@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+h2 { font-weight: 700; }
+h3 { font-weight: 600; }
+
+.text-primary { color: var(--primary-color-text); /* will be white in dark */ }
+
+.p-card .p-card-body { padding: 1.25rem; }

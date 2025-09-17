@@ -1,0 +1,80 @@
+/* PrimeNG core + icons + utilities */
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+
+/* Tailwind (if you use it) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* App globals */
+html, body { height: 100%; }
+body { margin: 0; background: var(--surface-ground); color: var(--text-color); }
+
+/* ===== Dark by default + Black Primary ===== */
+
+/* New theming tokens (PrimeNG v17+). These override Aura preset vars. */
+:root {
+  /* Primary to true black */
+  --p-primary-50:  #000000;
+  --p-primary-100: #000000;
+  --p-primary-200: #000000;
+  --p-primary-300: #000000;
+  --p-primary-400: #000000;
+  --p-primary-500: #000000; /* main */
+  --p-primary-600: #000000;
+  --p-primary-700: #000000;
+  --p-primary-800: #000000;
+  --p-primary-900: #000000;
+
+  /* Surfaces (dark) */
+  --p-surface-0:   #0a0a0a;  /* page bg */
+  --p-surface-50:  #101010;
+  --p-surface-100: #141414;  /* card bg */
+  --p-surface-200: #1a1a1a;  /* table/inputs */
+  --p-surface-300: #222222;  /* borders */
+
+  /* Back-compat tokens many components still read */
+  --surface-ground: var(--p-surface-0);
+  --surface-card:   var(--p-surface-100);
+  --surface-section:var(--p-surface-100);
+  --surface-border: var(--p-surface-300);
+  --text-color: #e8e8e8;
+  --text-color-secondary: #b1b1b1;
+
+  --primary-color: #000000;
+  --primary-color-text: #ffffff;
+}
+
+/* Cards & small accents */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+}
+
+/* Pills like the screenshot */
+.badge-pill {
+  padding: .25rem .6rem;
+  border-radius: 999px;
+  font-size: .75rem;
+}
+
+/* Buttons should be clearly black */
+.p-button,
+.p-button.p-button-primary {
+  background: #000 !important;
+  border-color: #000 !important;
+  color: #fff !important;
+}
+.p-button:enabled:hover { filter: brightness(1.1); }
+
+/* Optional table polish on dark */
+.p-datatable .p-datatable-thead > tr > th {
+  background: var(--p-surface-100);
+  border-color: var(--surface-border);
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  border-color: var(--surface-border);
+}
