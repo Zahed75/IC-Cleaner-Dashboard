@@ -1,1 +1,221 @@
-<p>reports works!</p>
+<div class="min-h-screen bg-gray-50 p-6">
+  <!-- Header Section -->
+  <div class="mb-8">
+    <div class="flex justify-between items-start mb-6">
+      <div>
+       
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">Reports</h2>
+        <p class="text-gray-600">Here's what's happening with your cleaning services today</p>
+      </div>
+      <button 
+        pButton 
+        icon="pi pi-sign-out" 
+        label="Logout" 
+        class="p-button-outlined p-button-secondary"
+      ></button>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Date Range -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+          <p-selectButton 
+            [options]="dateRangeOptions" 
+            [(ngModel)]="selectedDateRange"
+            (onChange)="onFilterChange()"
+          ></p-selectButton>
+        </div>
+
+        <!-- Service Type -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Service Type</label>
+          <select 
+            [(ngModel)]="selectedServiceType"
+            (change)="onFilterChange()"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option *ngFor="let option of serviceTypeOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Location -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+          <select 
+            [(ngModel)]="selectedLocation"
+            (change)="onFilterChange()"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option *ngFor="let option of locationOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Metrics Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Total Bookings Card -->
+    <p-card class="shadow-lg border-0">
+      <div class="text-center p-6">
+        <div class="flex items-center justify-center mb-4">
+          <i class="pi pi-calendar text-3xl text-blue-600 mr-3"></i>
+          <div>
+            <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Bookings</p>
+            <h3 class="text-4xl font-bold text-gray-900">{{ stats.totalBookings.toLocaleString() }}</h3>
+          </div>
+        </div>
+        <div class="flex items-center justify-center text-sm" 
+             [class]="stats.bookingChange >= 0 ? 'text-green-600' : 'text-red-600'">
+          <i [class]="stats.bookingChange >= 0 ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="mr-1"></i>
+          <span>{{ abs(stats.bookingChange) }} from last month</span>
+        </div>
+        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+          <p class="text-lg font-semibold text-blue-900">Revenue £{{ stats.revenue.toLocaleString('en-GB', {minimumFractionDigits: 2}) }}</p>
+          <p class="text-sm" [class]="stats.revenueChange >= 0 ? 'text-green-600' : 'text-red-600'">
+            <i [class]="stats.revenueChange >= 0 ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="mr-1"></i>
+            {{ abs(stats.revenueChange) }}% from last month
+          </p>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Average Rating Card -->
+    <p-card class="shadow-lg border-0">
+      <div class="text-center p-6">
+        <div class="flex items-center justify-center mb-4">
+          <i class="pi pi-star text-3xl text-amber-500 mr-3"></i>
+          <div>
+            <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Avg. Rating</p>
+            <h3 class="text-4xl font-bold text-gray-900">{{ stats.avgRating }}</h3>
+          </div>
+        </div>
+        <div class="flex items-center justify-center text-amber-600 text-sm mb-4">
+          <i class="pi pi-star-fill mr-1"></i>
+          <i class="pi pi-star-fill mr-1"></i>
+          <i class="pi pi-star-fill mr-1"></i>
+          <i class="pi pi-star-fill mr-1"></i>
+          <i class="pi pi-star-half mr-1"></i>
+        </div>
+        <div class="bg-amber-50 p-4 rounded-lg">
+          <p class="text-lg font-semibold text-amber-900">©{{ stats.positiveRating }}% Positive</p>
+          <p class="text-sm text-amber-700">Based on customer feedback</p>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Active Cleaners Card -->
+    <p-card class="shadow-lg border-0">
+      <div class="text-center p-6">
+        <div class="flex items-center justify-center mb-4">
+          <i class="pi pi-users text-3xl text-green-600 mr-3"></i>
+          <div>
+            <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Active Cleaners</p>
+            <h3 class="text-4xl font-bold text-gray-900">{{ stats.activeCleaners }}</h3>
+          </div>
+        </div>
+        <div class="flex items-center justify-center text-sm mb-4" 
+             [class]="stats.cleanerChange >= 0 ? 'text-green-600' : 'text-red-600'">
+          <i [class]="stats.cleanerChange >= 0 ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="mr-1"></i>
+          <span>{{ abs(stats.cleanerChange) }} {{ stats.cleanerChange >= 0 ? 'more' : 'less' }} than last month</span>
+        </div>
+        <div class="bg-green-50 p-4 rounded-lg">
+          <p class="text-lg font-semibold text-green-900">Performance</p>
+          <p class="text-sm text-green-700">98% on-time completion</p>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+    <!-- Revenue Overview -->
+    <p-card header="Revenue Overview" class="shadow-lg border-0">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h4 class="text-lg font-semibold text-gray-900">Revenue & Bookings Trend</h4>
+          <p class="text-gray-600">Last 7 months performance</p>
+        </div>
+        <p-selectButton 
+          [options]="datasetOptions" 
+          [(ngModel)]="selectedDataset"
+          (onChange)="onFilterChange()"
+        ></p-selectButton>
+      </div>
+      <div class="h-80">
+        <p-chart 
+          type="line" 
+          [data]="revenueChart" 
+          [options]="getRevenueChartOptions()"
+        ></p-chart>
+      </div>
+    </p-card>
+
+    <!-- Service Distribution -->
+    <p-card header="Service Distribution" class="shadow-lg border-0">
+      <div class="mb-6">
+        <h4 class="text-lg font-semibold text-gray-900">Service Type Breakdown</h4>
+        <p class="text-gray-600">Percentage distribution of services</p>
+      </div>
+      <div class="h-80">
+        <p-chart 
+          type="doughnut" 
+          [data]="serviceDistributionChart" 
+          [options]="getServiceDistributionOptions()"
+        ></p-chart>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Additional Metrics -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Completion Rate -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
+      <i class="pi pi-check-circle text-4xl text-green-500 mb-3"></i>
+      <h4 class="text-lg font-semibold text-gray-900 mb-1">Completion Rate</h4>
+      <p class="text-3xl font-bold text-green-600">98.2%</p>
+      <p class="text-sm text-gray-500">Services completed on time</p>
+    </div>
+
+    <!-- Customer Satisfaction -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
+      <i class="pi pi-heart text-4xl text-red-500 mb-3"></i>
+      <h4 class="text-lg font-semibold text-gray-900 mb-1">Satisfaction</h4>
+      <p class="text-3xl font-bold text-red-600">94%</p>
+      <p class="text-sm text-gray-500">Happy customers</p>
+    </div>
+
+    <!-- Repeat Customers -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
+      <i class="pi pi-repeat text-4xl text-blue-500 mb-3"></i>
+      <h4 class="text-lg font-semibold text-gray-900 mb-1">Repeat Rate</h4>
+      <p class="text-3xl font-bold text-blue-600">76%</p>
+      <p class="text-sm text-gray-500">Customer retention</p>
+    </div>
+
+    <!-- Response Time -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
+      <i class="pi pi-clock text-4xl text-purple-500 mb-3"></i>
+      <h4 class="text-lg font-semibold text-gray-900 mb-1">Response Time</h4>
+      <p class="text-3xl font-bold text-purple-600">2.3h</p>
+      <p class="text-sm text-gray-500">Average response</p>
+    </div>
+  </div>
+
+  <!-- Export Section -->
+  <div class="mt-8 text-center">
+    <button 
+      pButton 
+      icon="pi pi-download" 
+      label="Export Report" 
+      class="p-button-primary p-button-lg"
+      (click)="exportReport()"
+    ></button>
+  </div>
+</div>

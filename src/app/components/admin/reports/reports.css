@@ -1,0 +1,113 @@
+/* Custom PrimeNG component styling with Tailwind */
+::ng-deep .p-card {
+  border-radius: 1rem !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+::ng-deep .p-card .p-card-header {
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem !important;
+  font-weight: 600 !important;
+  font-size: 1.25rem !important;
+  color: #111827 !important;
+}
+
+::ng-deep .p-card .p-card-body {
+  padding: 1.5rem !important;
+}
+
+::ng-deep .p-card .p-card-content {
+  padding: 0 !important;
+}
+
+/* SelectButton styling */
+::ng-deep .p-selectbutton .p-button {
+  border: 1px solid #d1d5db !important;
+  background: white !important;
+  color: #6b7280 !important;
+  transition: all 0.2s ease !important;
+}
+
+::ng-deep .p-selectbutton .p-button.p-highlight {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: white !important;
+}
+
+::ng-deep .p-selectbutton .p-button:not(.p-disabled):not(.p-highlight):hover {
+  background: #f9fafb !important;
+  color: #374151 !important;
+}
+
+/* Button styling */
+::ng-deep .p-button {
+  border-radius: 0.75rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+::ng-deep .p-button:not(.p-disabled):hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+::ng-deep .p-button.p-button-lg {
+  padding: 0.875rem 1.5rem !important;
+  font-size: 1.125rem !important;
+}
+
+/* Chart container responsive behavior */
+::ng-deep .p-chart {
+  width: 100% !important;
+}
+
+/* Animation for card hover effects */
+.p-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.p-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  ::ng-deep .p-selectbutton .p-button {
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  ::ng-deep .p-card .p-card-header {
+    padding: 1rem 1rem 0.5rem 1rem !important;
+    font-size: 1.125rem !important;
+  }
+  
+  ::ng-deep .p-card .p-card-body {
+    padding: 1rem !important;
+  }
+}
+
+/* Custom gradient backgrounds for metric cards */
+.metric-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Custom select styling to match PrimeNG */
+select {
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}

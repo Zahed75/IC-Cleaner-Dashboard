@@ -1,25 +1,25 @@
 import {
   BaseComponent
-} from "./chunk-Z5W3CBAU.js";
+} from "./chunk-3FU3JTEY.js";
 import {
   BaseStyle
-} from "./chunk-2ICDDRS7.js";
+} from "./chunk-MCAR3IJC.js";
+import "./chunk-ZZP6IP25.js";
 import {
   Footer,
   Header,
   PrimeTemplate,
   SharedModule
-} from "./chunk-MIDRSENA.js";
+} from "./chunk-SXKELP34.js";
+import {
+  k2 as k
+} from "./chunk-ED6DJ4IY.js";
 import {
   CommonModule,
   NgIf,
   NgTemplateOutlet
 } from "./chunk-KZ44QYVE.js";
 import "./chunk-ZJ25XCV3.js";
-import "./chunk-ZZP6IP25.js";
-import {
-  k2 as k
-} from "./chunk-ED6DJ4IY.js";
 import {
   ChangeDetectionStrategy,
   Component,

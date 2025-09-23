@@ -3,7 +3,7 @@ import {
 } from "./chunk-P5652PBR.js";
 import {
   Button
-} from "./chunk-WVQM26IT.js";
+} from "./chunk-R43HKAIY.js";
 import {
   DomHandler,
   blockBodyScroll,
@@ -13,26 +13,18 @@ import {
   TimesIcon,
   WindowMaximizeIcon,
   WindowMinimizeIcon
-} from "./chunk-JPWVWCMN.js";
+} from "./chunk-D2PSGZYS.js";
 import {
   BaseComponent
-} from "./chunk-Z5W3CBAU.js";
+} from "./chunk-3FU3JTEY.js";
 import {
   BaseStyle
-} from "./chunk-2ICDDRS7.js";
+} from "./chunk-MCAR3IJC.js";
 import {
   PrimeTemplate,
   SharedModule,
   TranslationKeys
-} from "./chunk-MIDRSENA.js";
-import {
-  CommonModule,
-  NgClass,
-  NgIf,
-  NgStyle,
-  NgTemplateOutlet,
-  isPlatformBrowser
-} from "./chunk-KZ44QYVE.js";
+} from "./chunk-SXKELP34.js";
 import {
   C,
   Kt,
@@ -56,6 +48,14 @@ import {
   trigger,
   useAnimation
 } from "./chunk-BMT5F2AN.js";
+import {
+  CommonModule,
+  NgClass,
+  NgIf,
+  NgStyle,
+  NgTemplateOutlet,
+  isPlatformBrowser
+} from "./chunk-KZ44QYVE.js";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -2034,4 +2034,4 @@ export {
   Dialog,
   DialogModule
 };
-//# sourceMappingURL=chunk-DUZGBZUT.js.map
+//# sourceMappingURL=chunk-5CZQNR72.js.map

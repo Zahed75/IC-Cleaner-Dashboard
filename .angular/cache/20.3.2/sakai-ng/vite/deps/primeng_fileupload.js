@@ -1,39 +1,51 @@
 import {
-  DomSanitizer
-} from "./chunk-CUAGDTWJ.js";
-import "./chunk-2C5OLB37.js";
-import {
   Badge,
   Button
-} from "./chunk-WVQM26IT.js";
-import "./chunk-GUFE63AK.js";
-import {
-  style
-} from "./chunk-JWFKRTMS.js";
+} from "./chunk-R43HKAIY.js";
+import "./chunk-SQQYF4FI.js";
 import "./chunk-IKJOFFP5.js";
+import {
+  style as style2
+} from "./chunk-L3SQPXSN.js";
 import {
   PlusIcon,
   TimesIcon,
   UploadIcon
-} from "./chunk-JPWVWCMN.js";
+} from "./chunk-D2PSGZYS.js";
 import {
   Ripple
-} from "./chunk-GRZVYZFR.js";
+} from "./chunk-LC7DVVFG.js";
 import {
   BaseComponent
-} from "./chunk-Z5W3CBAU.js";
+} from "./chunk-3FU3JTEY.js";
 import {
   BaseStyle
-} from "./chunk-2ICDDRS7.js";
+} from "./chunk-MCAR3IJC.js";
+import "./chunk-ZZP6IP25.js";
 import {
   PrimeTemplate,
   SharedModule,
   TranslationKeys
-} from "./chunk-MIDRSENA.js";
+} from "./chunk-SXKELP34.js";
+import {
+  O,
+  W
+} from "./chunk-ED6DJ4IY.js";
+import "./chunk-CD477EXQ.js";
+import {
+  animate,
+  style,
+  transition,
+  trigger
+} from "./chunk-BMT5F2AN.js";
+import {
+  DomSanitizer
+} from "./chunk-PZFABHLE.js";
 import {
   HttpClient,
   HttpEventType
 } from "./chunk-6OZ6UGMT.js";
+import "./chunk-2C5OLB37.js";
 import {
   CommonModule,
   NgClass,
@@ -44,18 +56,6 @@ import {
   isPlatformBrowser
 } from "./chunk-KZ44QYVE.js";
 import "./chunk-ZJ25XCV3.js";
-import "./chunk-ZZP6IP25.js";
-import {
-  O,
-  W
-} from "./chunk-ED6DJ4IY.js";
-import "./chunk-CD477EXQ.js";
-import {
-  animate,
-  style as style2,
-  transition,
-  trigger
-} from "./chunk-BMT5F2AN.js";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -573,10 +573,10 @@ var Message = class _Message extends BaseComponent {
     dependencies: [CommonModule, NgClass, NgIf, NgTemplateOutlet, TimesIcon, Ripple, SharedModule],
     encapsulation: 2,
     data: {
-      animation: [trigger("messageAnimation", [transition(":enter", [style2({
+      animation: [trigger("messageAnimation", [transition(":enter", [style({
         opacity: 0,
         transform: "translateY(-25%)"
-      }), animate("{{showTransitionParams}}")]), transition(":leave", [animate("{{hideTransitionParams}}", style2({
+      }), animate("{{showTransitionParams}}")]), transition(":leave", [animate("{{hideTransitionParams}}", style({
         height: 0,
         marginTop: 0,
         marginBottom: 0,
@@ -653,10 +653,10 @@ var Message = class _Message extends BaseComponent {
       changeDetection: ChangeDetectionStrategy.OnPush,
       encapsulation: ViewEncapsulation.None,
       providers: [MessageStyle],
-      animations: [trigger("messageAnimation", [transition(":enter", [style2({
+      animations: [trigger("messageAnimation", [transition(":enter", [style({
         opacity: 0,
         transform: "translateY(-25%)"
-      }), animate("{{showTransitionParams}}")]), transition(":leave", [animate("{{hideTransitionParams}}", style2({
+      }), animate("{{showTransitionParams}}")]), transition(":leave", [animate("{{hideTransitionParams}}", style({
         height: 0,
         marginTop: 0,
         marginBottom: 0,
@@ -827,7 +827,7 @@ var classes2 = {
 };
 var ProgressBarStyle = class _ProgressBarStyle extends BaseStyle {
   name = "progressbar";
-  theme = style;
+  theme = style2;
   classes = classes2;
   static ɵfac = /* @__PURE__ */ (() => {
     let ɵProgressBarStyle_BaseFactory;

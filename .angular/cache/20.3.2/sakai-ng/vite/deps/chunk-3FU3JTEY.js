@@ -2,10 +2,7 @@ import {
   BaseStyle,
   PrimeNG,
   base
-} from "./chunk-2ICDDRS7.js";
-import {
-  isPlatformServer
-} from "./chunk-KZ44QYVE.js";
+} from "./chunk-MCAR3IJC.js";
 import {
   N,
   S
@@ -15,6 +12,9 @@ import {
   f,
   s3 as s
 } from "./chunk-ED6DJ4IY.js";
+import {
+  isPlatformServer
+} from "./chunk-KZ44QYVE.js";
 import {
   ChangeDetectorRef,
   DOCUMENT,
@@ -254,4 +254,4 @@ var BaseComponent = class _BaseComponent {
 export {
   BaseComponent
 };
-//# sourceMappingURL=chunk-Z5W3CBAU.js.map
+//# sourceMappingURL=chunk-3FU3JTEY.js.map
