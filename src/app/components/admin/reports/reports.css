@@ -111,3 +111,82 @@ select:focus {
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
+
+
+/* Modern Date Range Selector */
+::ng-deep .date-range-selector .p-selectbutton .p-button {
+  border: 1px solid #e5e7eb !important;
+  background: white !important;
+  color: #6b7280 !important;
+  transition: all 0.3s ease !important;
+  padding: 0.5rem 1rem !important;
+  margin: 0.125rem !important;
+}
+
+::ng-deep .date-range-selector .p-selectbutton .p-button.p-highlight {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+  border-color: #3b82f6 !important;
+  color: white !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+::ng-deep .date-range-selector .p-selectbutton .p-button:not(.p-disabled):not(.p-highlight):hover {
+  background: #f8fafc !important;
+  color: #374151 !important;
+  border-color: #d1d5db !important;
+}
+
+/* Modern Dropdown Styling */
+::ng-deep .modern-dropdown .p-dropdown {
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.75rem !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep .modern-dropdown .p-dropdown:not(.p-disabled):hover {
+  border-color: #9ca3af !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+::ng-deep .modern-dropdown .p-dropdown.p-focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+::ng-deep .modern-dropdown .p-dropdown-panel {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Gradient card animations */
+.filter-card {
+  transition: all 0.3s ease;
+}
+
+.filter-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive improvements */
+@media (max-width: 1024px) {
+  ::ng-deep .date-range-selector .p-selectbutton .p-button {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.875rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .date-range-selector .p-selectbutton {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  
+  ::ng-deep .date-range-selector .p-selectbutton .p-button {
+    margin: 0 !important;
+    text-align: center !important;
+  }
+}

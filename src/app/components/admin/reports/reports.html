@@ -3,7 +3,6 @@
   <div class="mb-8">
     <div class="flex justify-between items-start mb-6">
       <div>
-       
         <h2 class="text-xl font-semibold text-gray-700 mb-2">Reports</h2>
         <p class="text-gray-600">Here's what's happening with your cleaning services today</p>
       </div>
@@ -15,50 +14,121 @@
       ></button>
     </div>
 
-    <!-- Filters Section -->
+    <!-- Filters Section - Updated with AutoComplete -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Report Filters</h3>
+        <div class="flex items-center space-x-2 text-sm text-gray-500">
+          <i class="pi pi-filter"></i>
+          <span>Active Filters: 3</span>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Date Range -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
-          <p-selectButton 
-            [options]="dateRangeOptions" 
-            [(ngModel)]="selectedDateRange"
-            (onChange)="onFilterChange()"
-          ></p-selectButton>
+        <div class="lg:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Date Range</label>
+          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-blue-900">Select Time Period</span>
+              <i class="pi pi-calendar text-blue-500"></i>
+            </div>
+            <p-selectButton 
+              [options]="dateRangeOptions" 
+              [(ngModel)]="selectedDateRange"
+              (onChange)="onFilterChange()"
+              class="w-full"
+              styleClass="date-range-selector"
+            ></p-selectButton>
+            <div class="mt-3 flex items-center text-xs text-blue-600">
+              <i class="pi pi-info-circle mr-1"></i>
+              <span>Currently viewing: {{ getSelectedDateRangeLabel() }}</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Service Type -->
+        <!-- Service Type - Updated to AutoComplete -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Service Type</label>
-          <select 
-            [(ngModel)]="selectedServiceType"
-            (change)="onFilterChange()"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option *ngFor="let option of serviceTypeOptions" [value]="option.value">
-              {{ option.label }}
-            </option>
-          </select>
+          <label class="block text-sm font-medium text-gray-700 mb-3">Service Type</label>
+          <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-100">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-green-900">Service Filter</span>
+              <i class="pi pi-briefcase text-green-500"></i>
+            </div>
+            <p-autocomplete 
+              [(ngModel)]="selectedServiceType" 
+              [suggestions]="filteredServiceTypes"
+              (completeMethod)="filterServiceTypes($event)"
+              optionLabel="name"
+              placeholder="Search service type..."
+              [dropdown]="true"
+              styleClass="w-full modern-autocomplete"
+            >
+              <ng-template let-option pTemplate="item">
+                <div class="flex items-center">
+                  <i class="pi pi-briefcase mr-2 text-green-500"></i>
+                  <span>{{ option.name }}</span>
+                </div>
+              </ng-template>
+            </p-autocomplete>
+          </div>
         </div>
 
-        <!-- Location -->
+        <!-- Location - Updated to AutoComplete -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
-          <select 
-            [(ngModel)]="selectedLocation"
-            (change)="onFilterChange()"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option *ngFor="let option of locationOptions" [value]="option.value">
-              {{ option.label }}
-            </option>
-          </select>
+          <label class="block text-sm font-medium text-gray-700 mb-3">Location</label>
+          <div class="bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg p-4 border border-purple-100">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-purple-900">Location Filter</span>
+              <i class="pi pi-map-marker text-purple-500"></i>
+            </div>
+            <p-autocomplete 
+              [(ngModel)]="selectedLocation" 
+              [suggestions]="filteredLocations"
+              (completeMethod)="filterLocations($event)"
+              optionLabel="name"
+              placeholder="Search location..."
+              [dropdown]="true"
+              styleClass="w-full modern-autocomplete"
+            >
+              <ng-template let-option pTemplate="item">
+                <div class="flex items-center">
+                  <i class="pi pi-map-marker mr-2 text-purple-500"></i>
+                  <span>{{ option.name }}</span>
+                </div>
+              </ng-template>
+            </p-autocomplete>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
+        <div class="flex items-center space-x-2 text-sm text-gray-500">
+          <i class="pi pi-chart-line"></i>
+          <span>Reports update in real-time</span>
+        </div>
+        <div class="flex space-x-3">
+          <button 
+            pButton 
+            icon="pi pi-refresh" 
+            label="Reset Filters" 
+            class="p-button-outlined p-button-secondary p-button-sm"
+            (click)="resetFilters()"
+          ></button>
+          <button 
+            pButton 
+            icon="pi pi-chart-bar" 
+            label="Apply Filters" 
+            class="p-button-primary p-button-sm"
+            (click)="onFilterChange()"
+          ></button>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Rest of the content remains the same -->
   <!-- Key Metrics Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
     <!-- Total Bookings Card -->

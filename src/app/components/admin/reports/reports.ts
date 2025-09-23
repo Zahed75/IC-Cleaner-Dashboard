@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CardModule, Card } from 'primeng/card';
 import { ChartModule, UIChart } from 'primeng/chart';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { AutoCompleteModule, AutoComplete } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 
@@ -20,9 +21,11 @@ interface ChartData {
     CardModule,
     ChartModule,
     SelectButtonModule,
+    AutoCompleteModule,
     ButtonModule,
-      Card,
-      UIChart
+      AutoComplete,
+      UIChart,
+      Card
 ],
   templateUrl: './reports.html',
   styleUrls: ['./reports.css']
@@ -32,23 +35,25 @@ export class Reports implements OnInit {
     { label: 'Last 7 days', value: '7days' },
     { label: 'Last 30 days', value: '30days' },
     { label: 'Last 90 days', value: '90days' },
-    { label: 'Custom', value: 'custom' }
+    { label: 'Last 6 months', value: '6months' },
+    { label: 'Last year', value: '1year' },
+    { label: 'Custom Range', value: 'custom' }
   ];
 
   serviceTypeOptions = [
-    { label: 'All Services', value: 'all' },
-    { label: 'Regular Cleaning', value: 'regular' },
-    { label: 'Deep Cleaning', value: 'deep' },
-    { label: 'Move Out Cleaning', value: 'moveout' },
-    { label: 'Commercial Cleaning', value: 'commercial' }
+    { name: 'All Services', value: 'all' },
+    { name: 'Regular Cleaning', value: 'regular' },
+    { name: 'Deep Cleaning', value: 'deep' },
+    { name: 'Move Out Cleaning', value: 'moveout' },
+    { name: 'Commercial Cleaning', value: 'commercial' }
   ];
 
   locationOptions = [
-    { label: 'All Locations', value: 'all' },
-    { label: 'London', value: 'london' },
-    { label: 'Manchester', value: 'manchester' },
-    { label: 'Birmingham', value: 'birmingham' },
-    { label: 'Liverpool', value: 'liverpool' }
+    { name: 'All Locations', value: 'all' },
+    { name: 'London', value: 'london' },
+    { name: 'Manchester', value: 'manchester' },
+    { name: 'Birmingham', value: 'birmingham' },
+    { name: 'Liverpool', value: 'liverpool' }
   ];
 
   datasetOptions = [
@@ -57,9 +62,12 @@ export class Reports implements OnInit {
   ];
 
   selectedDateRange = '30days';
-  selectedServiceType = 'all';
-  selectedLocation = 'all';
+  selectedServiceType: any = { name: 'All Services', value: 'all' };
+  selectedLocation: any = { name: 'All Locations', value: 'all' };
   selectedDataset = 'service';
+
+  filteredServiceTypes: any[] = [];
+  filteredLocations: any[] = [];
 
   stats = {
     totalBookings: 786,
@@ -84,6 +92,9 @@ export class Reports implements OnInit {
 
   ngOnInit() {
     this.initializeCharts();
+    // Initialize filtered lists
+    this.filteredServiceTypes = this.serviceTypeOptions;
+    this.filteredLocations = this.locationOptions;
   }
 
   initializeCharts() {
@@ -129,6 +140,20 @@ export class Reports implements OnInit {
         }
       ]
     };
+  }
+
+  filterServiceTypes(event: any) {
+    const query = event.query.toLowerCase();
+    this.filteredServiceTypes = this.serviceTypeOptions.filter(option => 
+      option.name.toLowerCase().includes(query)
+    );
+  }
+
+  filterLocations(event: any) {
+    const query = event.query.toLowerCase();
+    this.filteredLocations = this.locationOptions.filter(option => 
+      option.name.toLowerCase().includes(query)
+    );
   }
 
   getRevenueChartOptions() {
@@ -197,12 +222,30 @@ export class Reports implements OnInit {
     });
   }
 
+  resetFilters() {
+    this.selectedDateRange = '30days';
+    this.selectedServiceType = { name: 'All Services', value: 'all' };
+    this.selectedLocation = { name: 'All Locations', value: 'all' };
+    this.onFilterChange();
+  }
+
   exportReport() {
     // Export functionality would go here
     console.log('Exporting report...');
   }
 
-  // Add Math.abs function to component
+  getSelectedDateRangeLabel(): string {
+    const labels: { [key: string]: string } = {
+      '7days': 'Last 7 Days',
+      '30days': 'Last 30 Days', 
+      '90days': 'Last 90 Days',
+      '6months': 'Last 6 Months',
+      '1year': 'Last Year',
+      'custom': 'Custom Date Range'
+    };
+    return labels[this.selectedDateRange] || 'Last 30 Days';
+  }
+
   abs(value: number): number {
     return Math.abs(value);
   }

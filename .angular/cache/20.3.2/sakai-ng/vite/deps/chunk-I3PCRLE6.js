@@ -2,7 +2,7 @@ import {
   BaseStyle,
   PrimeNG,
   base
-} from "./chunk-MCAR3IJC.js";
+} from "./chunk-D24RSC3H.js";
 import {
   N,
   S
@@ -254,4 +254,4 @@ var BaseComponent = class _BaseComponent {
 export {
   BaseComponent
 };
-//# sourceMappingURL=chunk-3FU3JTEY.js.map
+//# sourceMappingURL=chunk-I3PCRLE6.js.map
