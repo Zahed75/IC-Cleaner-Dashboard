@@ -3,7 +3,6 @@ import { AppLayout } from './app/layout/component/app.layout';
 
 
 
-import { Bookings } from '@/components/admin/bookings/bookings';
 import { Services } from '@/components/admin/services/services';
 import { Cleaners } from '@/components/admin/cleaners/cleaners';
 import { Clients } from '@/components/admin/clients/clients';
@@ -12,7 +11,7 @@ import { Disputes } from '@/components/admin/disputes/disputes';
 import { Reports } from '@/components/admin/reports/reports';
 import { Settings } from '@/components/admin/settings/settings';
 import { Dashboard } from '@/components/admin/dashboard/dashboard';
-
+import { BookingsComponent } from '@/components/admin/bookings/bookings';
 
 export const appRoutes: Routes = [
     {
@@ -22,7 +21,7 @@ export const appRoutes: Routes = [
             { path: '', component: Dashboard },
             { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
             { path: 'dashboard', component: Dashboard },
-            { path: 'bookings', component: Bookings },
+            { path:'booking',component:BookingsComponent},
             { path: 'services', component: Services },
             { path: 'cleaners', component: Cleaners },
             { path: 'clients', component: Clients },

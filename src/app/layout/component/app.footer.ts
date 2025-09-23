@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
     selector: 'app-footer',
     template: `<div class="layout-footer">
         IC Cleaner by
-        <a href="" target="_blank" rel="noopener noreferrer" class="text-primary font-bold hover:underline">Zahed</a>
+        <a href="https://www.linkedin.com/in/zahedhasan" target="_blank" rel="noopener noreferrer" class="text-primary font-bold hover:underline">Zahed</a>
     </div>`
 })
 export class AppFooter {}

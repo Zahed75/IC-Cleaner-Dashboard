@@ -1,0 +1,245 @@
+.bookings-container {
+    padding: 2rem;
+}
+
+.bookings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.header-content h2 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.header-content p {
+    margin: 0.5rem 0 0 0;
+    color: #6b7280;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.clickable-row:hover {
+    background-color: #f9fafb;
+}
+
+.booking-id {
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+.service-badge {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.datetime-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.date {
+    font-weight: 500;
+}
+
+.time {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.amount-cell {
+    font-weight: 600;
+    color: #059669;
+}
+
+/* Booking Form Styles */
+.booking-form {
+    min-height: 400px;
+}
+
+.step-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
+
+.step-content {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.field {
+    margin-bottom: 1.5rem;
+}
+
+/* Cleaner Selection */
+.cleaner-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cleaner-item {
+    border: 2px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cleaner-item:hover {
+    border-color: #3b82f6;
+    background-color: #f8fafc;
+}
+
+.cleaner-item.selected {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+}
+
+.cleaner-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.cleaner-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.completed-jobs {
+    font-weight: 500;
+}
+
+.rating {
+    background-color: #10b981;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+}
+
+/* Confirmation Step */
+.confirmation-content {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: #10b981;
+    margin-bottom: 1rem;
+}
+
+.confirmation-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.confirmation-message {
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+
+.booking-summary {
+    background-color: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: left;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-item .label {
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.summary-item .value {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.summary-item .value.amount {
+    color: #059669;
+    font-size: 1.1rem;
+}
+
+/* Date Picker Responsive Fix */
+.p-datepicker {
+    position: fixed !important;
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .p-datepicker {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 90vw !important;
+        max-width: 300px !important;
+    }
+    
+    .bookings-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Blue Button Styles */
+.p-button-primary {
+    background-color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+}
+
+.p-button-primary:hover {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
+}
+
+.text-center {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+}
+
+.p-inputtextarea {
+    width: 100%;
+    resize: vertical;
+}

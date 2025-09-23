@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { CardModule } from 'primeng/card';
+import { CardModule, Card } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
@@ -11,7 +11,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, ButtonModule, TableModule, TagModule, CardModule, TooltipModule, ConfirmDialogModule],
+  imports: [CommonModule, ButtonModule, TableModule, TagModule, CardModule, TooltipModule, ConfirmDialogModule, Card],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   providers: [ConfirmationService, MessageService]
