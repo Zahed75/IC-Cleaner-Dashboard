@@ -1,1 +1,137 @@
-<p>services works!</p>
+<div class="services-container">
+    <div class="services-header">
+        <div class="header-content">
+            <h2>Service Management</h2>
+            <p>Here's what's happening with your cleaning services today</p>
+        </div>
+        <p-button icon="pi pi-plus" label="Add New Service" severity="primary" (onClick)="openAddService()" />
+    </div>
+
+    <p-card>
+        <p-table [value]="services" [tableStyle]="{ 'min-width': '1000px' }" styleClass="p-datatable-striped"
+            [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="id" style="width: 150px">
+                        SERVICE ID <p-sortIcon field="id" />
+                    </th>
+                    <th pSortableColumn="name" style="width: 250px">
+                        SERVICE NAME <p-sortIcon field="name" />
+                    </th>
+                    <th pSortableColumn="cost" style="width: 150px">
+                        SERVICE COST <p-sortIcon field="cost" />
+                    </th>
+                    <th pSortableColumn="pricePerHour" style="width: 150px">
+                        PRICE PER HOUR <p-sortIcon field="pricePerHour" />
+                    </th>
+                    <th pSortableColumn="platformFee" style="width: 150px">
+                        PLATFORM FEE <p-sortIcon field="platformFee" />
+                    </th>
+                    <th pSortableColumn="status" style="width: 120px">
+                        STATUS <p-sortIcon field="status" />
+                    </th>
+                    <th style="width: 120px">
+                        ACTIONS
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-service>
+                <tr>
+                    <td>
+                        <span class="service-id">{{ service.id }}</span>
+                    </td>
+                    <td>
+                        <span class="service-name">{{ service.name }}</span>
+                    </td>
+                    <td class="cost-cell">{{ service.cost | currency:'GBP' }}</td>
+                    <td class="price-cell">{{ service.pricePerHour | currency:'GBP' }}/hr</td>
+                    <td class="fee-cell">
+                        {{ service.platformFee | currency:'GBP' }}
+                        <small class="percentage">({{ service.platformFeePercentage | number:'1.0-2' }}%)</small>
+                    </td>
+                    <td>
+                        <p-tag [value]="service.status" [severity]="getSeverity(service.status)" />
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <p-button icon="pi pi-pencil" severity="primary" text 
+                                (onClick)="openEditService(service)" title="Edit Service" />
+                            <p-button [icon]="service.status === 'Active' ? 'pi pi-pause' : 'pi pi-play'" 
+                                [severity]="service.status === 'Active' ? 'secondary' : 'primary'" text
+                                (onClick)="toggleServiceStatus(service)" 
+                                [title]="service.status === 'Active' ? 'Deactivate' : 'Activate'" />
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="7" class="text-center">No services found</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>
+
+<!-- Service Form Dialog -->
+<p-dialog [header]="isEditMode ? 'Edit Service' : 'Create New Service'" [(visible)]="showServiceForm" [modal]="true" 
+    [style]="{ width: '500px', 'max-width': '90vw' }" [draggable]="false" [resizable]="false">
+
+    <div class="service-form" [formGroup]="serviceForm">
+        <div class="field">
+            <label class="block text-sm font-medium mb-2">Service Name/Type</label>
+            <input pInputText formControlName="name" placeholder="Enter service name" class="w-full" />
+            <small *ngIf="serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched" class="text-red-500">
+                Service name is required
+            </small>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Price Per Hour (£)</label>
+                <p-inputNumber formControlName="pricePerHour" mode="currency" currency="GBP" locale="en-GB" 
+                    placeholder="0.00" class="w-full"></p-inputNumber>
+            </div>
+
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Cost of Service (£)</label>
+                <p-inputNumber formControlName="cost" mode="currency" currency="GBP" locale="en-GB" 
+                    placeholder="0.00" class="w-full"></p-inputNumber>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Platform Fee (£)</label>
+                <p-inputNumber formControlName="platformFee" mode="currency" currency="GBP" locale="en-GB" 
+                    placeholder="0.00" class="w-full" (onInput)="calculatePlatformFee()"></p-inputNumber>
+            </div>
+
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Platform Fee (%)</label>
+                <p-inputNumber formControlName="platformFeePercentage" suffix="%" minFractionDigits="2" maxFractionDigits="2"
+                    placeholder="0.00" class="w-full" (onInput)="calculatePlatformFeeFromPercentage()"></p-inputNumber>
+            </div>
+        </div>
+
+        <div class="field flex items-center gap-3">
+            <p-toggleSwitch formControlName="status" />
+            <label class="text-sm font-medium">Active</label>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-times" label="Cancel" severity="secondary" 
+            (onClick)="showServiceForm = false" />
+        <p-button [icon]="isEditMode ? 'pi pi-check' : 'pi pi-plus'" 
+                  [label]="isEditMode ? 'Edit Service' : 'Create Service'" 
+                  severity="primary" 
+                  (onClick)="saveService()" />
+    </ng-template>
+</p-dialog>
+
+<p-toast />
