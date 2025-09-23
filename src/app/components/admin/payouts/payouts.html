@@ -1,1 +1,269 @@
-<p>payouts works!</p>
+<div class="payouts-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1 class="company-title">1C-Cleaners</h1>
+    <h2 class="page-title">Payout Management</h2>
+    <p class="page-subtitle">Here's what's happening with your cleaning services today</p>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-container">
+    <p-card class="stat-card">
+      <div class="stat-content">
+        <h3 class="stat-label">Total Disputes</h3>
+        <span class="stat-value">{{ stats.totalDisputes }}</span>
+      </div>
+    </p-card>
+
+    <p-card class="stat-card">
+      <div class="stat-content">
+        <h3 class="stat-label">Pending</h3>
+        <span class="stat-value">{{ stats.pending }}</span>
+      </div>
+    </p-card>
+
+    <p-card class="stat-card">
+      <div class="stat-content">
+        <h3 class="stat-label">Resolved</h3>
+        <span class="stat-value">{{ stats.resolved }}</span>
+      </div>
+    </p-card>
+
+    <p-card class="stat-card high-priority-card">
+      <div class="stat-content">
+        <h3 class="stat-label">High Priority</h3>
+        <span class="stat-value">{{ stats.highPriority }}</span>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Payouts Table Section -->
+  <p-card class="payouts-card">
+    <div class="card-header">
+      <h3 class="card-title">Payouts Overview</h3>
+      <div class="header-actions">
+        <div class="search-box">
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input 
+              type="text" 
+              pInputText 
+              placeholder="Search by ID or Name" 
+              [(ngModel)]="searchText"
+              class="search-input"
+            />
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <p-table 
+      [value]="filteredPayouts" 
+      [paginator]="true" 
+      [rows]="5"
+      styleClass="payouts-table"
+      [tableStyle]="{'min-width': '800px'}"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="table-header">PAYOUT ID</th>
+          <th class="table-header">CLEANER</th>
+          <th class="table-header">PAYOUT METHOD</th>
+          <th class="table-header">AMOUNT</th>
+          <th class="table-header">STATUS</th>
+          <th class="table-header">ACTION</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-payout>
+        <tr class="table-row">
+          <td class="table-data payout-id">
+            <a 
+              class="payout-id-link" 
+              (click)="showPayoutDetails(payout)"
+              title="Click to view details"
+            >
+              {{ payout.id }}
+            </a>
+          </td>
+          <td class="table-data cleaner-name">{{ payout.cleaner }}</td>
+          <td class="table-data payout-method">{{ payout.payoutMethod }}</td>
+          <td class="table-data amount">{{ payout.currency }}{{ payout.amount }}</td>
+          <td class="table-data status">
+            <p-tag 
+              [value]="payout.status" 
+              [severity]="getStatusSeverity(payout.status)"
+              class="status-tag"
+            ></p-tag>
+          </td>
+          <td class="table-data action">
+            <p-button 
+              icon="pi pi-eye" 
+              styleClass="p-button-outlined p-button-sm details-btn"
+              (onClick)="showPayoutDetails(payout)"
+              title="View Details"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="empty-message">No payouts found</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- Payout Details Dialog -->
+  <p-dialog 
+    header="Payout Information" 
+    [(visible)]="payoutDialog" 
+    [style]="{width: '650px', 'max-width': '95vw'}"
+    [modal]="true"
+    [dismissableMask]="true"
+    class="payout-dialog"
+  >
+    <div *ngIf="selectedPayout" class="payout-details-content">
+      <!-- Payout ID Header -->
+      <div class="payout-header">
+        <h3 class="payout-title">Payout Details</h3>
+        <p class="payout-id-display">{{ selectedPayout.id }}</p>
+      </div>
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <label class="detail-label">Cleaner Name</label>
+          <strong class="detail-value">{{ selectedPayout.cleaner }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <label class="detail-label">Balance Amount</label>
+          <strong class="detail-value">{{ selectedPayout.currency }}{{ selectedPayout.balanceAmount }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <label class="detail-label">Payout Amount</label>
+          <strong class="detail-value highlight-amount">{{ selectedPayout.currency }}{{ selectedPayout.amount }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <label class="detail-label">Request Date</label>
+          <span class="detail-value">{{ formatDate(selectedPayout.requestDate) }}</span>
+        </div>
+
+        <div class="detail-item" *ngIf="selectedPayout.approvedDate">
+          <label class="detail-label">Approved Date</label>
+          <span class="detail-value">{{ formatDate(selectedPayout.approvedDate) }}</span>
+        </div>
+
+        <div class="detail-item" *ngIf="selectedPayout.paidDate">
+          <label class="detail-label">Paid Date</label>
+          <span class="detail-value">{{ formatDate(selectedPayout.paidDate) }}</span>
+        </div>
+
+        <div class="detail-item">
+          <label class="detail-label">Payout Status</label>
+          <p-tag 
+            [value]="selectedPayout.status" 
+            [severity]="getStatusSeverity(selectedPayout.status)"
+            class="status-tag-large"
+          ></p-tag>
+        </div>
+      </div>
+
+      <div class="detail-item full-width">
+        <label class="detail-label">Payout Method</label>
+        <div class="bank-details">
+          <strong>{{ selectedPayout.payoutMethod }}</strong><br>
+          <span *ngIf="selectedPayout.payoutMethod === 'Bank Transfer'">
+            {{ getBankDetails().accountName }}<br>
+            Account No: {{ getBankDetails().accountNo }}<br>
+            IBAN: {{ getBankDetails().iban }}<br>
+            Sort Code: {{ getBankDetails().sortCode }}<br>
+            Bank Name: {{ getBankDetails().bankName }}<br>
+            Bank Address: {{ getBankDetails().bankAddress }}
+          </span>
+          <span *ngIf="selectedPayout.payoutMethod === 'PayPal'">
+            PayPal Account<br>
+            Email: {{ selectedPayout.cleaner.toLowerCase().replace(' ', '.') }}@example.com<br>
+            Transaction ID: PP{{ selectedPayout.id.slice(3) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Payout History Timeline -->
+      <div class="detail-item full-width" *ngIf="getPayoutHistory(selectedPayout).length > 0">
+        <label class="detail-label">Payout History</label>
+        <div class="timeline">
+          <div 
+            *ngFor="let event of getPayoutHistory(selectedPayout); let last = last" 
+            class="timeline-item"
+          >
+            <div class="timeline-marker">
+              <i class="pi pi-circle-fill" [ngClass]="'status-' + event.status.toLowerCase()"></i>
+            </div>
+            <div class="timeline-content">
+              <strong>{{ event.action }}</strong>
+              <span>{{ formatDate(event.date) }}</span>
+            </div>
+            <div class="timeline-connector" *ngIf="!last"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons based on status -->
+      <div class="dialog-actions" *ngIf="selectedPayout.status === 'Pending'">
+        <p-button 
+          icon="pi pi-check" 
+          label="Approve Payout" 
+          styleClass="p-button-success approve-btn"
+          (onClick)="approvePayout()"
+        ></p-button>
+        <p-button 
+          icon="pi pi-times" 
+          label="Reject Payout" 
+          styleClass="p-button-danger reject-btn"
+          (onClick)="rejectPayout()"
+        ></p-button>
+      </div>
+
+      <div class="dialog-actions" *ngIf="selectedPayout.status === 'Approved'">
+        <p-button 
+          icon="pi pi-dollar" 
+          label="Mark as Paid" 
+          styleClass="p-button-success mark-paid-btn"
+          (onClick)="markAsPaid()"
+        ></p-button>
+        <p-button 
+          icon="pi pi-undo" 
+          label="Revert to Pending" 
+          styleClass="p-button-warning"
+          (onClick)="rejectPayout()"
+        ></p-button>
+      </div>
+
+      <div class="dialog-actions" *ngIf="selectedPayout.status === 'Paid'">
+        <p-tag 
+          icon="pi pi-check-circle" 
+          value="Payment Completed" 
+          severity="success" 
+          class="completed-tag"
+        ></p-tag>
+      </div>
+
+      <div class="dialog-actions" *ngIf="selectedPayout.status === 'Rejected'">
+        <p-tag 
+          icon="pi pi-times-circle" 
+          value="Payout Rejected" 
+          severity="danger" 
+          class="rejected-tag"
+        ></p-tag>
+        <p-button 
+          icon="pi pi-redo" 
+          label="Restore to Pending" 
+          styleClass="p-button-warning"
+          (onClick)="approvePayout()"
+        ></p-button>
+      </div>
+    </div>
+  </p-dialog>
+</div>

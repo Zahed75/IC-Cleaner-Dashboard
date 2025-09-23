@@ -1,1 +1,171 @@
-<p>clients works!</p>
+<div class="clients-container">
+    <div class="clients-header">
+        <div class="header-content">
+            <h2>Client Management</h2>
+            <p>Here's what's happening with your cleaning services today</p>
+        </div>
+        <p-button icon="pi pi-plus" label="Add New Client" severity="primary" (onClick)="openAddClient()" />
+    </div>
+
+    <p-card>
+        <p-table 
+            [value]="clients" 
+            [paginator]="true" 
+            [rows]="5"
+            [tableStyle]="{ 'min-width': '50rem' }"
+            [rowsPerPageOptions]="[5, 10, 20]"
+            styleClass="p-datatable-striped"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 120px">CLIENT ID</th>
+                    <th style="width: 150px">CLIENT</th>
+                    <th style="width: 200px">CONTACT</th>
+                    <th style="width: 120px">LOCATION</th>
+                    <th style="width: 120px">LIFETIME BILL</th>
+                    <th style="width: 120px">STATUS</th>
+                    <th style="width: 120px">ACTIONS</th>
+                </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="body" let-client>
+                <tr>
+                    <td>
+                        <span class="client-id">{{ client.id }}</span>
+                    </td>
+                    <td>
+                        <span class="client-name">{{ client.firstName }} {{ client.lastName }}</span>
+                    </td>
+                    <td class="contact-cell">
+                        <div class="email">{{ client.email }}</div>
+                        <div class="phone">{{ client.phone }}</div>
+                    </td>
+                    <td class="location-cell">{{ client.location }}</td>
+                    <td class="bill-cell">{{ client.lifetimeBill | currency:'GBP' }}</td>
+                    <td>
+                        <p-tag [value]="client.status" [severity]="getSeverity(client.status)" />
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <p-button icon="pi pi-pencil" severity="primary" text 
+                                (onClick)="openEditClient(client)" title="Edit Client" />
+                            <p-button [icon]="client.status === 'Active' ? 'pi pi-user-minus' : 'pi pi-user-plus'" 
+                                [severity]="client.status === 'Active' ? 'secondary' : 'primary'" text
+                                (onClick)="toggleClientStatus(client)" 
+                                [title]="client.status === 'Active' ? 'Deactivate' : 'Activate'" />
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="7" class="text-center">No clients found</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>
+
+<!-- Client Form Dialog -->
+<p-dialog [header]="isEditMode ? 'Client Profile' : 'Add New Client'" [(visible)]="showClientForm" [modal]="true" 
+    [style]="{ width: '700px', 'max-width': '90vw' }" [draggable]="false" [resizable]="false">
+
+    <div class="client-form" [formGroup]="clientForm">
+        <!-- Upload Section -->
+        <div class="form-section">
+            <label class="section-label">Upload</label>
+            <p-fileUpload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" 
+                customUpload="true" (onSelect)="onUpload($event)" class="w-full" />
+            <small class="upload-hint">No files chosen</small>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">First Name</label>
+                <input pInputText formControlName="firstName" placeholder="Enter first name" class="w-full" />
+            </div>
+
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Last Name</label>
+                <input pInputText formControlName="lastName" placeholder="Enter last name" class="w-full" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Email</label>
+                <input pInputText formControlName="email" placeholder="Enter email address" class="w-full" />
+            </div>
+
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Phone Number</label>
+                <input pInputText formControlName="phone" placeholder="Enter phone number" class="w-full" />
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="block text-sm font-medium mb-2">Location</label>
+            <input pInputText formControlName="location" placeholder="Enter location" class="w-full" />
+        </div>
+
+        <!-- Address Section -->
+        <div class="form-section">
+            <label class="section-label">Building Number and Street Name</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="field">
+                    <input pInputText formControlName="buildingNumber" placeholder="Building Number" class="w-full" />
+                </div>
+                <div class="field">
+                    <input pInputText formControlName="streetName" placeholder="Street Name" class="w-full" />
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="field">
+                    <label class="block text-sm font-medium mb-2">Post Town</label>
+                    <input pInputText formControlName="postTown" placeholder="Post Town" class="w-full" />
+                </div>
+                
+                <div class="field">
+                    <label class="block text-sm font-medium mb-2">Locality Name (optional)</label>
+                    <input pInputText formControlName="localityName" placeholder="Locality Name" class="w-full" />
+                </div>
+            </div>
+            
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Postcode</label>
+                <input pInputText formControlName="postCode" placeholder="Postcode" class="w-full" />
+            </div>
+        </div>
+
+        <!-- Password Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Password (if want to change)</label>
+                <input pInputText type="password" formControlName="password" placeholder="Enter new password" class="w-full" />
+            </div>
+
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Repeat Password</label>
+                <input pInputText type="password" formControlName="repeatPassword" placeholder="Repeat password" class="w-full" />
+            </div>
+        </div>
+
+        <!-- Status Toggle -->
+        <div class="field flex items-center gap-3">
+            <p-toggleSwitch formControlName="status" />
+            <label class="text-sm font-medium">Active</label>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-times" label="Cancel" severity="secondary" 
+            (onClick)="showClientForm = false" />
+        <p-button icon="pi pi-check" label="Save Changes" severity="primary" 
+            (onClick)="saveClient()" />
+    </ng-template>
+</p-dialog>
+
+<p-toast />
