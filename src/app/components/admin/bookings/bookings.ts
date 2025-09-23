@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 // PrimeNG standalone components for v20
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
-import { Table, TableModule, SortableColumn } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 import { Dialog } from 'primeng/dialog';
 import { Toast } from 'primeng/toast';
@@ -54,9 +54,8 @@ interface Cleaner {
     Toast,
     Select,
     DatePicker,
-    Steps,
-   
-],
+    Steps
+  ],
   providers: [MessageService],
   templateUrl: './bookings.html',
   styleUrls: ['./bookings.css']
@@ -158,6 +157,17 @@ export class BookingsComponent {
   showBookingDetails(booking: Booking) {
     this.selectedBooking = booking;
     this.showBookingDetailsDialog = true;
+  }
+
+  // Add the missing editBooking method
+  editBooking() {
+    this.showBookingDetailsDialog = false;
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Edit Booking',
+      detail: 'Edit functionality would be implemented here',
+      life: 3000
+    });
   }
 
   nextStep() {
@@ -269,9 +279,5 @@ export class BookingsComponent {
       case 'In Progress': return 'warning';
       default: return 'secondary';
     }
-  }
-
-  editBooking(){
-    
   }
 }
