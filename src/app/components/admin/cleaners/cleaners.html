@@ -1,1 +1,172 @@
-<p>cleaners works!</p>
+<div class="cleaners-container">
+    <div class="cleaners-header">
+        <div class="header-content">
+            <h2>Cleaner Management</h2>
+            <p>Here's what's happening with your cleaning services today</p>
+        </div>
+        <p-button icon="pi pi-plus" label="Add New Cleaner" severity="primary" (onClick)="openAddCleaner()" />
+    </div>
+
+    <p-card>
+        <p-table [value]="cleaners" [tableStyle]="{ 'min-width': '1000px' }" styleClass="p-datatable-striped"
+            [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="id" style="width: 120px">
+                        CLEANER ID <p-sortIcon field="id" />
+                    </th>
+                    <th pSortableColumn="name" style="width: 150px">
+                        CLEANER <p-sortIcon field="name" />
+                    </th>
+                    <th style="width: 200px">
+                        CONTACT
+                    </th>
+                    <th pSortableColumn="location" style="width: 120px">
+                        LOCATION <p-sortIcon field="location" />
+                    </th>
+                    <th pSortableColumn="rating" style="width: 100px">
+                        RATING <p-sortIcon field="rating" />
+                    </th>
+                    <th pSortableColumn="status" style="width: 120px">
+                        STATUS <p-sortIcon field="status" />
+                    </th>
+                    <th style="width: 120px">
+                        ACTIONS
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-cleaner>
+                <tr>
+                    <td>
+                        <span class="cleaner-id">{{ cleaner.id }}</span>
+                    </td>
+                    <td>
+                        <span class="cleaner-name">{{ cleaner.name }}</span>
+                    </td>
+                    <td class="contact-cell">
+                        <div class="email">{{ cleaner.email }}</div>
+                        <div class="phone">{{ cleaner.phone }}</div>
+                    </td>
+                    <td class="location-cell">{{ cleaner.location }}</td>
+                    <td class="rating-cell">
+                        <span [class]="cleaner.rating > 0 ? 'stars active' : 'stars inactive'">
+                            {{ getRatingStars(cleaner.rating) }}
+                        </span>
+                    </td>
+                    <td>
+                        <p-tag [value]="cleaner.status" [severity]="getSeverity(cleaner.status)" />
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <p-button icon="pi pi-pencil" severity="primary" text 
+                                (onClick)="openEditCleaner(cleaner)" title="Edit Cleaner" />
+                            <p-button [icon]="cleaner.status === 'Active' ? 'pi pi-user-minus' : 'pi pi-user-plus'" 
+                                [severity]="cleaner.status === 'Active' ? 'secondary' : 'primary'" text
+                                (onClick)="toggleCleanerStatus(cleaner)" 
+                                [title]="cleaner.status === 'Active' ? 'Deactivate' : 'Activate'" />
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="7" class="text-center">No cleaners found</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>
+
+<!-- Cleaner Form Dialog -->
+<p-dialog [header]="isEditMode ? 'Cleaner Profile' : 'Add New Cleaner'" [(visible)]="showCleanerForm" [modal]="true" 
+    [style]="{ width: '600px', 'max-width': '90vw' }" [draggable]="false" [resizable]="false">
+
+    <div class="cleaner-form" [formGroup]="cleanerForm">
+        <!-- Upload Section -->
+        <div class="form-section">
+            <label class="section-label">Upload</label>
+            <p-fileUpload mode="basic" chooseLabel="Choose File" chooseIcon="pi pi-upload" 
+                customUpload="true" (onSelect)="onUpload($event)" class="w-full" />
+            <small class="upload-hint">No files chosen</small>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Full Name</label>
+                <input pInputText formControlName="name" placeholder="Enter full name" class="w-full" />
+            </div>
+
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Email</label>
+                <input pInputText formControlName="email" placeholder="Enter email address" class="w-full" />
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Phone</label>
+                <input pInputText formControlName="phone" placeholder="Enter phone number" class="w-full" />
+            </div>
+
+            <div class="field">
+                <label class="block text-sm font-medium mb-2">Location</label>
+                <input pInputText formControlName="location" placeholder="Enter location" class="w-full" />
+            </div>
+        </div>
+
+        <!-- Address Section -->
+        <div class="form-section">
+            <label class="section-label">Building Number and Street Name</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="field">
+                    <input pInputText formControlName="buildingNumber" placeholder="Building Number" class="w-full" />
+                </div>
+                <div class="field">
+                    <input pInputText formControlName="streetName" placeholder="Street Name" class="w-full" />
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="field">
+                    <input pInputText formControlName="postTown" placeholder="Post Town" class="w-full" />
+                </div>
+                <div class="field">
+                    <input pInputText formControlName="postCode" placeholder="Post Code" class="w-full" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Section -->
+        <div class="field">
+            <label class="block text-sm font-medium mb-2">Password (if want to change)</label>
+            <input pInputText type="password" formControlName="password" placeholder="Enter new password" class="w-full" />
+        </div>
+
+        <!-- DBS Files Section -->
+        <div class="form-section">
+            <label class="section-label">Identity Verification Files</label>
+            <label class="subsection-label">DBS Files</label>
+            <p-fileUpload mode="basic" chooseLabel="Upload" chooseIcon="pi pi-upload" 
+                customUpload="true" (onSelect)="onUpload($event)" class="w-full" />
+            <small class="upload-hint">No files chosen</small>
+        </div>
+
+        <!-- Status Toggle -->
+        <div class="field flex items-center gap-3">
+            <p-toggleSwitch formControlName="status" />
+            <label class="text-sm font-medium">Active</label>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-times" label="Cancel" severity="secondary" 
+            (onClick)="showCleanerForm = false" />
+        <p-button icon="pi pi-check" label="Save Changes" severity="primary" 
+            (onClick)="saveCleaner()" />
+    </ng-template>
+</p-dialog>
+
+<p-toast />

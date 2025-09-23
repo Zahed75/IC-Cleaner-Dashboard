@@ -1,61 +1,53 @@
 import {
+  Tooltip
+} from "./chunk-5AXNLNHQ.js";
+import {
   BaseInput
-} from "./chunk-3MVPZE26.js";
+} from "./chunk-RJZBYIA4.js";
 import {
   InputText
-} from "./chunk-5B6JZTQF.js";
+} from "./chunk-4BLM2RN7.js";
 import {
   Scroller
-} from "./chunk-EQJ7LDH5.js";
-import {
-  Tooltip
-} from "./chunk-VGZ2S72B.js";
+} from "./chunk-HAY56D6Y.js";
 import {
   ObjectUtils,
   zindexutils
 } from "./chunk-P5652PBR.js";
 import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-JHOZZ4DP.js";
-import {
   AutoFocus
-} from "./chunk-4D56QC3K.js";
+} from "./chunk-GUFE63AK.js";
 import {
-  Ripple
-} from "./chunk-6W76BDKO.js";
+  ConnectedOverlayScrollHandler,
+  DomHandler,
+  unblockBodyScroll
+} from "./chunk-IKJOFFP5.js";
 import {
   BlankIcon,
   CheckIcon,
   ChevronDownIcon,
   SearchIcon,
   TimesIcon
-} from "./chunk-4II37YPS.js";
+} from "./chunk-JPWVWCMN.js";
 import {
-  ConnectedOverlayScrollHandler,
-  DomHandler,
-  unblockBodyScroll
-} from "./chunk-I7MR5YE7.js";
+  Ripple
+} from "./chunk-GRZVYZFR.js";
 import {
   BaseComponent
-} from "./chunk-MZB5ON5V.js";
+} from "./chunk-Z5W3CBAU.js";
 import {
   BaseStyle
-} from "./chunk-LR27P6UM.js";
+} from "./chunk-2ICDDRS7.js";
 import {
   FilterService,
   OverlayService,
   PrimeTemplate,
   SharedModule,
   TranslationKeys
-} from "./chunk-JV5MBX6P.js";
+} from "./chunk-MIDRSENA.js";
 import {
-  animate,
-  animation,
-  style,
-  transition,
-  trigger,
-  useAnimation
-} from "./chunk-BMT5F2AN.js";
+  NG_VALUE_ACCESSOR
+} from "./chunk-JHOZZ4DP.js";
 import {
   CommonModule,
   NgClass,
@@ -65,6 +57,34 @@ import {
   NgTemplateOutlet,
   isPlatformBrowser
 } from "./chunk-KZ44QYVE.js";
+import {
+  Jt,
+  Lt,
+  M,
+  O,
+  W,
+  Yt,
+  a,
+  b,
+  bt,
+  c,
+  j,
+  j2,
+  k2 as k,
+  s2 as s,
+  s3 as s2,
+  vt,
+  y,
+  z
+} from "./chunk-ED6DJ4IY.js";
+import {
+  animate,
+  animation,
+  style,
+  transition,
+  trigger,
+  useAnimation
+} from "./chunk-BMT5F2AN.js";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -137,26 +157,6 @@ import {
   ɵɵtwoWayProperty,
   ɵɵviewQuery
 } from "./chunk-GUR423XC.js";
-import {
-  Jt,
-  Lt,
-  M,
-  O,
-  W,
-  Yt,
-  a,
-  b2 as b,
-  bt,
-  c,
-  j,
-  j2,
-  k,
-  s,
-  s3 as s2,
-  vt,
-  y,
-  z2 as z
-} from "./chunk-MSBUF645.js";
 import {
   __spreadProps,
   __spreadValues
@@ -899,7 +899,7 @@ var Overlay = class _Overlay extends BaseComponent {
     return this.contentViewChild?.nativeElement;
   }
   get targetEl() {
-    return j2(this.target, this.el?.nativeElement);
+    return j(this.target, this.el?.nativeElement);
   }
   constructor(overlayService, zone) {
     super();
@@ -3397,7 +3397,7 @@ var Select = class _Select extends BaseInput {
       case "ShiftRight":
         break;
       default:
-        if (!event.metaKey && j(event.key)) {
+        if (!event.metaKey && j2(event.key)) {
           !this.overlayVisible && this.show();
           !this.editable && this.searchOptions(event, event.key);
         }
@@ -4549,4 +4549,4 @@ export {
   Select,
   SelectModule
 };
-//# sourceMappingURL=chunk-BWXUCTPB.js.map
+//# sourceMappingURL=chunk-TTWTHKGW.js.map

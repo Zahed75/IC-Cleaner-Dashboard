@@ -1,9 +1,9 @@
 import {
   BaseComponent
-} from "./chunk-MZB5ON5V.js";
+} from "./chunk-Z5W3CBAU.js";
 import {
   BaseStyle
-} from "./chunk-LR27P6UM.js";
+} from "./chunk-2ICDDRS7.js";
 import {
   CommonModule
 } from "./chunk-KZ44QYVE.js";
@@ -132,6 +132,7 @@ var FluidModule = class _FluidModule {
 })();
 
 export {
+  style,
   Fluid
 };
-//# sourceMappingURL=chunk-5HD7BQ3B.js.map
+//# sourceMappingURL=chunk-JWFKRTMS.js.map
