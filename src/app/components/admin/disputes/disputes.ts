@@ -132,23 +132,23 @@ export class Disputes {
     );
   }
 
-  getStatusSeverity(status: string): string {
-    switch (status) {
-      case 'Resolved': return 'success';
-      case 'Pending': return 'warning';
-      case 'Cancelled': return 'danger';
-      default: return 'secondary';
-    }
+  getStatusSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | null | undefined {
+  switch (status) {
+    case 'Resolved': return 'success';
+    case 'Pending': return 'warn';  // Changed from 'warning' to 'warn'
+    case 'Cancelled': return 'danger';
+    default: return 'secondary';
   }
+}
 
-  getPrioritySeverity(priority: string): string {
-    switch (priority) {
-      case 'High': return 'danger';
-      case 'Medium': return 'warning';
-      case 'Low': return 'info';
-      default: return 'secondary';
-    }
+getPrioritySeverity(priority: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | null | undefined {
+  switch (priority) {
+    case 'High': return 'danger';
+    case 'Medium': return 'warn';  // Changed from 'warning' to 'warn'
+    case 'Low': return 'info';
+    default: return 'secondary';
   }
+}
 
   showDisputeDetails(dispute: Dispute): void {
     this.selectedDispute = { ...dispute };

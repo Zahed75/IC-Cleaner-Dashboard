@@ -278,14 +278,18 @@ export class Cleaners {
     });
   }
 
-  getSeverity(status: string) {
-    switch (status) {
-      case 'Active': return 'success';
-      case 'Pending Approval': return 'warning';
-      case 'Terminated': return 'danger';
-      default: return 'secondary';
-    }
+getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | null | undefined {
+  switch (status) {
+    case 'Active':
+      return 'success';
+    case 'Pending Approval':
+      return 'warn';
+    case 'Terminated':
+      return 'danger';
+    default:
+      return 'secondary';
   }
+}
 
   getRatingStars(rating: number): string {
     if (rating === 0) return '☆0.0';

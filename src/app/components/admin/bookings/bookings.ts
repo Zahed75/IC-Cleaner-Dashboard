@@ -60,6 +60,8 @@ interface Cleaner {
   templateUrl: './bookings.html',
   styleUrls: ['./bookings.css']
 })
+
+
 export class BookingsComponent {
   private messageService = inject(MessageService);
   private fb = inject(FormBuilder);
@@ -271,13 +273,21 @@ export class BookingsComponent {
     return parts.length > 1 ? parts[1].trim() : '';
   }
 
-  getSeverity(status: string) {
+  getSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | null | undefined {
     switch (status) {
-      case 'Completed': return 'success';
-      case 'Scheduled': return 'info';
-      case 'Cancelled': return 'danger';
-      case 'In Progress': return 'warning';
-      default: return 'secondary';
+        case 'Completed':
+            return 'success';
+        case 'Pending':
+            return 'info';
+        case 'Cancelled':
+            return 'danger';
+        case 'In Progress':
+            return 'secondary';
+        case 'Warning':
+            return 'warn';
+        default:
+            return 'info';
     }
-  }
+}
+
 }

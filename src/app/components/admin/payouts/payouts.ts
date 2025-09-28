@@ -117,15 +117,24 @@ export class Payouts {
     );
   }
 
-  getStatusSeverity(status: string): string {
-    switch (status) {
-      case 'Approved': return 'success';
-      case 'Pending': return 'warning';
-      case 'Paid': return 'info';
-      case 'Rejected': return 'danger';
-      default: return 'secondary';
-    }
+ getStatusSeverity(
+  status: string
+): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | null | undefined {
+  switch (status) {
+    case 'Paid':
+      return 'success';
+    case 'Approved':
+      return 'info';
+    case 'Pending':
+      return 'warn';
+    case 'Rejected':
+      return 'danger';
+    case 'High Priority':
+      return 'danger';
+    default:
+      return 'secondary';
   }
+}
 
   showPayoutDetails(payout: Payout): void {
     this.selectedPayout = { ...payout };
