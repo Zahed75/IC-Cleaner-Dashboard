@@ -1,58 +1,56 @@
 import {
-  SelectButtonModule
-} from "./chunk-BEOL7E4X.js";
-import {
   Select,
   SelectModule
-} from "./chunk-RBVDP6CN.js";
-import "./chunk-TH5HZZUV.js";
+} from "./chunk-JDKADBGT.js";
 import {
-  DatePicker,
-  DatePickerModule
-} from "./chunk-BTUXMY4X.js";
+  Checkbox,
+  CheckboxModule
+} from "./chunk-NB2YWGPG.js";
 import {
   InputNumber,
   InputNumberModule
-} from "./chunk-34K7CE2Z.js";
+} from "./chunk-XRQMDGDZ.js";
+import "./chunk-UGPMWUGM.js";
+import {
+  SelectButtonModule
+} from "./chunk-3WTIZKKY.js";
+import {
+  DatePicker,
+  DatePickerModule
+} from "./chunk-RUYSTPDJ.js";
 import {
   Badge,
   BadgeModule,
   Button,
   ButtonModule
-} from "./chunk-RQDGCYHP.js";
-import "./chunk-OAQKFIAS.js";
+} from "./chunk-PRTWXJGJ.js";
+import "./chunk-LCBNS3GV.js";
 import {
   Scroller,
   ScrollerModule
-} from "./chunk-6HK7YNW4.js";
+} from "./chunk-5YPNW2YT.js";
+import "./chunk-IQUPK66J.js";
+import {
+  BaseEditableHolder
+} from "./chunk-IWZXCOXV.js";
 import {
   ObjectUtils,
   UniqueComponentId,
   zindexutils
 } from "./chunk-P5652PBR.js";
-import "./chunk-SBM4DXYC.js";
 import {
-  BaseEditableHolder
-} from "./chunk-CZXMGR56.js";
+  AutoFocus
+} from "./chunk-UXOV7YBN.js";
+import {
+  ConnectedOverlayScrollHandler,
+  DomHandler
+} from "./chunk-TBDWCOHT.js";
 import {
   InputText,
   InputTextModule
-} from "./chunk-CC44RNVT.js";
-import "./chunk-MD6KA4BS.js";
-import {
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-  NgControl,
-  NgControlStatus,
-  NgModel,
-  RequiredValidator
-} from "./chunk-LEAHLM6I.js";
-import {
-  Ripple
-} from "./chunk-6PZXAVXC.js";
-import {
-  AutoFocus
-} from "./chunk-3BOIN6IH.js";
+} from "./chunk-ROORLXPK.js";
+import "./chunk-US2TOEK2.js";
+import "./chunk-PDPYUQTV.js";
 import {
   AngleDoubleLeftIcon,
   AngleDoubleRightIcon,
@@ -60,30 +58,28 @@ import {
   AngleRightIcon,
   ArrowDownIcon,
   ArrowUpIcon,
-  BaseIcon,
-  CheckIcon,
   FilterIcon,
   FilterSlashIcon,
-  MinusIcon,
   PlusIcon,
   SortAltIcon,
   SortAmountDownIcon,
   SortAmountUpAltIcon,
   SpinnerIcon,
   TrashIcon
-} from "./chunk-WOBPPRQO.js";
+} from "./chunk-N4HMWTS2.js";
 import {
-  ConnectedOverlayScrollHandler,
-  DomHandler
-} from "./chunk-WS3AEYWX.js";
-import "./chunk-N4HC4MBT.js";
+  BaseIcon
+} from "./chunk-3AHV5LOR.js";
+import {
+  Ripple
+} from "./chunk-Y3D7HKFC.js";
 import {
   BaseComponent
-} from "./chunk-5DDOTM24.js";
+} from "./chunk-ZJZBGEXF.js";
 import {
   BaseStyle
-} from "./chunk-2BN4WN7Y.js";
-import "./chunk-7NI4C57H.js";
+} from "./chunk-5ZCQOJYK.js";
+import "./chunk-FHYMM5W2.js";
 import {
   FilterMatchMode,
   FilterOperator,
@@ -92,11 +88,8 @@ import {
   PrimeTemplate,
   SharedModule,
   TranslationKeys
-} from "./chunk-T3KH32J2.js";
-import {
-  B,
-  k
-} from "./chunk-MSBUF645.js";
+} from "./chunk-DB47RAQD.js";
+import "./chunk-ED6DJ4IY.js";
 import "./chunk-OB4TQOFF.js";
 import {
   animate,
@@ -104,6 +97,14 @@ import {
   transition,
   trigger
 } from "./chunk-GIO6HHV3.js";
+import {
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+  NgControl,
+  NgControlStatus,
+  NgModel,
+  RequiredValidator
+} from "./chunk-LEAHLM6I.js";
 import {
   CommonModule,
   NgClass,
@@ -147,7 +148,6 @@ import {
   input,
   numberAttribute,
   setClassMetadata,
-  signal,
   ɵɵInheritDefinitionFeature,
   ɵɵNgOnChangesFeature,
   ɵɵProvidersFeature,
@@ -203,8 +203,8 @@ import {
   ɵɵtwoWayProperty,
   ɵɵviewQuery
 } from "./chunk-YO6GPXUM.js";
-import "./chunk-JRFR6BLO.js";
 import "./chunk-HWYXSU2G.js";
+import "./chunk-JRFR6BLO.js";
 import {
   Subject
 } from "./chunk-MARUHEWW.js";
@@ -213,617 +213,8 @@ import {
   __spreadValues
 } from "./chunk-WDMUDEB6.js";
 
-// node_modules/@primeuix/styles/dist/checkbox/index.mjs
-var style2 = "\n    .p-checkbox {\n        position: relative;\n        display: inline-flex;\n        user-select: none;\n        vertical-align: bottom;\n        width: dt('checkbox.width');\n        height: dt('checkbox.height');\n    }\n\n    .p-checkbox-input {\n        cursor: pointer;\n        appearance: none;\n        position: absolute;\n        inset-block-start: 0;\n        inset-inline-start: 0;\n        width: 100%;\n        height: 100%;\n        padding: 0;\n        margin: 0;\n        opacity: 0;\n        z-index: 1;\n        outline: 0 none;\n        border: 1px solid transparent;\n        border-radius: dt('checkbox.border.radius');\n    }\n\n    .p-checkbox-box {\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        border-radius: dt('checkbox.border.radius');\n        border: 1px solid dt('checkbox.border.color');\n        background: dt('checkbox.background');\n        width: dt('checkbox.width');\n        height: dt('checkbox.height');\n        transition:\n            background dt('checkbox.transition.duration'),\n            color dt('checkbox.transition.duration'),\n            border-color dt('checkbox.transition.duration'),\n            box-shadow dt('checkbox.transition.duration'),\n            outline-color dt('checkbox.transition.duration');\n        outline-color: transparent;\n        box-shadow: dt('checkbox.shadow');\n    }\n\n    .p-checkbox-icon {\n        transition-duration: dt('checkbox.transition.duration');\n        color: dt('checkbox.icon.color');\n        font-size: dt('checkbox.icon.size');\n        width: dt('checkbox.icon.size');\n        height: dt('checkbox.icon.size');\n    }\n\n    .p-checkbox:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {\n        border-color: dt('checkbox.hover.border.color');\n    }\n\n    .p-checkbox-checked .p-checkbox-box {\n        border-color: dt('checkbox.checked.border.color');\n        background: dt('checkbox.checked.background');\n    }\n\n    .p-checkbox-checked .p-checkbox-icon {\n        color: dt('checkbox.icon.checked.color');\n    }\n\n    .p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {\n        background: dt('checkbox.checked.hover.background');\n        border-color: dt('checkbox.checked.hover.border.color');\n    }\n\n    .p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-icon {\n        color: dt('checkbox.icon.checked.hover.color');\n    }\n\n    .p-checkbox:not(.p-disabled):has(.p-checkbox-input:focus-visible) .p-checkbox-box {\n        border-color: dt('checkbox.focus.border.color');\n        box-shadow: dt('checkbox.focus.ring.shadow');\n        outline: dt('checkbox.focus.ring.width') dt('checkbox.focus.ring.style') dt('checkbox.focus.ring.color');\n        outline-offset: dt('checkbox.focus.ring.offset');\n    }\n\n    .p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:focus-visible) .p-checkbox-box {\n        border-color: dt('checkbox.checked.focus.border.color');\n    }\n\n    .p-checkbox.p-invalid > .p-checkbox-box {\n        border-color: dt('checkbox.invalid.border.color');\n    }\n\n    .p-checkbox.p-variant-filled .p-checkbox-box {\n        background: dt('checkbox.filled.background');\n    }\n\n    .p-checkbox-checked.p-variant-filled .p-checkbox-box {\n        background: dt('checkbox.checked.background');\n    }\n\n    .p-checkbox-checked.p-variant-filled:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {\n        background: dt('checkbox.checked.hover.background');\n    }\n\n    .p-checkbox.p-disabled {\n        opacity: 1;\n    }\n\n    .p-checkbox.p-disabled .p-checkbox-box {\n        background: dt('checkbox.disabled.background');\n        border-color: dt('checkbox.checked.disabled.border.color');\n    }\n\n    .p-checkbox.p-disabled .p-checkbox-box .p-checkbox-icon {\n        color: dt('checkbox.icon.disabled.color');\n    }\n\n    .p-checkbox-sm,\n    .p-checkbox-sm .p-checkbox-box {\n        width: dt('checkbox.sm.width');\n        height: dt('checkbox.sm.height');\n    }\n\n    .p-checkbox-sm .p-checkbox-icon {\n        font-size: dt('checkbox.icon.sm.size');\n        width: dt('checkbox.icon.sm.size');\n        height: dt('checkbox.icon.sm.size');\n    }\n\n    .p-checkbox-lg,\n    .p-checkbox-lg .p-checkbox-box {\n        width: dt('checkbox.lg.width');\n        height: dt('checkbox.lg.height');\n    }\n\n    .p-checkbox-lg .p-checkbox-icon {\n        font-size: dt('checkbox.icon.lg.size');\n        width: dt('checkbox.icon.lg.size');\n        height: dt('checkbox.icon.lg.size');\n    }\n";
-
-// node_modules/primeng/fesm2022/primeng-checkbox.mjs
-var _c0 = ["icon"];
-var _c1 = ["input"];
-var _c2 = (a0, a1) => ({
-  checked: a0,
-  class: a1
-});
-function Checkbox_ng_container_3_ng_container_1_span_1_Template(rf, ctx) {
-  if (rf & 1) {
-    ɵɵelement(0, "span", 7);
-  }
-  if (rf & 2) {
-    const ctx_r1 = ɵɵnextContext(3);
-    ɵɵclassMap(ctx_r1.cx("icon"));
-    ɵɵproperty("ngClass", ctx_r1.checkboxIcon);
-    ɵɵattribute("data-pc-section", "icon");
-  }
-}
-function Checkbox_ng_container_3_ng_container_1__svg_svg_2_Template(rf, ctx) {
-  if (rf & 1) {
-    ɵɵnamespaceSVG();
-    ɵɵelement(0, "svg", 8);
-  }
-  if (rf & 2) {
-    const ctx_r1 = ɵɵnextContext(3);
-    ɵɵclassMap(ctx_r1.cx("icon"));
-    ɵɵattribute("data-pc-section", "icon");
-  }
-}
-function Checkbox_ng_container_3_ng_container_1_Template(rf, ctx) {
-  if (rf & 1) {
-    ɵɵelementContainerStart(0);
-    ɵɵtemplate(1, Checkbox_ng_container_3_ng_container_1_span_1_Template, 1, 4, "span", 5)(2, Checkbox_ng_container_3_ng_container_1__svg_svg_2_Template, 1, 3, "svg", 6);
-    ɵɵelementContainerEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = ɵɵnextContext(2);
-    ɵɵadvance();
-    ɵɵproperty("ngIf", ctx_r1.checkboxIcon);
-    ɵɵadvance();
-    ɵɵproperty("ngIf", !ctx_r1.checkboxIcon);
-  }
-}
-function Checkbox_ng_container_3__svg_svg_2_Template(rf, ctx) {
-  if (rf & 1) {
-    ɵɵnamespaceSVG();
-    ɵɵelement(0, "svg", 9);
-  }
-  if (rf & 2) {
-    const ctx_r1 = ɵɵnextContext(2);
-    ɵɵclassMap(ctx_r1.cx("icon"));
-    ɵɵattribute("data-pc-section", "icon");
-  }
-}
-function Checkbox_ng_container_3_Template(rf, ctx) {
-  if (rf & 1) {
-    ɵɵelementContainerStart(0);
-    ɵɵtemplate(1, Checkbox_ng_container_3_ng_container_1_Template, 3, 2, "ng-container", 2)(2, Checkbox_ng_container_3__svg_svg_2_Template, 1, 3, "svg", 4);
-    ɵɵelementContainerEnd();
-  }
-  if (rf & 2) {
-    const ctx_r1 = ɵɵnextContext();
-    ɵɵadvance();
-    ɵɵproperty("ngIf", ctx_r1.checked);
-    ɵɵadvance();
-    ɵɵproperty("ngIf", ctx_r1._indeterminate());
-  }
-}
-function Checkbox_4_ng_template_0_Template(rf, ctx) {
-}
-function Checkbox_4_Template(rf, ctx) {
-  if (rf & 1) {
-    ɵɵtemplate(0, Checkbox_4_ng_template_0_Template, 0, 0, "ng-template");
-  }
-}
-var theme = (
-  /*css*/
-  `
-    ${style2}
-
-    /* For PrimeNG */
-    p-checkBox.ng-invalid.ng-dirty .p-checkbox-box,
-    p-check-box.ng-invalid.ng-dirty .p-checkbox-box,
-    p-checkbox.ng-invalid.ng-dirty .p-checkbox-box {
-        border-color: dt('checkbox.invalid.border.color');
-    }
-`
-);
-var classes = {
-  root: ({
-    instance
-  }) => ["p-checkbox p-component", {
-    "p-checkbox-checked p-highlight": instance.checked,
-    "p-disabled": instance.$disabled(),
-    "p-invalid": instance.invalid(),
-    "p-variant-filled": instance.$variant() === "filled",
-    "p-checkbox-sm p-inputfield-sm": instance.size() === "small",
-    "p-checkbox-lg p-inputfield-lg": instance.size() === "large"
-  }],
-  box: "p-checkbox-box",
-  input: "p-checkbox-input",
-  icon: "p-checkbox-icon"
-};
-var CheckboxStyle = class _CheckboxStyle extends BaseStyle {
-  name = "checkbox";
-  theme = theme;
-  classes = classes;
-  static ɵfac = /* @__PURE__ */ (() => {
-    let ɵCheckboxStyle_BaseFactory;
-    return function CheckboxStyle_Factory(__ngFactoryType__) {
-      return (ɵCheckboxStyle_BaseFactory || (ɵCheckboxStyle_BaseFactory = ɵɵgetInheritedFactory(_CheckboxStyle)))(__ngFactoryType__ || _CheckboxStyle);
-    };
-  })();
-  static ɵprov = ɵɵdefineInjectable({
-    token: _CheckboxStyle,
-    factory: _CheckboxStyle.ɵfac
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CheckboxStyle, [{
-    type: Injectable
-  }], null, null);
-})();
-var CheckboxClasses;
-(function(CheckboxClasses2) {
-  CheckboxClasses2["root"] = "p-checkbox";
-  CheckboxClasses2["box"] = "p-checkbox-box";
-  CheckboxClasses2["input"] = "p-checkbox-input";
-  CheckboxClasses2["icon"] = "p-checkbox-icon";
-})(CheckboxClasses || (CheckboxClasses = {}));
-var CHECKBOX_VALUE_ACCESSOR = {
-  provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => Checkbox),
-  multi: true
-};
-var Checkbox = class _Checkbox extends BaseEditableHolder {
-  /**
-   * Value of the checkbox.
-   * @group Props
-   */
-  value;
-  /**
-   * Allows to select a boolean value instead of multiple values.
-   * @group Props
-   */
-  binary;
-  /**
-   * Establishes relationships between the component and label(s) where its value should be one or more element IDs.
-   * @group Props
-   */
-  ariaLabelledBy;
-  /**
-   * Used to define a string that labels the input element.
-   * @group Props
-   */
-  ariaLabel;
-  /**
-   * Index of the element in tabbing order.
-   * @group Props
-   */
-  tabindex;
-  /**
-   * Identifier of the focus input to match a label defined for the component.
-   * @group Props
-   */
-  inputId;
-  /**
-   * Inline style of the input element.
-   * @group Props
-   */
-  inputStyle;
-  /**
-   * Style class of the component.
-   * @deprecated since v20.0.0, use `class` instead.
-   * @group Props
-   */
-  styleClass;
-  /**
-   * Style class of the input element.
-   * @group Props
-   */
-  inputClass;
-  /**
-   * When present, it specifies input state as indeterminate.
-   * @group Props
-   */
-  indeterminate = false;
-  /**
-   * Form control value.
-   * @group Props
-   */
-  formControl;
-  /**
-   * Icon class of the checkbox icon.
-   * @group Props
-   */
-  checkboxIcon;
-  /**
-   * When present, it specifies that the component cannot be edited.
-   * @group Props
-   */
-  readonly;
-  /**
-   * When present, it specifies that the component should automatically get focus on load.
-   * @group Props
-   */
-  autofocus;
-  /**
-   * Value in checked state.
-   * @group Props
-   */
-  trueValue = true;
-  /**
-   * Value in unchecked state.
-   * @group Props
-   */
-  falseValue = false;
-  /**
-   * Specifies the input variant of the component.
-   * @defaultValue undefined
-   * @group Props
-   */
-  variant = input(...ngDevMode ? [void 0, {
-    debugName: "variant"
-  }] : []);
-  /**
-   * Specifies the size of the component.
-   * @defaultValue undefined
-   * @group Props
-   */
-  size = input(...ngDevMode ? [void 0, {
-    debugName: "size"
-  }] : []);
-  /**
-   * Callback to invoke on value change.
-   * @param {CheckboxChangeEvent} event - Custom value change event.
-   * @group Emits
-   */
-  onChange = new EventEmitter();
-  /**
-   * Callback to invoke when the receives focus.
-   * @param {Event} event - Browser event.
-   * @group Emits
-   */
-  onFocus = new EventEmitter();
-  /**
-   * Callback to invoke when the loses focus.
-   * @param {Event} event - Browser event.
-   * @group Emits
-   */
-  onBlur = new EventEmitter();
-  inputViewChild;
-  get checked() {
-    return this._indeterminate() ? false : this.binary ? this.modelValue() === this.trueValue : B(this.value, this.modelValue());
-  }
-  _indeterminate = signal(void 0, ...ngDevMode ? [{
-    debugName: "_indeterminate"
-  }] : []);
-  /**
-   * The template of the checkbox icon.
-   * @group Templates
-   */
-  checkboxIconTemplate;
-  templates;
-  _checkboxIconTemplate;
-  focused = false;
-  _componentStyle = inject(CheckboxStyle);
-  $variant = computed(() => this.variant() || this.config.inputStyle() || this.config.inputVariant(), ...ngDevMode ? [{
-    debugName: "$variant"
-  }] : []);
-  ngAfterContentInit() {
-    this.templates?.forEach((item) => {
-      switch (item.getType()) {
-        case "icon":
-          this._checkboxIconTemplate = item.template;
-          break;
-        case "checkboxicon":
-          this._checkboxIconTemplate = item.template;
-          break;
-      }
-    });
-  }
-  ngOnChanges(changes) {
-    super.ngOnChanges(changes);
-    if (changes.indeterminate) {
-      this._indeterminate.set(changes.indeterminate.currentValue);
-    }
-  }
-  updateModel(event) {
-    let newModelValue;
-    const selfControl = this.injector.get(NgControl, null, {
-      optional: true,
-      self: true
-    });
-    const currentModelValue = selfControl && !this.formControl ? selfControl.value : this.modelValue();
-    if (!this.binary) {
-      if (this.checked || this._indeterminate()) newModelValue = currentModelValue.filter((val) => !k(val, this.value));
-      else newModelValue = currentModelValue ? [...currentModelValue, this.value] : [this.value];
-      this.onModelChange(newModelValue);
-      this.writeModelValue(newModelValue);
-      if (this.formControl) {
-        this.formControl.setValue(newModelValue);
-      }
-    } else {
-      newModelValue = this._indeterminate() ? this.trueValue : this.checked ? this.falseValue : this.trueValue;
-      this.writeModelValue(newModelValue);
-      this.onModelChange(newModelValue);
-    }
-    if (this._indeterminate()) {
-      this._indeterminate.set(false);
-    }
-    this.onChange.emit({
-      checked: newModelValue,
-      originalEvent: event
-    });
-  }
-  handleChange(event) {
-    if (!this.readonly) {
-      this.updateModel(event);
-    }
-  }
-  onInputFocus(event) {
-    this.focused = true;
-    this.onFocus.emit(event);
-  }
-  onInputBlur(event) {
-    this.focused = false;
-    this.onBlur.emit(event);
-    this.onModelTouched();
-  }
-  focus() {
-    this.inputViewChild?.nativeElement.focus();
-  }
-  /**
-   * @override
-   *
-   * @see {@link BaseEditableHolder.writeControlValue}
-   * Writes the value to the control.
-   */
-  writeControlValue(value, setModelValue) {
-    setModelValue(value);
-    this.cd.markForCheck();
-  }
-  static ɵfac = /* @__PURE__ */ (() => {
-    let ɵCheckbox_BaseFactory;
-    return function Checkbox_Factory(__ngFactoryType__) {
-      return (ɵCheckbox_BaseFactory || (ɵCheckbox_BaseFactory = ɵɵgetInheritedFactory(_Checkbox)))(__ngFactoryType__ || _Checkbox);
-    };
-  })();
-  static ɵcmp = ɵɵdefineComponent({
-    type: _Checkbox,
-    selectors: [["p-checkbox"], ["p-checkBox"], ["p-check-box"]],
-    contentQueries: function Checkbox_ContentQueries(rf, ctx, dirIndex) {
-      if (rf & 1) {
-        ɵɵcontentQuery(dirIndex, _c0, 4);
-        ɵɵcontentQuery(dirIndex, PrimeTemplate, 4);
-      }
-      if (rf & 2) {
-        let _t;
-        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx.checkboxIconTemplate = _t.first);
-        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx.templates = _t);
-      }
-    },
-    viewQuery: function Checkbox_Query(rf, ctx) {
-      if (rf & 1) {
-        ɵɵviewQuery(_c1, 5);
-      }
-      if (rf & 2) {
-        let _t;
-        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx.inputViewChild = _t.first);
-      }
-    },
-    hostVars: 6,
-    hostBindings: function Checkbox_HostBindings(rf, ctx) {
-      if (rf & 2) {
-        ɵɵattribute("data-pc-name", "checkbox")("data-p-highlight", ctx.checked)("data-p-checked", ctx.checked)("data-p-disabled", ctx.$disabled());
-        ɵɵclassMap(ctx.cn(ctx.cx("root"), ctx.styleClass));
-      }
-    },
-    inputs: {
-      value: "value",
-      binary: [2, "binary", "binary", booleanAttribute],
-      ariaLabelledBy: "ariaLabelledBy",
-      ariaLabel: "ariaLabel",
-      tabindex: [2, "tabindex", "tabindex", numberAttribute],
-      inputId: "inputId",
-      inputStyle: "inputStyle",
-      styleClass: "styleClass",
-      inputClass: "inputClass",
-      indeterminate: [2, "indeterminate", "indeterminate", booleanAttribute],
-      formControl: "formControl",
-      checkboxIcon: "checkboxIcon",
-      readonly: [2, "readonly", "readonly", booleanAttribute],
-      autofocus: [2, "autofocus", "autofocus", booleanAttribute],
-      trueValue: "trueValue",
-      falseValue: "falseValue",
-      variant: [1, "variant"],
-      size: [1, "size"]
-    },
-    outputs: {
-      onChange: "onChange",
-      onFocus: "onFocus",
-      onBlur: "onBlur"
-    },
-    features: [ɵɵProvidersFeature([CHECKBOX_VALUE_ACCESSOR, CheckboxStyle]), ɵɵInheritDefinitionFeature, ɵɵNgOnChangesFeature],
-    decls: 5,
-    vars: 22,
-    consts: [["input", ""], ["type", "checkbox", 3, "focus", "blur", "change", "checked"], [4, "ngIf"], [4, "ngTemplateOutlet", "ngTemplateOutletContext"], ["data-p-icon", "minus", 3, "class", 4, "ngIf"], [3, "class", "ngClass", 4, "ngIf"], ["data-p-icon", "check", 3, "class", 4, "ngIf"], [3, "ngClass"], ["data-p-icon", "check"], ["data-p-icon", "minus"]],
-    template: function Checkbox_Template(rf, ctx) {
-      if (rf & 1) {
-        const _r1 = ɵɵgetCurrentView();
-        ɵɵelementStart(0, "input", 1, 0);
-        ɵɵlistener("focus", function Checkbox_Template_input_focus_0_listener($event) {
-          ɵɵrestoreView(_r1);
-          return ɵɵresetView(ctx.onInputFocus($event));
-        })("blur", function Checkbox_Template_input_blur_0_listener($event) {
-          ɵɵrestoreView(_r1);
-          return ɵɵresetView(ctx.onInputBlur($event));
-        })("change", function Checkbox_Template_input_change_0_listener($event) {
-          ɵɵrestoreView(_r1);
-          return ɵɵresetView(ctx.handleChange($event));
-        });
-        ɵɵelementEnd();
-        ɵɵelementStart(2, "div");
-        ɵɵtemplate(3, Checkbox_ng_container_3_Template, 3, 2, "ng-container", 2)(4, Checkbox_4_Template, 1, 0, null, 3);
-        ɵɵelementEnd();
-      }
-      if (rf & 2) {
-        ɵɵstyleMap(ctx.inputStyle);
-        ɵɵclassMap(ctx.cn(ctx.cx("input"), ctx.inputClass));
-        ɵɵproperty("checked", ctx.checked);
-        ɵɵattribute("id", ctx.inputId)("value", ctx.value)("name", ctx.name())("tabindex", ctx.tabindex)("required", ctx.required() ? "" : void 0)("readonly", ctx.readonly ? "" : void 0)("disabled", ctx.$disabled() ? "" : void 0)("aria-labelledby", ctx.ariaLabelledBy)("aria-label", ctx.ariaLabel);
-        ɵɵadvance(2);
-        ɵɵclassMap(ctx.cx("box"));
-        ɵɵadvance();
-        ɵɵproperty("ngIf", !ctx.checkboxIconTemplate && !ctx._checkboxIconTemplate);
-        ɵɵadvance();
-        ɵɵproperty("ngTemplateOutlet", ctx.checkboxIconTemplate || ctx._checkboxIconTemplate)("ngTemplateOutletContext", ɵɵpureFunction2(19, _c2, ctx.checked, ctx.cx("icon")));
-      }
-    },
-    dependencies: [CommonModule, NgClass, NgIf, NgTemplateOutlet, SharedModule, CheckIcon, MinusIcon],
-    encapsulation: 2,
-    changeDetection: 0
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(Checkbox, [{
-    type: Component,
-    args: [{
-      selector: "p-checkbox, p-checkBox, p-check-box",
-      standalone: true,
-      imports: [CommonModule, SharedModule, CheckIcon, MinusIcon],
-      template: `
-        <input
-            #input
-            [attr.id]="inputId"
-            type="checkbox"
-            [attr.value]="value"
-            [attr.name]="name()"
-            [checked]="checked"
-            [attr.tabindex]="tabindex"
-            [attr.required]="required() ? '' : undefined"
-            [attr.readonly]="readonly ? '' : undefined"
-            [attr.disabled]="$disabled() ? '' : undefined"
-            [attr.aria-labelledby]="ariaLabelledBy"
-            [attr.aria-label]="ariaLabel"
-            [style]="inputStyle"
-            [class]="cn(cx('input'), inputClass)"
-            (focus)="onInputFocus($event)"
-            (blur)="onInputBlur($event)"
-            (change)="handleChange($event)"
-        />
-        <div [class]="cx('box')">
-            <ng-container *ngIf="!checkboxIconTemplate && !_checkboxIconTemplate">
-                <ng-container *ngIf="checked">
-                    <span *ngIf="checkboxIcon" [class]="cx('icon')" [ngClass]="checkboxIcon" [attr.data-pc-section]="'icon'"></span>
-                    <svg data-p-icon="check" *ngIf="!checkboxIcon" [class]="cx('icon')" [attr.data-pc-section]="'icon'" />
-                </ng-container>
-                <svg data-p-icon="minus" *ngIf="_indeterminate()" [class]="cx('icon')" [attr.data-pc-section]="'icon'" />
-            </ng-container>
-            <ng-template *ngTemplateOutlet="checkboxIconTemplate || _checkboxIconTemplate; context: { checked: checked, class: cx('icon') }"></ng-template>
-        </div>
-    `,
-      providers: [CHECKBOX_VALUE_ACCESSOR, CheckboxStyle],
-      changeDetection: ChangeDetectionStrategy.OnPush,
-      encapsulation: ViewEncapsulation.None,
-      host: {
-        "[class]": "cn(cx('root'), styleClass)",
-        "[attr.data-pc-name]": "'checkbox'",
-        "[attr.data-p-highlight]": "checked",
-        "[attr.data-p-checked]": "checked",
-        "[attr.data-p-disabled]": "$disabled()"
-      }
-    }]
-  }], null, {
-    value: [{
-      type: Input
-    }],
-    binary: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    ariaLabelledBy: [{
-      type: Input
-    }],
-    ariaLabel: [{
-      type: Input
-    }],
-    tabindex: [{
-      type: Input,
-      args: [{
-        transform: numberAttribute
-      }]
-    }],
-    inputId: [{
-      type: Input
-    }],
-    inputStyle: [{
-      type: Input
-    }],
-    styleClass: [{
-      type: Input
-    }],
-    inputClass: [{
-      type: Input
-    }],
-    indeterminate: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    formControl: [{
-      type: Input
-    }],
-    checkboxIcon: [{
-      type: Input
-    }],
-    readonly: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    autofocus: [{
-      type: Input,
-      args: [{
-        transform: booleanAttribute
-      }]
-    }],
-    trueValue: [{
-      type: Input
-    }],
-    falseValue: [{
-      type: Input
-    }],
-    onChange: [{
-      type: Output
-    }],
-    onFocus: [{
-      type: Output
-    }],
-    onBlur: [{
-      type: Output
-    }],
-    inputViewChild: [{
-      type: ViewChild,
-      args: ["input"]
-    }],
-    checkboxIconTemplate: [{
-      type: ContentChild,
-      args: ["icon", {
-        descendants: false
-      }]
-    }],
-    templates: [{
-      type: ContentChildren,
-      args: [PrimeTemplate]
-    }]
-  });
-})();
-var CheckboxModule = class _CheckboxModule {
-  static ɵfac = function CheckboxModule_Factory(__ngFactoryType__) {
-    return new (__ngFactoryType__ || _CheckboxModule)();
-  };
-  static ɵmod = ɵɵdefineNgModule({
-    type: _CheckboxModule,
-    imports: [Checkbox, SharedModule],
-    exports: [Checkbox, SharedModule]
-  });
-  static ɵinj = ɵɵdefineInjector({
-    imports: [Checkbox, SharedModule, SharedModule]
-  });
-};
-(() => {
-  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(CheckboxModule, [{
-    type: NgModule,
-    args: [{
-      imports: [Checkbox, SharedModule],
-      exports: [Checkbox, SharedModule]
-    }]
-  }], null, null);
-})();
-
 // node_modules/primeng/fesm2022/primeng-icons-filterfill.mjs
-var _c02 = ["data-p-icon", "filter-fill"];
+var _c0 = ["data-p-icon", "filter-fill"];
 var FilterFillIcon = class _FilterFillIcon extends BaseIcon {
   static ɵfac = /* @__PURE__ */ (() => {
     let ɵFilterFillIcon_BaseFactory;
@@ -835,7 +226,7 @@ var FilterFillIcon = class _FilterFillIcon extends BaseIcon {
     type: _FilterFillIcon,
     selectors: [["", "data-p-icon", "filter-fill"]],
     features: [ɵɵInheritDefinitionFeature],
-    attrs: _c02,
+    attrs: _c0,
     decls: 1,
     vars: 0,
     consts: [["d", "M13.7274 0.33847C13.6228 0.130941 13.4095 0 13.1764 0H0.82351C0.590451 0 0.377157 0.130941 0.272568 0.33847C0.167157 0.545999 0.187746 0.795529 0.325275 0.98247L4.73527 6.99588V13.3824C4.73527 13.7233 5.01198 14 5.35292 14H8.64704C8.98798 14 9.26469 13.7233 9.26469 13.3824V6.99588L13.6747 0.98247C13.8122 0.795529 13.8328 0.545999 13.7274 0.33847Z", "fill", "currentColor"]],
@@ -865,12 +256,12 @@ var FilterFillIcon = class _FilterFillIcon extends BaseIcon {
 })();
 
 // node_modules/@primeuix/styles/dist/paginator/index.mjs
-var style3 = "\n    .p-paginator {\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        flex-wrap: wrap;\n        background: dt('paginator.background');\n        color: dt('paginator.color');\n        padding: dt('paginator.padding');\n        border-radius: dt('paginator.border.radius');\n        gap: dt('paginator.gap');\n    }\n\n    .p-paginator-content {\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        flex-wrap: wrap;\n        gap: dt('paginator.gap');\n    }\n\n    .p-paginator-content-start {\n        margin-inline-end: auto;\n    }\n\n    .p-paginator-content-end {\n        margin-inline-start: auto;\n    }\n\n    .p-paginator-page,\n    .p-paginator-next,\n    .p-paginator-last,\n    .p-paginator-first,\n    .p-paginator-prev {\n        cursor: pointer;\n        display: inline-flex;\n        align-items: center;\n        justify-content: center;\n        line-height: 1;\n        user-select: none;\n        overflow: hidden;\n        position: relative;\n        background: dt('paginator.nav.button.background');\n        border: 0 none;\n        color: dt('paginator.nav.button.color');\n        min-width: dt('paginator.nav.button.width');\n        height: dt('paginator.nav.button.height');\n        transition:\n            background dt('paginator.transition.duration'),\n            color dt('paginator.transition.duration'),\n            outline-color dt('paginator.transition.duration'),\n            box-shadow dt('paginator.transition.duration');\n        border-radius: dt('paginator.nav.button.border.radius');\n        padding: 0;\n        margin: 0;\n    }\n\n    .p-paginator-page:focus-visible,\n    .p-paginator-next:focus-visible,\n    .p-paginator-last:focus-visible,\n    .p-paginator-first:focus-visible,\n    .p-paginator-prev:focus-visible {\n        box-shadow: dt('paginator.nav.button.focus.ring.shadow');\n        outline: dt('paginator.nav.button.focus.ring.width') dt('paginator.nav.button.focus.ring.style') dt('paginator.nav.button.focus.ring.color');\n        outline-offset: dt('paginator.nav.button.focus.ring.offset');\n    }\n\n    .p-paginator-page:not(.p-disabled):not(.p-paginator-page-selected):hover,\n    .p-paginator-first:not(.p-disabled):hover,\n    .p-paginator-prev:not(.p-disabled):hover,\n    .p-paginator-next:not(.p-disabled):hover,\n    .p-paginator-last:not(.p-disabled):hover {\n        background: dt('paginator.nav.button.hover.background');\n        color: dt('paginator.nav.button.hover.color');\n    }\n\n    .p-paginator-page.p-paginator-page-selected {\n        background: dt('paginator.nav.button.selected.background');\n        color: dt('paginator.nav.button.selected.color');\n    }\n\n    .p-paginator-current {\n        color: dt('paginator.current.page.report.color');\n    }\n\n    .p-paginator-pages {\n        display: flex;\n        align-items: center;\n        gap: dt('paginator.gap');\n    }\n\n    .p-paginator-jtp-input .p-inputtext {\n        max-width: dt('paginator.jump.to.page.input.max.width');\n    }\n\n    .p-paginator-first:dir(rtl),\n    .p-paginator-prev:dir(rtl),\n    .p-paginator-next:dir(rtl),\n    .p-paginator-last:dir(rtl) {\n        transform: rotate(180deg);\n    }\n";
+var style2 = "\n    .p-paginator {\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        flex-wrap: wrap;\n        background: dt('paginator.background');\n        color: dt('paginator.color');\n        padding: dt('paginator.padding');\n        border-radius: dt('paginator.border.radius');\n        gap: dt('paginator.gap');\n    }\n\n    .p-paginator-content {\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        flex-wrap: wrap;\n        gap: dt('paginator.gap');\n    }\n\n    .p-paginator-content-start {\n        margin-inline-end: auto;\n    }\n\n    .p-paginator-content-end {\n        margin-inline-start: auto;\n    }\n\n    .p-paginator-page,\n    .p-paginator-next,\n    .p-paginator-last,\n    .p-paginator-first,\n    .p-paginator-prev {\n        cursor: pointer;\n        display: inline-flex;\n        align-items: center;\n        justify-content: center;\n        line-height: 1;\n        user-select: none;\n        overflow: hidden;\n        position: relative;\n        background: dt('paginator.nav.button.background');\n        border: 0 none;\n        color: dt('paginator.nav.button.color');\n        min-width: dt('paginator.nav.button.width');\n        height: dt('paginator.nav.button.height');\n        transition:\n            background dt('paginator.transition.duration'),\n            color dt('paginator.transition.duration'),\n            outline-color dt('paginator.transition.duration'),\n            box-shadow dt('paginator.transition.duration');\n        border-radius: dt('paginator.nav.button.border.radius');\n        padding: 0;\n        margin: 0;\n    }\n\n    .p-paginator-page:focus-visible,\n    .p-paginator-next:focus-visible,\n    .p-paginator-last:focus-visible,\n    .p-paginator-first:focus-visible,\n    .p-paginator-prev:focus-visible {\n        box-shadow: dt('paginator.nav.button.focus.ring.shadow');\n        outline: dt('paginator.nav.button.focus.ring.width') dt('paginator.nav.button.focus.ring.style') dt('paginator.nav.button.focus.ring.color');\n        outline-offset: dt('paginator.nav.button.focus.ring.offset');\n    }\n\n    .p-paginator-page:not(.p-disabled):not(.p-paginator-page-selected):hover,\n    .p-paginator-first:not(.p-disabled):hover,\n    .p-paginator-prev:not(.p-disabled):hover,\n    .p-paginator-next:not(.p-disabled):hover,\n    .p-paginator-last:not(.p-disabled):hover {\n        background: dt('paginator.nav.button.hover.background');\n        color: dt('paginator.nav.button.hover.color');\n    }\n\n    .p-paginator-page.p-paginator-page-selected {\n        background: dt('paginator.nav.button.selected.background');\n        color: dt('paginator.nav.button.selected.color');\n    }\n\n    .p-paginator-current {\n        color: dt('paginator.current.page.report.color');\n    }\n\n    .p-paginator-pages {\n        display: flex;\n        align-items: center;\n        gap: dt('paginator.gap');\n    }\n\n    .p-paginator-jtp-input .p-inputtext {\n        max-width: dt('paginator.jump.to.page.input.max.width');\n    }\n\n    .p-paginator-first:dir(rtl),\n    .p-paginator-prev:dir(rtl),\n    .p-paginator-next:dir(rtl),\n    .p-paginator-last:dir(rtl) {\n        transform: rotate(180deg);\n    }\n";
 
 // node_modules/primeng/fesm2022/primeng-paginator.mjs
-var _c03 = ["dropdownicon"];
-var _c12 = ["firstpagelinkicon"];
-var _c22 = ["previouspagelinkicon"];
+var _c02 = ["dropdownicon"];
+var _c1 = ["firstpagelinkicon"];
+var _c2 = ["previouspagelinkicon"];
 var _c3 = ["lastpagelinkicon"];
 var _c4 = ["nextpagelinkicon"];
 var _c5 = (a0) => ({
@@ -1289,7 +680,7 @@ function Paginator_div_14_Template(rf, ctx) {
     ɵɵproperty("ngTemplateOutlet", ctx_r0.templateRight)("ngTemplateOutletContext", ɵɵpureFunction1(5, _c5, ctx_r0.paginatorState));
   }
 }
-var classes2 = {
+var classes = {
   paginator: ({
     instance
   }) => ["p-paginator p-component"],
@@ -1334,8 +725,8 @@ var classes2 = {
 };
 var PaginatorStyle = class _PaginatorStyle extends BaseStyle {
   name = "paginator";
-  theme = style3;
-  classes = classes2;
+  theme = style2;
+  classes = classes;
   static ɵfac = /* @__PURE__ */ (() => {
     let ɵPaginatorStyle_BaseFactory;
     return function PaginatorStyle_Factory(__ngFactoryType__) {
@@ -1746,9 +1137,9 @@ var Paginator = class _Paginator extends BaseComponent {
     selectors: [["p-paginator"]],
     contentQueries: function Paginator_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        ɵɵcontentQuery(dirIndex, _c03, 4);
-        ɵɵcontentQuery(dirIndex, _c12, 4);
-        ɵɵcontentQuery(dirIndex, _c22, 4);
+        ɵɵcontentQuery(dirIndex, _c02, 4);
+        ɵɵcontentQuery(dirIndex, _c1, 4);
+        ɵɵcontentQuery(dirIndex, _c2, 4);
         ɵɵcontentQuery(dirIndex, _c3, 4);
         ɵɵcontentQuery(dirIndex, _c4, 4);
         ɵɵcontentQuery(dirIndex, PrimeTemplate, 4);
@@ -2119,14 +1510,14 @@ var PaginatorModule = class _PaginatorModule {
 })();
 
 // node_modules/@primeuix/styles/dist/radiobutton/index.mjs
-var style4 = "\n    .p-radiobutton {\n        position: relative;\n        display: inline-flex;\n        user-select: none;\n        vertical-align: bottom;\n        width: dt('radiobutton.width');\n        height: dt('radiobutton.height');\n    }\n\n    .p-radiobutton-input {\n        cursor: pointer;\n        appearance: none;\n        position: absolute;\n        top: 0;\n        inset-inline-start: 0;\n        width: 100%;\n        height: 100%;\n        padding: 0;\n        margin: 0;\n        opacity: 0;\n        z-index: 1;\n        outline: 0 none;\n        border: 1px solid transparent;\n        border-radius: 50%;\n    }\n\n    .p-radiobutton-box {\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        border-radius: 50%;\n        border: 1px solid dt('radiobutton.border.color');\n        background: dt('radiobutton.background');\n        width: dt('radiobutton.width');\n        height: dt('radiobutton.height');\n        transition:\n            background dt('radiobutton.transition.duration'),\n            color dt('radiobutton.transition.duration'),\n            border-color dt('radiobutton.transition.duration'),\n            box-shadow dt('radiobutton.transition.duration'),\n            outline-color dt('radiobutton.transition.duration');\n        outline-color: transparent;\n        box-shadow: dt('radiobutton.shadow');\n    }\n\n    .p-radiobutton-icon {\n        transition-duration: dt('radiobutton.transition.duration');\n        background: transparent;\n        font-size: dt('radiobutton.icon.size');\n        width: dt('radiobutton.icon.size');\n        height: dt('radiobutton.icon.size');\n        border-radius: 50%;\n        backface-visibility: hidden;\n        transform: translateZ(0) scale(0.1);\n    }\n\n    .p-radiobutton:not(.p-disabled):has(.p-radiobutton-input:hover) .p-radiobutton-box {\n        border-color: dt('radiobutton.hover.border.color');\n    }\n\n    .p-radiobutton-checked .p-radiobutton-box {\n        border-color: dt('radiobutton.checked.border.color');\n        background: dt('radiobutton.checked.background');\n    }\n\n    .p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon {\n        background: dt('radiobutton.icon.checked.color');\n        transform: translateZ(0) scale(1, 1);\n        visibility: visible;\n    }\n\n    .p-radiobutton-checked:not(.p-disabled):has(.p-radiobutton-input:hover) .p-radiobutton-box {\n        border-color: dt('radiobutton.checked.hover.border.color');\n        background: dt('radiobutton.checked.hover.background');\n    }\n\n    .p-radiobutton:not(.p-disabled):has(.p-radiobutton-input:hover).p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon {\n        background: dt('radiobutton.icon.checked.hover.color');\n    }\n\n    .p-radiobutton:not(.p-disabled):has(.p-radiobutton-input:focus-visible) .p-radiobutton-box {\n        border-color: dt('radiobutton.focus.border.color');\n        box-shadow: dt('radiobutton.focus.ring.shadow');\n        outline: dt('radiobutton.focus.ring.width') dt('radiobutton.focus.ring.style') dt('radiobutton.focus.ring.color');\n        outline-offset: dt('radiobutton.focus.ring.offset');\n    }\n\n    .p-radiobutton-checked:not(.p-disabled):has(.p-radiobutton-input:focus-visible) .p-radiobutton-box {\n        border-color: dt('radiobutton.checked.focus.border.color');\n    }\n\n    .p-radiobutton.p-invalid > .p-radiobutton-box {\n        border-color: dt('radiobutton.invalid.border.color');\n    }\n\n    .p-radiobutton.p-variant-filled .p-radiobutton-box {\n        background: dt('radiobutton.filled.background');\n    }\n\n    .p-radiobutton.p-variant-filled.p-radiobutton-checked .p-radiobutton-box {\n        background: dt('radiobutton.checked.background');\n    }\n\n    .p-radiobutton.p-variant-filled:not(.p-disabled):has(.p-radiobutton-input:hover).p-radiobutton-checked .p-radiobutton-box {\n        background: dt('radiobutton.checked.hover.background');\n    }\n\n    .p-radiobutton.p-disabled {\n        opacity: 1;\n    }\n\n    .p-radiobutton.p-disabled .p-radiobutton-box {\n        background: dt('radiobutton.disabled.background');\n        border-color: dt('radiobutton.checked.disabled.border.color');\n    }\n\n    .p-radiobutton-checked.p-disabled .p-radiobutton-box .p-radiobutton-icon {\n        background: dt('radiobutton.icon.disabled.color');\n    }\n\n    .p-radiobutton-sm,\n    .p-radiobutton-sm .p-radiobutton-box {\n        width: dt('radiobutton.sm.width');\n        height: dt('radiobutton.sm.height');\n    }\n\n    .p-radiobutton-sm .p-radiobutton-icon {\n        font-size: dt('radiobutton.icon.sm.size');\n        width: dt('radiobutton.icon.sm.size');\n        height: dt('radiobutton.icon.sm.size');\n    }\n\n    .p-radiobutton-lg,\n    .p-radiobutton-lg .p-radiobutton-box {\n        width: dt('radiobutton.lg.width');\n        height: dt('radiobutton.lg.height');\n    }\n\n    .p-radiobutton-lg .p-radiobutton-icon {\n        font-size: dt('radiobutton.icon.lg.size');\n        width: dt('radiobutton.icon.lg.size');\n        height: dt('radiobutton.icon.lg.size');\n    }\n";
+var style3 = "\n    .p-radiobutton {\n        position: relative;\n        display: inline-flex;\n        user-select: none;\n        vertical-align: bottom;\n        width: dt('radiobutton.width');\n        height: dt('radiobutton.height');\n    }\n\n    .p-radiobutton-input {\n        cursor: pointer;\n        appearance: none;\n        position: absolute;\n        top: 0;\n        inset-inline-start: 0;\n        width: 100%;\n        height: 100%;\n        padding: 0;\n        margin: 0;\n        opacity: 0;\n        z-index: 1;\n        outline: 0 none;\n        border: 1px solid transparent;\n        border-radius: 50%;\n    }\n\n    .p-radiobutton-box {\n        display: flex;\n        justify-content: center;\n        align-items: center;\n        border-radius: 50%;\n        border: 1px solid dt('radiobutton.border.color');\n        background: dt('radiobutton.background');\n        width: dt('radiobutton.width');\n        height: dt('radiobutton.height');\n        transition:\n            background dt('radiobutton.transition.duration'),\n            color dt('radiobutton.transition.duration'),\n            border-color dt('radiobutton.transition.duration'),\n            box-shadow dt('radiobutton.transition.duration'),\n            outline-color dt('radiobutton.transition.duration');\n        outline-color: transparent;\n        box-shadow: dt('radiobutton.shadow');\n    }\n\n    .p-radiobutton-icon {\n        transition-duration: dt('radiobutton.transition.duration');\n        background: transparent;\n        font-size: dt('radiobutton.icon.size');\n        width: dt('radiobutton.icon.size');\n        height: dt('radiobutton.icon.size');\n        border-radius: 50%;\n        backface-visibility: hidden;\n        transform: translateZ(0) scale(0.1);\n    }\n\n    .p-radiobutton:not(.p-disabled):has(.p-radiobutton-input:hover) .p-radiobutton-box {\n        border-color: dt('radiobutton.hover.border.color');\n    }\n\n    .p-radiobutton-checked .p-radiobutton-box {\n        border-color: dt('radiobutton.checked.border.color');\n        background: dt('radiobutton.checked.background');\n    }\n\n    .p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon {\n        background: dt('radiobutton.icon.checked.color');\n        transform: translateZ(0) scale(1, 1);\n        visibility: visible;\n    }\n\n    .p-radiobutton-checked:not(.p-disabled):has(.p-radiobutton-input:hover) .p-radiobutton-box {\n        border-color: dt('radiobutton.checked.hover.border.color');\n        background: dt('radiobutton.checked.hover.background');\n    }\n\n    .p-radiobutton:not(.p-disabled):has(.p-radiobutton-input:hover).p-radiobutton-checked .p-radiobutton-box .p-radiobutton-icon {\n        background: dt('radiobutton.icon.checked.hover.color');\n    }\n\n    .p-radiobutton:not(.p-disabled):has(.p-radiobutton-input:focus-visible) .p-radiobutton-box {\n        border-color: dt('radiobutton.focus.border.color');\n        box-shadow: dt('radiobutton.focus.ring.shadow');\n        outline: dt('radiobutton.focus.ring.width') dt('radiobutton.focus.ring.style') dt('radiobutton.focus.ring.color');\n        outline-offset: dt('radiobutton.focus.ring.offset');\n    }\n\n    .p-radiobutton-checked:not(.p-disabled):has(.p-radiobutton-input:focus-visible) .p-radiobutton-box {\n        border-color: dt('radiobutton.checked.focus.border.color');\n    }\n\n    .p-radiobutton.p-invalid > .p-radiobutton-box {\n        border-color: dt('radiobutton.invalid.border.color');\n    }\n\n    .p-radiobutton.p-variant-filled .p-radiobutton-box {\n        background: dt('radiobutton.filled.background');\n    }\n\n    .p-radiobutton.p-variant-filled.p-radiobutton-checked .p-radiobutton-box {\n        background: dt('radiobutton.checked.background');\n    }\n\n    .p-radiobutton.p-variant-filled:not(.p-disabled):has(.p-radiobutton-input:hover).p-radiobutton-checked .p-radiobutton-box {\n        background: dt('radiobutton.checked.hover.background');\n    }\n\n    .p-radiobutton.p-disabled {\n        opacity: 1;\n    }\n\n    .p-radiobutton.p-disabled .p-radiobutton-box {\n        background: dt('radiobutton.disabled.background');\n        border-color: dt('radiobutton.checked.disabled.border.color');\n    }\n\n    .p-radiobutton-checked.p-disabled .p-radiobutton-box .p-radiobutton-icon {\n        background: dt('radiobutton.icon.disabled.color');\n    }\n\n    .p-radiobutton-sm,\n    .p-radiobutton-sm .p-radiobutton-box {\n        width: dt('radiobutton.sm.width');\n        height: dt('radiobutton.sm.height');\n    }\n\n    .p-radiobutton-sm .p-radiobutton-icon {\n        font-size: dt('radiobutton.icon.sm.size');\n        width: dt('radiobutton.icon.sm.size');\n        height: dt('radiobutton.icon.sm.size');\n    }\n\n    .p-radiobutton-lg,\n    .p-radiobutton-lg .p-radiobutton-box {\n        width: dt('radiobutton.lg.width');\n        height: dt('radiobutton.lg.height');\n    }\n\n    .p-radiobutton-lg .p-radiobutton-icon {\n        font-size: dt('radiobutton.icon.lg.size');\n        width: dt('radiobutton.icon.lg.size');\n        height: dt('radiobutton.icon.lg.size');\n    }\n";
 
 // node_modules/primeng/fesm2022/primeng-radiobutton.mjs
-var _c04 = ["input"];
-var theme2 = (
+var _c03 = ["input"];
+var theme = (
   /*css*/
   `
-    ${style4}
+    ${style3}
 
     /* For PrimeNG */
     p-radioButton.ng-invalid.ng-dirty .p-radiobutton-box,
@@ -2136,7 +1527,7 @@ var theme2 = (
     }
 `
 );
-var classes3 = {
+var classes2 = {
   root: ({
     instance
   }) => ["p-radiobutton p-component", {
@@ -2153,8 +1544,8 @@ var classes3 = {
 };
 var RadioButtonStyle = class _RadioButtonStyle extends BaseStyle {
   name = "radiobutton";
-  theme = theme2;
-  classes = classes3;
+  theme = theme;
+  classes = classes2;
   static ɵfac = /* @__PURE__ */ (() => {
     let ɵRadioButtonStyle_BaseFactory;
     return function RadioButtonStyle_Factory(__ngFactoryType__) {
@@ -2373,7 +1764,7 @@ var RadioButton = class _RadioButton extends BaseEditableHolder {
     selectors: [["p-radioButton"], ["p-radiobutton"], ["p-radio-button"]],
     viewQuery: function RadioButton_Query(rf, ctx) {
       if (rf & 1) {
-        ɵɵviewQuery(_c04, 5);
+        ɵɵviewQuery(_c03, 5);
       }
       if (rf & 2) {
         let _t;
@@ -2556,12 +1947,12 @@ var RadioButtonModule = class _RadioButtonModule {
 })();
 
 // node_modules/@primeuix/styles/dist/datatable/index.mjs
-var style5 = "\n    .p-datatable {\n        position: relative;\n        display: block;\n    }\n\n    .p-datatable-table {\n        border-spacing: 0;\n        border-collapse: separate;\n        width: 100%;\n    }\n\n    .p-datatable-scrollable > .p-datatable-table-container {\n        position: relative;\n    }\n\n    .p-datatable-scrollable-table > .p-datatable-thead {\n        inset-block-start: 0;\n        z-index: 1;\n    }\n\n    .p-datatable-scrollable-table > .p-datatable-frozen-tbody {\n        position: sticky;\n        z-index: 1;\n    }\n\n    .p-datatable-scrollable-table > .p-datatable-tfoot {\n        inset-block-end: 0;\n        z-index: 1;\n    }\n\n    .p-datatable-scrollable .p-datatable-frozen-column {\n        position: sticky;\n    }\n\n    .p-datatable-scrollable th.p-datatable-frozen-column {\n        z-index: 1;\n    }\n\n    .p-datatable-scrollable td.p-datatable-frozen-column {\n        background: inherit;\n    }\n\n    .p-datatable-scrollable > .p-datatable-table-container > .p-datatable-table > .p-datatable-thead,\n    .p-datatable-scrollable > .p-datatable-table-container > .p-virtualscroller > .p-datatable-table > .p-datatable-thead {\n        background: dt('datatable.header.cell.background');\n    }\n\n    .p-datatable-scrollable > .p-datatable-table-container > .p-datatable-table > .p-datatable-tfoot,\n    .p-datatable-scrollable > .p-datatable-table-container > .p-virtualscroller > .p-datatable-table > .p-datatable-tfoot {\n        background: dt('datatable.footer.cell.background');\n    }\n\n    .p-datatable-flex-scrollable {\n        display: flex;\n        flex-direction: column;\n        height: 100%;\n    }\n\n    .p-datatable-flex-scrollable > .p-datatable-table-container {\n        display: flex;\n        flex-direction: column;\n        flex: 1;\n        height: 100%;\n    }\n\n    .p-datatable-scrollable-table > .p-datatable-tbody > .p-datatable-row-group-header {\n        position: sticky;\n        z-index: 1;\n    }\n\n    .p-datatable-resizable-table > .p-datatable-thead > tr > th,\n    .p-datatable-resizable-table > .p-datatable-tfoot > tr > td,\n    .p-datatable-resizable-table > .p-datatable-tbody > tr > td {\n        overflow: hidden;\n        white-space: nowrap;\n    }\n\n    .p-datatable-resizable-table > .p-datatable-thead > tr > th.p-datatable-resizable-column:not(.p-datatable-frozen-column) {\n        background-clip: padding-box;\n        position: relative;\n    }\n\n    .p-datatable-resizable-table-fit > .p-datatable-thead > tr > th.p-datatable-resizable-column:last-child .p-datatable-column-resizer {\n        display: none;\n    }\n\n    .p-datatable-column-resizer {\n        display: block;\n        position: absolute;\n        inset-block-start: 0;\n        inset-inline-end: 0;\n        margin: 0;\n        width: dt('datatable.column.resizer.width');\n        height: 100%;\n        padding: 0;\n        cursor: col-resize;\n        border: 1px solid transparent;\n    }\n\n    .p-datatable-column-header-content {\n        display: flex;\n        align-items: center;\n        gap: dt('datatable.header.cell.gap');\n    }\n\n    .p-datatable-column-resize-indicator {\n        width: dt('datatable.resize.indicator.width');\n        position: absolute;\n        z-index: 10;\n        display: none;\n        background: dt('datatable.resize.indicator.color');\n    }\n\n    .p-datatable-row-reorder-indicator-up,\n    .p-datatable-row-reorder-indicator-down {\n        position: absolute;\n        display: none;\n    }\n\n    .p-datatable-reorderable-column,\n    .p-datatable-reorderable-row-handle {\n        cursor: move;\n    }\n\n    .p-datatable-mask {\n        position: absolute;\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        z-index: 2;\n    }\n\n    .p-datatable-inline-filter {\n        display: flex;\n        align-items: center;\n        width: 100%;\n        gap: dt('datatable.filter.inline.gap');\n    }\n\n    .p-datatable-inline-filter .p-datatable-filter-element-container {\n        flex: 1 1 auto;\n        width: 1%;\n    }\n\n    .p-datatable-filter-overlay {\n        background: dt('datatable.filter.overlay.select.background');\n        color: dt('datatable.filter.overlay.select.color');\n        border: 1px solid dt('datatable.filter.overlay.select.border.color');\n        border-radius: dt('datatable.filter.overlay.select.border.radius');\n        box-shadow: dt('datatable.filter.overlay.select.shadow');\n        min-width: 12.5rem;\n    }\n\n    .p-datatable-filter-constraint-list {\n        margin: 0;\n        list-style: none;\n        display: flex;\n        flex-direction: column;\n        padding: dt('datatable.filter.constraint.list.padding');\n        gap: dt('datatable.filter.constraint.list.gap');\n    }\n\n    .p-datatable-filter-constraint {\n        padding: dt('datatable.filter.constraint.padding');\n        color: dt('datatable.filter.constraint.color');\n        border-radius: dt('datatable.filter.constraint.border.radius');\n        cursor: pointer;\n        transition:\n            background dt('datatable.transition.duration'),\n            color dt('datatable.transition.duration'),\n            border-color dt('datatable.transition.duration'),\n            box-shadow dt('datatable.transition.duration');\n    }\n\n    .p-datatable-filter-constraint-selected {\n        background: dt('datatable.filter.constraint.selected.background');\n        color: dt('datatable.filter.constraint.selected.color');\n    }\n\n    .p-datatable-filter-constraint:not(.p-datatable-filter-constraint-selected):not(.p-disabled):hover {\n        background: dt('datatable.filter.constraint.focus.background');\n        color: dt('datatable.filter.constraint.focus.color');\n    }\n\n    .p-datatable-filter-constraint:focus-visible {\n        outline: 0 none;\n        background: dt('datatable.filter.constraint.focus.background');\n        color: dt('datatable.filter.constraint.focus.color');\n    }\n\n    .p-datatable-filter-constraint-selected:focus-visible {\n        outline: 0 none;\n        background: dt('datatable.filter.constraint.selected.focus.background');\n        color: dt('datatable.filter.constraint.selected.focus.color');\n    }\n\n    .p-datatable-filter-constraint-separator {\n        border-block-start: 1px solid dt('datatable.filter.constraint.separator.border.color');\n    }\n\n    .p-datatable-popover-filter {\n        display: inline-flex;\n        margin-inline-start: auto;\n    }\n\n    .p-datatable-filter-overlay-popover {\n        background: dt('datatable.filter.overlay.popover.background');\n        color: dt('datatable.filter.overlay.popover.color');\n        border: 1px solid dt('datatable.filter.overlay.popover.border.color');\n        border-radius: dt('datatable.filter.overlay.popover.border.radius');\n        box-shadow: dt('datatable.filter.overlay.popover.shadow');\n        min-width: 12.5rem;\n        padding: dt('datatable.filter.overlay.popover.padding');\n        display: flex;\n        flex-direction: column;\n        gap: dt('datatable.filter.overlay.popover.gap');\n    }\n\n    .p-datatable-filter-operator-dropdown {\n        width: 100%;\n    }\n\n    .p-datatable-filter-rule-list,\n    .p-datatable-filter-rule {\n        display: flex;\n        flex-direction: column;\n        gap: dt('datatable.filter.overlay.popover.gap');\n    }\n\n    .p-datatable-filter-rule {\n        border-block-end: 1px solid dt('datatable.filter.rule.border.color');\n        padding-bottom: dt('datatable.filter.overlay.popover.gap');\n    }\n\n    .p-datatable-filter-rule:last-child {\n        border-block-end: 0 none;\n        padding-bottom: 0;\n    }\n\n    .p-datatable-filter-add-rule-button {\n        width: 100%;\n    }\n\n    .p-datatable-filter-remove-rule-button {\n        width: 100%;\n    }\n\n    .p-datatable-filter-buttonbar {\n        padding: 0;\n        display: flex;\n        align-items: center;\n        justify-content: space-between;\n    }\n\n    .p-datatable-virtualscroller-spacer {\n        display: flex;\n    }\n\n    .p-datatable .p-virtualscroller .p-virtualscroller-loading {\n        transform: none !important;\n        min-height: 0;\n        position: sticky;\n        inset-block-start: 0;\n        inset-inline-start: 0;\n    }\n\n    .p-datatable-paginator-top {\n        border-color: dt('datatable.paginator.top.border.color');\n        border-style: solid;\n        border-width: dt('datatable.paginator.top.border.width');\n    }\n\n    .p-datatable-paginator-bottom {\n        border-color: dt('datatable.paginator.bottom.border.color');\n        border-style: solid;\n        border-width: dt('datatable.paginator.bottom.border.width');\n    }\n\n    .p-datatable-header {\n        background: dt('datatable.header.background');\n        color: dt('datatable.header.color');\n        border-color: dt('datatable.header.border.color');\n        border-style: solid;\n        border-width: dt('datatable.header.border.width');\n        padding: dt('datatable.header.padding');\n    }\n\n    .p-datatable-footer {\n        background: dt('datatable.footer.background');\n        color: dt('datatable.footer.color');\n        border-color: dt('datatable.footer.border.color');\n        border-style: solid;\n        border-width: dt('datatable.footer.border.width');\n        padding: dt('datatable.footer.padding');\n    }\n\n    .p-datatable-header-cell {\n        padding: dt('datatable.header.cell.padding');\n        background: dt('datatable.header.cell.background');\n        border-color: dt('datatable.header.cell.border.color');\n        border-style: solid;\n        border-width: 0 0 1px 0;\n        color: dt('datatable.header.cell.color');\n        font-weight: normal;\n        text-align: start;\n        transition:\n            background dt('datatable.transition.duration'),\n            color dt('datatable.transition.duration'),\n            border-color dt('datatable.transition.duration'),\n            outline-color dt('datatable.transition.duration'),\n            box-shadow dt('datatable.transition.duration');\n    }\n\n    .p-datatable-column-title {\n        font-weight: dt('datatable.column.title.font.weight');\n    }\n\n    .p-datatable-tbody > tr {\n        outline-color: transparent;\n        background: dt('datatable.row.background');\n        color: dt('datatable.row.color');\n        transition:\n            background dt('datatable.transition.duration'),\n            color dt('datatable.transition.duration'),\n            border-color dt('datatable.transition.duration'),\n            outline-color dt('datatable.transition.duration'),\n            box-shadow dt('datatable.transition.duration');\n    }\n\n    .p-datatable-tbody > tr > td {\n        text-align: start;\n        border-color: dt('datatable.body.cell.border.color');\n        border-style: solid;\n        border-width: 0 0 1px 0;\n        padding: dt('datatable.body.cell.padding');\n    }\n\n    .p-datatable-hoverable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover {\n        background: dt('datatable.row.hover.background');\n        color: dt('datatable.row.hover.color');\n    }\n\n    .p-datatable-tbody > tr.p-datatable-row-selected {\n        background: dt('datatable.row.selected.background');\n        color: dt('datatable.row.selected.color');\n    }\n\n    .p-datatable-tbody > tr:has(+ .p-datatable-row-selected) > td {\n        border-block-end-color: dt('datatable.body.cell.selected.border.color');\n    }\n\n    .p-datatable-tbody > tr.p-datatable-row-selected > td {\n        border-block-end-color: dt('datatable.body.cell.selected.border.color');\n    }\n\n    .p-datatable-tbody > tr:focus-visible,\n    .p-datatable-tbody > tr.p-datatable-contextmenu-row-selected {\n        box-shadow: dt('datatable.row.focus.ring.shadow');\n        outline: dt('datatable.row.focus.ring.width') dt('datatable.row.focus.ring.style') dt('datatable.row.focus.ring.color');\n        outline-offset: dt('datatable.row.focus.ring.offset');\n    }\n\n    .p-datatable-tfoot > tr > td {\n        text-align: start;\n        padding: dt('datatable.footer.cell.padding');\n        border-color: dt('datatable.footer.cell.border.color');\n        border-style: solid;\n        border-width: 0 0 1px 0;\n        color: dt('datatable.footer.cell.color');\n        background: dt('datatable.footer.cell.background');\n    }\n\n    .p-datatable-column-footer {\n        font-weight: dt('datatable.column.footer.font.weight');\n    }\n\n    .p-datatable-sortable-column {\n        cursor: pointer;\n        user-select: none;\n        outline-color: transparent;\n    }\n\n    .p-datatable-column-title,\n    .p-datatable-sort-icon,\n    .p-datatable-sort-badge {\n        vertical-align: middle;\n    }\n\n    .p-datatable-sort-icon {\n        color: dt('datatable.sort.icon.color');\n        font-size: dt('datatable.sort.icon.size');\n        width: dt('datatable.sort.icon.size');\n        height: dt('datatable.sort.icon.size');\n        transition: color dt('datatable.transition.duration');\n    }\n\n    .p-datatable-sortable-column:not(.p-datatable-column-sorted):hover {\n        background: dt('datatable.header.cell.hover.background');\n        color: dt('datatable.header.cell.hover.color');\n    }\n\n    .p-datatable-sortable-column:not(.p-datatable-column-sorted):hover .p-datatable-sort-icon {\n        color: dt('datatable.sort.icon.hover.color');\n    }\n\n    .p-datatable-column-sorted {\n        background: dt('datatable.header.cell.selected.background');\n        color: dt('datatable.header.cell.selected.color');\n    }\n\n    .p-datatable-column-sorted .p-datatable-sort-icon {\n        color: dt('datatable.header.cell.selected.color');\n    }\n\n    .p-datatable-sortable-column:focus-visible {\n        box-shadow: dt('datatable.header.cell.focus.ring.shadow');\n        outline: dt('datatable.header.cell.focus.ring.width') dt('datatable.header.cell.focus.ring.style') dt('datatable.header.cell.focus.ring.color');\n        outline-offset: dt('datatable.header.cell.focus.ring.offset');\n    }\n\n    .p-datatable-hoverable .p-datatable-selectable-row {\n        cursor: pointer;\n    }\n\n    .p-datatable-tbody > tr.p-datatable-dragpoint-top > td {\n        box-shadow: inset 0 2px 0 0 dt('datatable.drop.point.color');\n    }\n\n    .p-datatable-tbody > tr.p-datatable-dragpoint-bottom > td {\n        box-shadow: inset 0 -2px 0 0 dt('datatable.drop.point.color');\n    }\n\n    .p-datatable-loading-icon {\n        font-size: dt('datatable.loading.icon.size');\n        width: dt('datatable.loading.icon.size');\n        height: dt('datatable.loading.icon.size');\n    }\n\n    .p-datatable-gridlines .p-datatable-header {\n        border-width: 1px 1px 0 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-footer {\n        border-width: 0 1px 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-paginator-top {\n        border-width: 1px 1px 0 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-paginator-bottom {\n        border-width: 0 1px 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-thead > tr > th {\n        border-width: 1px 0 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-thead > tr > th:last-child {\n        border-width: 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tbody > tr > td {\n        border-width: 1px 0 0 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tbody > tr > td:last-child {\n        border-width: 1px 1px 0 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tbody > tr:last-child > td {\n        border-width: 1px 0 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tbody > tr:last-child > td:last-child {\n        border-width: 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tfoot > tr > td {\n        border-width: 1px 0 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tfoot > tr > td:last-child {\n        border-width: 1px 1px 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines .p-datatable-thead + .p-datatable-tfoot > tr > td {\n        border-width: 0 0 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines .p-datatable-thead + .p-datatable-tfoot > tr > td:last-child {\n        border-width: 0 1px 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody > tr > td {\n        border-width: 0 0 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody > tr > td:last-child {\n        border-width: 0 1px 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines:has(.p-datatable-tbody):has(.p-datatable-tfoot) .p-datatable-tbody > tr:last-child > td {\n        border-width: 0 0 0 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines:has(.p-datatable-tbody):has(.p-datatable-tfoot) .p-datatable-tbody > tr:last-child > td:last-child {\n        border-width: 0 1px 0 1px;\n    }\n\n    .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {\n        background: dt('datatable.row.striped.background');\n    }\n\n    .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd.p-datatable-row-selected {\n        background: dt('datatable.row.selected.background');\n        color: dt('datatable.row.selected.color');\n    }\n\n    .p-datatable-striped.p-datatable-hoverable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover {\n        background: dt('datatable.row.hover.background');\n        color: dt('datatable.row.hover.color');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-header {\n        padding: dt('datatable.header.sm.padding');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-thead > tr > th {\n        padding: dt('datatable.header.cell.sm.padding');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {\n        padding: dt('datatable.body.cell.sm.padding');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-tfoot > tr > td {\n        padding: dt('datatable.footer.cell.sm.padding');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-footer {\n        padding: dt('datatable.footer.sm.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-header {\n        padding: dt('datatable.header.lg.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-thead > tr > th {\n        padding: dt('datatable.header.cell.lg.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-tbody > tr > td {\n        padding: dt('datatable.body.cell.lg.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-tfoot > tr > td {\n        padding: dt('datatable.footer.cell.lg.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-footer {\n        padding: dt('datatable.footer.lg.padding');\n    }\n\n    .p-datatable-row-toggle-button {\n        display: inline-flex;\n        align-items: center;\n        justify-content: center;\n        overflow: hidden;\n        position: relative;\n        width: dt('datatable.row.toggle.button.size');\n        height: dt('datatable.row.toggle.button.size');\n        color: dt('datatable.row.toggle.button.color');\n        border: 0 none;\n        background: transparent;\n        cursor: pointer;\n        border-radius: dt('datatable.row.toggle.button.border.radius');\n        transition:\n            background dt('datatable.transition.duration'),\n            color dt('datatable.transition.duration'),\n            border-color dt('datatable.transition.duration'),\n            outline-color dt('datatable.transition.duration'),\n            box-shadow dt('datatable.transition.duration');\n        outline-color: transparent;\n        user-select: none;\n    }\n\n    .p-datatable-row-toggle-button:enabled:hover {\n        color: dt('datatable.row.toggle.button.hover.color');\n        background: dt('datatable.row.toggle.button.hover.background');\n    }\n\n    .p-datatable-tbody > tr.p-datatable-row-selected .p-datatable-row-toggle-button:hover {\n        background: dt('datatable.row.toggle.button.selected.hover.background');\n        color: dt('datatable.row.toggle.button.selected.hover.color');\n    }\n\n    .p-datatable-row-toggle-button:focus-visible {\n        box-shadow: dt('datatable.row.toggle.button.focus.ring.shadow');\n        outline: dt('datatable.row.toggle.button.focus.ring.width') dt('datatable.row.toggle.button.focus.ring.style') dt('datatable.row.toggle.button.focus.ring.color');\n        outline-offset: dt('datatable.row.toggle.button.focus.ring.offset');\n    }\n\n    .p-datatable-row-toggle-icon:dir(rtl) {\n        transform: rotate(180deg);\n    }\n";
+var style4 = "\n    .p-datatable {\n        position: relative;\n        display: block;\n    }\n\n    .p-datatable-table {\n        border-spacing: 0;\n        border-collapse: separate;\n        width: 100%;\n    }\n\n    .p-datatable-scrollable > .p-datatable-table-container {\n        position: relative;\n    }\n\n    .p-datatable-scrollable-table > .p-datatable-thead {\n        inset-block-start: 0;\n        z-index: 1;\n    }\n\n    .p-datatable-scrollable-table > .p-datatable-frozen-tbody {\n        position: sticky;\n        z-index: 1;\n    }\n\n    .p-datatable-scrollable-table > .p-datatable-tfoot {\n        inset-block-end: 0;\n        z-index: 1;\n    }\n\n    .p-datatable-scrollable .p-datatable-frozen-column {\n        position: sticky;\n    }\n\n    .p-datatable-scrollable th.p-datatable-frozen-column {\n        z-index: 1;\n    }\n\n    .p-datatable-scrollable td.p-datatable-frozen-column {\n        background: inherit;\n    }\n\n    .p-datatable-scrollable > .p-datatable-table-container > .p-datatable-table > .p-datatable-thead,\n    .p-datatable-scrollable > .p-datatable-table-container > .p-virtualscroller > .p-datatable-table > .p-datatable-thead {\n        background: dt('datatable.header.cell.background');\n    }\n\n    .p-datatable-scrollable > .p-datatable-table-container > .p-datatable-table > .p-datatable-tfoot,\n    .p-datatable-scrollable > .p-datatable-table-container > .p-virtualscroller > .p-datatable-table > .p-datatable-tfoot {\n        background: dt('datatable.footer.cell.background');\n    }\n\n    .p-datatable-flex-scrollable {\n        display: flex;\n        flex-direction: column;\n        height: 100%;\n    }\n\n    .p-datatable-flex-scrollable > .p-datatable-table-container {\n        display: flex;\n        flex-direction: column;\n        flex: 1;\n        height: 100%;\n    }\n\n    .p-datatable-scrollable-table > .p-datatable-tbody > .p-datatable-row-group-header {\n        position: sticky;\n        z-index: 1;\n    }\n\n    .p-datatable-resizable-table > .p-datatable-thead > tr > th,\n    .p-datatable-resizable-table > .p-datatable-tfoot > tr > td,\n    .p-datatable-resizable-table > .p-datatable-tbody > tr > td {\n        overflow: hidden;\n        white-space: nowrap;\n    }\n\n    .p-datatable-resizable-table > .p-datatable-thead > tr > th.p-datatable-resizable-column:not(.p-datatable-frozen-column) {\n        background-clip: padding-box;\n        position: relative;\n    }\n\n    .p-datatable-resizable-table-fit > .p-datatable-thead > tr > th.p-datatable-resizable-column:last-child .p-datatable-column-resizer {\n        display: none;\n    }\n\n    .p-datatable-column-resizer {\n        display: block;\n        position: absolute;\n        inset-block-start: 0;\n        inset-inline-end: 0;\n        margin: 0;\n        width: dt('datatable.column.resizer.width');\n        height: 100%;\n        padding: 0;\n        cursor: col-resize;\n        border: 1px solid transparent;\n    }\n\n    .p-datatable-column-header-content {\n        display: flex;\n        align-items: center;\n        gap: dt('datatable.header.cell.gap');\n    }\n\n    .p-datatable-column-resize-indicator {\n        width: dt('datatable.resize.indicator.width');\n        position: absolute;\n        z-index: 10;\n        display: none;\n        background: dt('datatable.resize.indicator.color');\n    }\n\n    .p-datatable-row-reorder-indicator-up,\n    .p-datatable-row-reorder-indicator-down {\n        position: absolute;\n        display: none;\n    }\n\n    .p-datatable-reorderable-column,\n    .p-datatable-reorderable-row-handle {\n        cursor: move;\n    }\n\n    .p-datatable-mask {\n        position: absolute;\n        display: flex;\n        align-items: center;\n        justify-content: center;\n        z-index: 2;\n    }\n\n    .p-datatable-inline-filter {\n        display: flex;\n        align-items: center;\n        width: 100%;\n        gap: dt('datatable.filter.inline.gap');\n    }\n\n    .p-datatable-inline-filter .p-datatable-filter-element-container {\n        flex: 1 1 auto;\n        width: 1%;\n    }\n\n    .p-datatable-filter-overlay {\n        background: dt('datatable.filter.overlay.select.background');\n        color: dt('datatable.filter.overlay.select.color');\n        border: 1px solid dt('datatable.filter.overlay.select.border.color');\n        border-radius: dt('datatable.filter.overlay.select.border.radius');\n        box-shadow: dt('datatable.filter.overlay.select.shadow');\n        min-width: 12.5rem;\n    }\n\n    .p-datatable-filter-constraint-list {\n        margin: 0;\n        list-style: none;\n        display: flex;\n        flex-direction: column;\n        padding: dt('datatable.filter.constraint.list.padding');\n        gap: dt('datatable.filter.constraint.list.gap');\n    }\n\n    .p-datatable-filter-constraint {\n        padding: dt('datatable.filter.constraint.padding');\n        color: dt('datatable.filter.constraint.color');\n        border-radius: dt('datatable.filter.constraint.border.radius');\n        cursor: pointer;\n        transition:\n            background dt('datatable.transition.duration'),\n            color dt('datatable.transition.duration'),\n            border-color dt('datatable.transition.duration'),\n            box-shadow dt('datatable.transition.duration');\n    }\n\n    .p-datatable-filter-constraint-selected {\n        background: dt('datatable.filter.constraint.selected.background');\n        color: dt('datatable.filter.constraint.selected.color');\n    }\n\n    .p-datatable-filter-constraint:not(.p-datatable-filter-constraint-selected):not(.p-disabled):hover {\n        background: dt('datatable.filter.constraint.focus.background');\n        color: dt('datatable.filter.constraint.focus.color');\n    }\n\n    .p-datatable-filter-constraint:focus-visible {\n        outline: 0 none;\n        background: dt('datatable.filter.constraint.focus.background');\n        color: dt('datatable.filter.constraint.focus.color');\n    }\n\n    .p-datatable-filter-constraint-selected:focus-visible {\n        outline: 0 none;\n        background: dt('datatable.filter.constraint.selected.focus.background');\n        color: dt('datatable.filter.constraint.selected.focus.color');\n    }\n\n    .p-datatable-filter-constraint-separator {\n        border-block-start: 1px solid dt('datatable.filter.constraint.separator.border.color');\n    }\n\n    .p-datatable-popover-filter {\n        display: inline-flex;\n        margin-inline-start: auto;\n    }\n\n    .p-datatable-filter-overlay-popover {\n        background: dt('datatable.filter.overlay.popover.background');\n        color: dt('datatable.filter.overlay.popover.color');\n        border: 1px solid dt('datatable.filter.overlay.popover.border.color');\n        border-radius: dt('datatable.filter.overlay.popover.border.radius');\n        box-shadow: dt('datatable.filter.overlay.popover.shadow');\n        min-width: 12.5rem;\n        padding: dt('datatable.filter.overlay.popover.padding');\n        display: flex;\n        flex-direction: column;\n        gap: dt('datatable.filter.overlay.popover.gap');\n    }\n\n    .p-datatable-filter-operator-dropdown {\n        width: 100%;\n    }\n\n    .p-datatable-filter-rule-list,\n    .p-datatable-filter-rule {\n        display: flex;\n        flex-direction: column;\n        gap: dt('datatable.filter.overlay.popover.gap');\n    }\n\n    .p-datatable-filter-rule {\n        border-block-end: 1px solid dt('datatable.filter.rule.border.color');\n        padding-bottom: dt('datatable.filter.overlay.popover.gap');\n    }\n\n    .p-datatable-filter-rule:last-child {\n        border-block-end: 0 none;\n        padding-bottom: 0;\n    }\n\n    .p-datatable-filter-add-rule-button {\n        width: 100%;\n    }\n\n    .p-datatable-filter-remove-rule-button {\n        width: 100%;\n    }\n\n    .p-datatable-filter-buttonbar {\n        padding: 0;\n        display: flex;\n        align-items: center;\n        justify-content: space-between;\n    }\n\n    .p-datatable-virtualscroller-spacer {\n        display: flex;\n    }\n\n    .p-datatable .p-virtualscroller .p-virtualscroller-loading {\n        transform: none !important;\n        min-height: 0;\n        position: sticky;\n        inset-block-start: 0;\n        inset-inline-start: 0;\n    }\n\n    .p-datatable-paginator-top {\n        border-color: dt('datatable.paginator.top.border.color');\n        border-style: solid;\n        border-width: dt('datatable.paginator.top.border.width');\n    }\n\n    .p-datatable-paginator-bottom {\n        border-color: dt('datatable.paginator.bottom.border.color');\n        border-style: solid;\n        border-width: dt('datatable.paginator.bottom.border.width');\n    }\n\n    .p-datatable-header {\n        background: dt('datatable.header.background');\n        color: dt('datatable.header.color');\n        border-color: dt('datatable.header.border.color');\n        border-style: solid;\n        border-width: dt('datatable.header.border.width');\n        padding: dt('datatable.header.padding');\n    }\n\n    .p-datatable-footer {\n        background: dt('datatable.footer.background');\n        color: dt('datatable.footer.color');\n        border-color: dt('datatable.footer.border.color');\n        border-style: solid;\n        border-width: dt('datatable.footer.border.width');\n        padding: dt('datatable.footer.padding');\n    }\n\n    .p-datatable-header-cell {\n        padding: dt('datatable.header.cell.padding');\n        background: dt('datatable.header.cell.background');\n        border-color: dt('datatable.header.cell.border.color');\n        border-style: solid;\n        border-width: 0 0 1px 0;\n        color: dt('datatable.header.cell.color');\n        font-weight: normal;\n        text-align: start;\n        transition:\n            background dt('datatable.transition.duration'),\n            color dt('datatable.transition.duration'),\n            border-color dt('datatable.transition.duration'),\n            outline-color dt('datatable.transition.duration'),\n            box-shadow dt('datatable.transition.duration');\n    }\n\n    .p-datatable-column-title {\n        font-weight: dt('datatable.column.title.font.weight');\n    }\n\n    .p-datatable-tbody > tr {\n        outline-color: transparent;\n        background: dt('datatable.row.background');\n        color: dt('datatable.row.color');\n        transition:\n            background dt('datatable.transition.duration'),\n            color dt('datatable.transition.duration'),\n            border-color dt('datatable.transition.duration'),\n            outline-color dt('datatable.transition.duration'),\n            box-shadow dt('datatable.transition.duration');\n    }\n\n    .p-datatable-tbody > tr > td {\n        text-align: start;\n        border-color: dt('datatable.body.cell.border.color');\n        border-style: solid;\n        border-width: 0 0 1px 0;\n        padding: dt('datatable.body.cell.padding');\n    }\n\n    .p-datatable-hoverable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover {\n        background: dt('datatable.row.hover.background');\n        color: dt('datatable.row.hover.color');\n    }\n\n    .p-datatable-tbody > tr.p-datatable-row-selected {\n        background: dt('datatable.row.selected.background');\n        color: dt('datatable.row.selected.color');\n    }\n\n    .p-datatable-tbody > tr:has(+ .p-datatable-row-selected) > td {\n        border-block-end-color: dt('datatable.body.cell.selected.border.color');\n    }\n\n    .p-datatable-tbody > tr.p-datatable-row-selected > td {\n        border-block-end-color: dt('datatable.body.cell.selected.border.color');\n    }\n\n    .p-datatable-tbody > tr:focus-visible,\n    .p-datatable-tbody > tr.p-datatable-contextmenu-row-selected {\n        box-shadow: dt('datatable.row.focus.ring.shadow');\n        outline: dt('datatable.row.focus.ring.width') dt('datatable.row.focus.ring.style') dt('datatable.row.focus.ring.color');\n        outline-offset: dt('datatable.row.focus.ring.offset');\n    }\n\n    .p-datatable-tfoot > tr > td {\n        text-align: start;\n        padding: dt('datatable.footer.cell.padding');\n        border-color: dt('datatable.footer.cell.border.color');\n        border-style: solid;\n        border-width: 0 0 1px 0;\n        color: dt('datatable.footer.cell.color');\n        background: dt('datatable.footer.cell.background');\n    }\n\n    .p-datatable-column-footer {\n        font-weight: dt('datatable.column.footer.font.weight');\n    }\n\n    .p-datatable-sortable-column {\n        cursor: pointer;\n        user-select: none;\n        outline-color: transparent;\n    }\n\n    .p-datatable-column-title,\n    .p-datatable-sort-icon,\n    .p-datatable-sort-badge {\n        vertical-align: middle;\n    }\n\n    .p-datatable-sort-icon {\n        color: dt('datatable.sort.icon.color');\n        font-size: dt('datatable.sort.icon.size');\n        width: dt('datatable.sort.icon.size');\n        height: dt('datatable.sort.icon.size');\n        transition: color dt('datatable.transition.duration');\n    }\n\n    .p-datatable-sortable-column:not(.p-datatable-column-sorted):hover {\n        background: dt('datatable.header.cell.hover.background');\n        color: dt('datatable.header.cell.hover.color');\n    }\n\n    .p-datatable-sortable-column:not(.p-datatable-column-sorted):hover .p-datatable-sort-icon {\n        color: dt('datatable.sort.icon.hover.color');\n    }\n\n    .p-datatable-column-sorted {\n        background: dt('datatable.header.cell.selected.background');\n        color: dt('datatable.header.cell.selected.color');\n    }\n\n    .p-datatable-column-sorted .p-datatable-sort-icon {\n        color: dt('datatable.header.cell.selected.color');\n    }\n\n    .p-datatable-sortable-column:focus-visible {\n        box-shadow: dt('datatable.header.cell.focus.ring.shadow');\n        outline: dt('datatable.header.cell.focus.ring.width') dt('datatable.header.cell.focus.ring.style') dt('datatable.header.cell.focus.ring.color');\n        outline-offset: dt('datatable.header.cell.focus.ring.offset');\n    }\n\n    .p-datatable-hoverable .p-datatable-selectable-row {\n        cursor: pointer;\n    }\n\n    .p-datatable-tbody > tr.p-datatable-dragpoint-top > td {\n        box-shadow: inset 0 2px 0 0 dt('datatable.drop.point.color');\n    }\n\n    .p-datatable-tbody > tr.p-datatable-dragpoint-bottom > td {\n        box-shadow: inset 0 -2px 0 0 dt('datatable.drop.point.color');\n    }\n\n    .p-datatable-loading-icon {\n        font-size: dt('datatable.loading.icon.size');\n        width: dt('datatable.loading.icon.size');\n        height: dt('datatable.loading.icon.size');\n    }\n\n    .p-datatable-gridlines .p-datatable-header {\n        border-width: 1px 1px 0 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-footer {\n        border-width: 0 1px 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-paginator-top {\n        border-width: 1px 1px 0 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-paginator-bottom {\n        border-width: 0 1px 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-thead > tr > th {\n        border-width: 1px 0 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-thead > tr > th:last-child {\n        border-width: 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tbody > tr > td {\n        border-width: 1px 0 0 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tbody > tr > td:last-child {\n        border-width: 1px 1px 0 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tbody > tr:last-child > td {\n        border-width: 1px 0 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tbody > tr:last-child > td:last-child {\n        border-width: 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tfoot > tr > td {\n        border-width: 1px 0 1px 1px;\n    }\n\n    .p-datatable-gridlines .p-datatable-tfoot > tr > td:last-child {\n        border-width: 1px 1px 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines .p-datatable-thead + .p-datatable-tfoot > tr > td {\n        border-width: 0 0 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines .p-datatable-thead + .p-datatable-tfoot > tr > td:last-child {\n        border-width: 0 1px 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody > tr > td {\n        border-width: 0 0 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines:has(.p-datatable-thead):has(.p-datatable-tbody) .p-datatable-tbody > tr > td:last-child {\n        border-width: 0 1px 1px 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines:has(.p-datatable-tbody):has(.p-datatable-tfoot) .p-datatable-tbody > tr:last-child > td {\n        border-width: 0 0 0 1px;\n    }\n\n    .p-datatable.p-datatable-gridlines:has(.p-datatable-tbody):has(.p-datatable-tfoot) .p-datatable-tbody > tr:last-child > td:last-child {\n        border-width: 0 1px 0 1px;\n    }\n\n    .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {\n        background: dt('datatable.row.striped.background');\n    }\n\n    .p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd.p-datatable-row-selected {\n        background: dt('datatable.row.selected.background');\n        color: dt('datatable.row.selected.color');\n    }\n\n    .p-datatable-striped.p-datatable-hoverable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover {\n        background: dt('datatable.row.hover.background');\n        color: dt('datatable.row.hover.color');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-header {\n        padding: dt('datatable.header.sm.padding');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-thead > tr > th {\n        padding: dt('datatable.header.cell.sm.padding');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {\n        padding: dt('datatable.body.cell.sm.padding');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-tfoot > tr > td {\n        padding: dt('datatable.footer.cell.sm.padding');\n    }\n\n    .p-datatable.p-datatable-sm .p-datatable-footer {\n        padding: dt('datatable.footer.sm.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-header {\n        padding: dt('datatable.header.lg.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-thead > tr > th {\n        padding: dt('datatable.header.cell.lg.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-tbody > tr > td {\n        padding: dt('datatable.body.cell.lg.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-tfoot > tr > td {\n        padding: dt('datatable.footer.cell.lg.padding');\n    }\n\n    .p-datatable.p-datatable-lg .p-datatable-footer {\n        padding: dt('datatable.footer.lg.padding');\n    }\n\n    .p-datatable-row-toggle-button {\n        display: inline-flex;\n        align-items: center;\n        justify-content: center;\n        overflow: hidden;\n        position: relative;\n        width: dt('datatable.row.toggle.button.size');\n        height: dt('datatable.row.toggle.button.size');\n        color: dt('datatable.row.toggle.button.color');\n        border: 0 none;\n        background: transparent;\n        cursor: pointer;\n        border-radius: dt('datatable.row.toggle.button.border.radius');\n        transition:\n            background dt('datatable.transition.duration'),\n            color dt('datatable.transition.duration'),\n            border-color dt('datatable.transition.duration'),\n            outline-color dt('datatable.transition.duration'),\n            box-shadow dt('datatable.transition.duration');\n        outline-color: transparent;\n        user-select: none;\n    }\n\n    .p-datatable-row-toggle-button:enabled:hover {\n        color: dt('datatable.row.toggle.button.hover.color');\n        background: dt('datatable.row.toggle.button.hover.background');\n    }\n\n    .p-datatable-tbody > tr.p-datatable-row-selected .p-datatable-row-toggle-button:hover {\n        background: dt('datatable.row.toggle.button.selected.hover.background');\n        color: dt('datatable.row.toggle.button.selected.hover.color');\n    }\n\n    .p-datatable-row-toggle-button:focus-visible {\n        box-shadow: dt('datatable.row.toggle.button.focus.ring.shadow');\n        outline: dt('datatable.row.toggle.button.focus.ring.width') dt('datatable.row.toggle.button.focus.ring.style') dt('datatable.row.toggle.button.focus.ring.color');\n        outline-offset: dt('datatable.row.toggle.button.focus.ring.offset');\n    }\n\n    .p-datatable-row-toggle-icon:dir(rtl) {\n        transform: rotate(180deg);\n    }\n";
 
 // node_modules/primeng/fesm2022/primeng-table.mjs
-var _c05 = ["header"];
-var _c13 = ["headergrouped"];
-var _c23 = ["body"];
+var _c04 = ["header"];
+var _c12 = ["headergrouped"];
+var _c22 = ["body"];
 var _c32 = ["loadingbody"];
 var _c42 = ["caption"];
 var _c52 = ["footer"];
@@ -2572,7 +1963,7 @@ var _c9 = ["expandedrow"];
 var _c10 = ["groupheader"];
 var _c11 = ["groupfooter"];
 var _c122 = ["frozenexpandedrow"];
-var _c132 = ["frozenheader"];
+var _c13 = ["frozenheader"];
 var _c14 = ["frozenbody"];
 var _c15 = ["frozenfooter"];
 var _c16 = ["frozencolgroup"];
@@ -2582,7 +1973,7 @@ var _c19 = ["paginatorright"];
 var _c20 = ["paginatordropdownitem"];
 var _c21 = ["loadingicon"];
 var _c222 = ["reorderindicatorupicon"];
-var _c232 = ["reorderindicatordownicon"];
+var _c23 = ["reorderindicatordownicon"];
 var _c24 = ["sorticon"];
 var _c25 = ["checkboxicon"];
 var _c26 = ["headercheckboxicon"];
@@ -4207,10 +3598,10 @@ function ColumnFilterFormElement_ng_template_1_Template(rf, ctx) {
     ɵɵproperty("ngSwitchCase", "date");
   }
 }
-var theme3 = (
+var theme2 = (
   /*css*/
   `
-    ${style5}
+    ${style4}
 
     /* For PrimeNG */
     .p-datatable-scrollable-table > .p-datatable-thead {
@@ -4323,7 +3714,7 @@ var theme3 = (
     }
 `
 );
-var classes4 = {
+var classes3 = {
   root: ({
     instance
   }) => ["p-datatable p-component", {
@@ -4454,8 +3845,8 @@ var inlineStyles = {
 };
 var TableStyle = class _TableStyle extends BaseStyle {
   name = "datatable";
-  theme = theme3;
-  classes = classes4;
+  theme = theme2;
+  classes = classes3;
   inlineStyles = inlineStyles;
   static ɵfac = /* @__PURE__ */ (() => {
     let ɵTableStyle_BaseFactory;
@@ -6642,12 +6033,12 @@ var Table = class _Table extends BaseComponent {
     let innerHTML = "";
     width.forEach((width2, index) => {
       let colWidth = index === colIndex ? newColumnWidth : nextColumnWidth && index === colIndex + 1 ? nextColumnWidth : width2;
-      let style6 = `width: ${colWidth}px !important; max-width: ${colWidth}px !important;`;
+      let style5 = `width: ${colWidth}px !important; max-width: ${colWidth}px !important;`;
       innerHTML += `
                 #${this.id}-table > .p-datatable-thead > tr > th:nth-child(${index + 1}),
                 #${this.id}-table > .p-datatable-tbody > tr > td:nth-child(${index + 1}),
                 #${this.id}-table > .p-datatable-tfoot > tr > td:nth-child(${index + 1}) {
-                    ${style6}
+                    ${style5}
                 }
             `;
     });
@@ -6843,12 +6234,12 @@ var Table = class _Table extends BaseComponent {
         this.createStyleElement();
         let innerHTML = "";
         widths.forEach((width, index) => {
-          let style6 = `width: ${width}px !important; max-width: ${width}px !important`;
+          let style5 = `width: ${width}px !important; max-width: ${width}px !important`;
           innerHTML += `
                         #${this.id}-table > .p-datatable-thead > tr > th:nth-child(${index + 1}),
                         #${this.id}-table > .p-datatable-tbody > tr > td:nth-child(${index + 1}),
                         #${this.id}-table > .p-datatable-tfoot > tr > td:nth-child(${index + 1}) {
-                            ${style6}
+                            ${style5}
                         }
                     `;
         });
@@ -6979,9 +6370,9 @@ var Table = class _Table extends BaseComponent {
     selectors: [["p-table"]],
     contentQueries: function Table_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        ɵɵcontentQuery(dirIndex, _c05, 4);
-        ɵɵcontentQuery(dirIndex, _c13, 4);
-        ɵɵcontentQuery(dirIndex, _c23, 4);
+        ɵɵcontentQuery(dirIndex, _c04, 4);
+        ɵɵcontentQuery(dirIndex, _c12, 4);
+        ɵɵcontentQuery(dirIndex, _c22, 4);
         ɵɵcontentQuery(dirIndex, _c32, 4);
         ɵɵcontentQuery(dirIndex, _c42, 4);
         ɵɵcontentQuery(dirIndex, _c52, 4);
@@ -6992,7 +6383,7 @@ var Table = class _Table extends BaseComponent {
         ɵɵcontentQuery(dirIndex, _c10, 4);
         ɵɵcontentQuery(dirIndex, _c11, 4);
         ɵɵcontentQuery(dirIndex, _c122, 4);
-        ɵɵcontentQuery(dirIndex, _c132, 4);
+        ɵɵcontentQuery(dirIndex, _c13, 4);
         ɵɵcontentQuery(dirIndex, _c14, 4);
         ɵɵcontentQuery(dirIndex, _c15, 4);
         ɵɵcontentQuery(dirIndex, _c16, 4);
@@ -7002,7 +6393,7 @@ var Table = class _Table extends BaseComponent {
         ɵɵcontentQuery(dirIndex, _c20, 4);
         ɵɵcontentQuery(dirIndex, _c21, 4);
         ɵɵcontentQuery(dirIndex, _c222, 4);
-        ɵɵcontentQuery(dirIndex, _c232, 4);
+        ɵɵcontentQuery(dirIndex, _c23, 4);
         ɵɵcontentQuery(dirIndex, _c24, 4);
         ɵɵcontentQuery(dirIndex, _c25, 4);
         ɵɵcontentQuery(dirIndex, _c26, 4);
@@ -11677,7 +11068,7 @@ var ColumnFilter = class _ColumnFilter extends BaseComponent {
     selectors: [["p-columnFilter"], ["p-column-filter"], ["p-columnfilter"]],
     contentQueries: function ColumnFilter_ContentQueries(rf, ctx, dirIndex) {
       if (rf & 1) {
-        ɵɵcontentQuery(dirIndex, _c05, 4);
+        ɵɵcontentQuery(dirIndex, _c04, 4);
         ɵɵcontentQuery(dirIndex, _c53, 4);
         ɵɵcontentQuery(dirIndex, _c52, 4);
         ɵɵcontentQuery(dirIndex, _c54, 4);
