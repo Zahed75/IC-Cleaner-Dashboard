@@ -4,13 +4,17 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 
 // PrimeNG standalone components
 import { Button } from 'primeng/button';
+import { Card, CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { Tag } from 'primeng/tag';
 import { Dialog } from 'primeng/dialog';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { Checkbox } from 'primeng/checkbox';
-import { ToastModule } from 'primeng/toast';
+import { Toast } from 'primeng/toast';
 import { InputText } from 'primeng/inputtext';
+import { ToggleSwitch } from 'primeng/toggleswitch';
+import { FileUpload } from 'primeng/fileupload';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { Checkbox, CheckboxModule } from 'primeng/checkbox';
+import { ToastModule } from 'primeng/toast';
 
 import { MessageService } from 'primeng/api';
 import { 
@@ -29,13 +33,17 @@ import {
     FormsModule,
     ReactiveFormsModule,
     Button,
+    CardModule,
     TableModule,
     Tag,
     Dialog,
+    Toast,
+    InputText,
+    ToggleSwitch,
+    FileUpload,
     ProgressSpinner,
-    Checkbox,
-    ToastModule,
-    InputText
+    CheckboxModule,
+    ToastModule
   ],
   providers: [MessageService],
   templateUrl: './cleaners.html',

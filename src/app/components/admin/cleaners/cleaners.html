@@ -1,366 +1,376 @@
+<!-- Cleaner Details Dialog -->
+<p-dialog header="Cleaner Details" [(visible)]="showCleanerDetailsDialog" [modal]="true"
+    [style]="{ width: '500px' }" [draggable]="false" [resizable]="false">
+
+    <div class="cleaner-details" *ngIf="selectedCleaner">
+        <div class="loading-spinner" *ngIf="isLoadingDetails">
+            <p-progressSpinner styleClass="w-8 h-8" strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+            <span class="ml-2">Loading cleaner details...</span>
+        </div>
+
+        <div *ngIf="!isLoadingDetails">
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Cleaner ID</label>
+                <p class="text-gray-900 font-mono">ICC#{{ selectedCleaner.id.toString().padStart(5, '0') }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
+                <p class="text-gray-900">{{ selectedCleaner.first_name }} {{ selectedCleaner.last_name }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                <p class="text-gray-900">{{ selectedCleaner.email }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Phone</label>
+                <p class="text-gray-900">{{ selectedCleaner.phone_number }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Location</label>
+                <p class="text-gray-900">
+                    {{ selectedCleaner.city }}{{ selectedCleaner.state ? ', ' + selectedCleaner.state : '' }}{{ selectedCleaner.country ? ', ' + selectedCleaner.country : '' }}
+                </p>
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Status</label>
+                <p-tag [value]="selectedCleaner.is_active ? 'Active' : 'Inactive'" 
+                       [severity]="getSeverity(selectedCleaner.is_active)" />
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Rating</label>
+                <p class="text-gray-900">{{ selectedCleaner.rating }}/5</p>
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Total Services Done</label>
+                <p class="text-gray-900">{{ selectedCleaner.total_services_done }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Pending Services</label>
+                <p class="text-gray-900">{{ selectedCleaner.pending_services }}</p>
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">DBA Verification</label>
+                <p-tag [value]="selectedCleaner.dba_verification ? 'Verified' : 'Not Verified'" 
+                       [severity]="selectedCleaner.dba_verification ? 'success' : 'warn'" />
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Account Verified</label>
+                <p-tag [value]="selectedCleaner.is_verified ? 'Verified' : 'Not Verified'" 
+                       [severity]="selectedCleaner.is_verified ? 'success' : 'warn'" />
+            </div>
+
+            <div class="detail-item">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Member Since</label>
+                <p class="text-gray-900">{{ formatDate(selectedCleaner.created_at) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <div class="flex gap-2 justify-between w-full">
+            <p-button icon="pi pi-pencil" label="Edit Cleaner" severity="primary" 
+                (onClick)="openEditCleaner(editingCleaner || selectedCleaner)" />
+            <p-button icon="pi pi-times" label="Close" severity="secondary" 
+                (onClick)="showCleanerDetailsDialog = false" />
+        </div>
+    </ng-template>
+</p-dialog>
+
 <!-- Main Cleaners Component -->
 <div class="p-4">
-  <!-- Header Section -->
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-gray-800">Cleaners Management</h1>
-    <p-button 
-      icon="pi pi-plus" 
-      label="Add Cleaner" 
-      severity="primary"
-      (onClick)="openAddCleaner()">
-    </p-button>
-  </div>
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Cleaners Management</h1>
+        <p-button 
+            icon="pi pi-plus" 
+            label="Add Cleaner" 
+            severity="primary"
+            (onClick)="openAddCleaner()">
+        </p-button>
+    </div>
 
-  <!-- Loading Spinner -->
-  <div *ngIf="isLoading" class="flex justify-center items-center p-8">
-    <p-progressSpinner></p-progressSpinner>
-    <span class="ml-2">Loading cleaners...</span>
-  </div>
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="flex justify-center items-center p-8">
+        <p-progressSpinner></p-progressSpinner>
+        <span class="ml-2">Loading cleaners...</span>
+    </div>
 
-  <!-- Cleaners Table -->
-  <div *ngIf="!isLoading" class="bg-white rounded-lg shadow">
-    <p-table 
-      [value]="cleaners" 
-      [paginator]="true" 
-      [rows]="10"
-      [rowsPerPageOptions]="[10, 20, 50]"
-      [tableStyle]="{ 'min-width': '75rem' }">
-      
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Cleaner ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Location</th>
-          <th>Rating</th>
-          <th>Services Done</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
+    <!-- Cleaners Table -->
+    <div *ngIf="!isLoading" class="bg-white rounded-lg shadow">
+        <p-table 
+            [value]="cleaners" 
+            [paginator]="true" 
+            [rows]="10"
+            [rowsPerPageOptions]="[10, 20, 50]"
+            [tableStyle]="{ 'min-width': '75rem' }">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Cleaner ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Rating</th>
+                    <th>Services Done</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </ng-template>
 
-      <ng-template pTemplate="body" let-cleaner>
-        <tr>
-          <td>
-            <span 
-              class="text-blue-600 cursor-pointer hover:underline font-mono"
-              (click)="showCleanerDetails(cleaner)">
-              {{ getCleanerId(cleaner) }}
-            </span>
-          </td>
-          <td>{{ getCleanerFullName(cleaner) }}</td>
-          <td>{{ cleaner.email }}</td>
-          <td>{{ getCleanerPhone(cleaner) }}</td>
-          <td>{{ getCleanerLocation(cleaner) }}</td>
-          <td>
-            <span [class]="parseRating(cleaner.profile.rating) > 0 ? 'text-yellow-500' : 'text-gray-300'">
-              {{ getRatingStars(cleaner.profile.rating) }}
-            </span>
-          </td>
-          <td>{{ cleaner.profile.total_services_done }}</td>
-          <td>
-            <p-tag 
-              [value]="getStatusText(cleaner)" 
-              [severity]="getSeverity(cleaner.is_active ? cleaner.profile.status : false)">
-            </p-tag>
-          </td>
-          <td>
-            <div class="flex gap-2">
-              <p-button 
-                icon="pi pi-pencil" 
-                severity="secondary" 
-                size="small"
-                (onClick)="openEditCleaner(cleaner)">
-              </p-button>
-              <p-button 
-                [icon]="cleaner.is_active ? 'pi pi-ban' : 'pi pi-check'" 
-                [severity]="cleaner.is_active ? 'warn' : 'success'" 
-                size="small"
-                (onClick)="toggleCleanerStatus(cleaner)">
-              </p-button>
-            </div>
-          </td>
-        </tr>
-      </ng-template>
+            <ng-template pTemplate="body" let-cleaner>
+                <tr>
+                    <td>
+                        <span 
+                            class="text-blue-600 cursor-pointer hover:underline font-mono"
+                            (click)="showCleanerDetails(cleaner)">
+                            {{ getCleanerId(cleaner) }}
+                        </span>
+                    </td>
+                    <td>{{ getCleanerFullName(cleaner) }}</td>
+                    <td>{{ cleaner.email }}</td>
+                    <td>{{ getCleanerPhone(cleaner) }}</td>
+                    <td>{{ getCleanerLocation(cleaner) }}</td>
+                    <td>
+                        <span [class]="parseRating(cleaner.profile.rating) > 0 ? 'text-yellow-500' : 'text-gray-300'">
+                            {{ getRatingStars(cleaner.profile.rating) }}
+                        </span>
+                    </td>
+                    <td>{{ cleaner.profile.total_services_done }}</td>
+                    <td>
+                        <p-tag 
+                            [value]="getStatusText(cleaner)" 
+                            [severity]="getSeverity(cleaner.is_active ? cleaner.profile.status : false)">
+                        </p-tag>
+                    </td>
+                    <td>
+                        <div class="flex gap-2">
+                            <p-button 
+                                icon="pi pi-pencil" 
+                                severity="secondary" 
+                                size="small"
+                                (onClick)="openEditCleaner(cleaner)">
+                            </p-button>
+                            <p-button 
+                                [icon]="cleaner.is_active ? 'pi pi-ban' : 'pi pi-check'" 
+                                [severity]="cleaner.is_active ? 'warn' : 'success'" 
+                                size="small"
+                                (onClick)="toggleCleanerStatus(cleaner)">
+                            </p-button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
 
-      <ng-template pTemplate="emptymessage">
-        <tr>
-          <td colspan="9" class="text-center p-4 text-gray-500">
-            No cleaners found
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="9" class="text-center p-4 text-gray-500">
+                        No cleaners found
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
 </div>
-
-<!-- Cleaner Details Dialog -->
-<p-dialog 
-  header="Cleaner Details" 
-  [(visible)]="showCleanerDetailsDialog" 
-  [modal]="true"
-  [style]="{ width: '500px' }" 
-  [draggable]="false" 
-  [resizable]="false">
-
-  <div class="cleaner-details" *ngIf="selectedCleaner">
-    <div class="loading-spinner" *ngIf="isLoadingDetails">
-      <p-progressSpinner styleClass="w-8 h-8" strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
-      <span class="ml-2">Loading cleaner details...</span>
-    </div>
-
-    <div *ngIf="!isLoadingDetails" class="space-y-4">
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Cleaner ID</label>
-        <p class="text-gray-900 font-mono">ICC#{{ selectedCleaner.id.toString().padStart(5, '0') }}</p>
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
-        <p class="text-gray-900">{{ selectedCleaner.first_name }} {{ selectedCleaner.last_name }}</p>
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Email</label>
-        <p class="text-gray-900">{{ selectedCleaner.email }}</p>
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Phone</label>
-        <p class="text-gray-900">{{ selectedCleaner.phone_number }}</p>
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Location</label>
-        <p class="text-gray-900">
-          {{ selectedCleaner.city }}{{ selectedCleaner.state ? ', ' + selectedCleaner.state : '' }}{{ selectedCleaner.country ? ', ' + selectedCleaner.country : '' }}
-        </p>
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Status</label>
-        <p-tag 
-          [value]="selectedCleaner.is_active ? 'Active' : 'Inactive'" 
-          [severity]="getSeverity(selectedCleaner.is_active)" />
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Rating</label>
-        <p class="text-gray-900">{{ selectedCleaner.rating }}/5</p>
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Total Services Done</label>
-        <p class="text-gray-900">{{ selectedCleaner.total_services_done }}</p>
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Pending Services</label>
-        <p class="text-gray-900">{{ selectedCleaner.pending_services }}</p>
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">DBA Verification</label>
-        <p-tag 
-          [value]="selectedCleaner.dba_verification ? 'Verified' : 'Not Verified'" 
-          [severity]="selectedCleaner.dba_verification ? 'success' : 'warn'" />
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Account Verified</label>
-        <p-tag 
-          [value]="selectedCleaner.is_verified ? 'Verified' : 'Not Verified'" 
-          [severity]="selectedCleaner.is_verified ? 'success' : 'warn'" />
-      </div>
-
-      <div class="detail-item">
-        <label class="block text-sm font-medium text-gray-600 mb-1">Member Since</label>
-        <p class="text-gray-900">{{ formatDate(selectedCleaner.created_at) }}</p>
-      </div>
-    </div>
-  </div>
-
-  <ng-template pTemplate="footer">
-    <div class="flex gap-2 justify-between w-full">
-      <p-button 
-        icon="pi pi-pencil" 
-        label="Edit Cleaner" 
-        severity="primary" 
-        (onClick)="openEditCleaner(editingCleaner || selectedCleaner)">
-      </p-button>
-      <p-button 
-        icon="pi pi-times" 
-        label="Close" 
-        severity="secondary" 
-        (onClick)="showCleanerDetailsDialog = false">
-      </p-button>
-    </div>
-  </ng-template>
-</p-dialog>
 
 <!-- Add/Edit Cleaner Form Dialog -->
 <p-dialog 
-  [header]="isEditMode ? 'Edit Cleaner' : 'Add New Cleaner'" 
-  [(visible)]="showCleanerForm" 
-  [modal]="true"
-  [style]="{ width: '600px' }" 
-  [draggable]="false" 
-  [resizable]="false">
+    [header]="isEditMode ? 'Edit Cleaner' : 'Add New Cleaner'" 
+    [(visible)]="showCleanerForm" 
+    [modal]="true"
+    [style]="{ width: '600px' }" 
+    [draggable]="false" 
+    [resizable]="false">
 
-  <form [formGroup]="cleanerForm" class="p-fluid space-y-4">
-    <div class="grid grid-cols-2 gap-4">
-      <div class="field">
-        <label for="first_name" class="block text-sm font-medium mb-2">First Name *</label>
-        <input 
-          id="first_name" 
-          type="text" 
-          pInputText 
-          formControlName="first_name" 
-          class="w-full" 
-          placeholder="Enter first name">
-        <small *ngIf="cleanerForm.get('first_name')?.invalid && cleanerForm.get('first_name')?.touched" 
-               class="text-red-500 block mt-1">
-          First name is required
-        </small>
-      </div>
+    <form [formGroup]="cleanerForm" class="p-fluid space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="field">
+                <label for="first_name" class="block text-sm font-medium mb-2">First Name *</label>
+                <input 
+                    id="first_name" 
+                    type="text" 
+                    pInputText 
+                    formControlName="first_name" 
+                    class="w-full" 
+                    placeholder="Enter first name">
+                <small *ngIf="cleanerForm.get('first_name')?.invalid && cleanerForm.get('first_name')?.touched" 
+                       class="text-red-500 block mt-1">
+                    First name is required
+                </small>
+            </div>
 
-      <div class="field">
-        <label for="last_name" class="block text-sm font-medium mb-2">Last Name *</label>
-        <input 
-          id="last_name" 
-          type="text" 
-          pInputText 
-          formControlName="last_name" 
-          class="w-full" 
-          placeholder="Enter last name">
-        <small *ngIf="cleanerForm.get('last_name')?.invalid && cleanerForm.get('last_name')?.touched" 
-               class="text-red-500 block mt-1">
-          Last name is required
-        </small>
-      </div>
-    </div>
+            <div class="field">
+                <label for="last_name" class="block text-sm font-medium mb-2">Last Name *</label>
+                <input 
+                    id="last_name" 
+                    type="text" 
+                    pInputText 
+                    formControlName="last_name" 
+                    class="w-full" 
+                    placeholder="Enter last name">
+                <small *ngIf="cleanerForm.get('last_name')?.invalid && cleanerForm.get('last_name')?.touched" 
+                       class="text-red-500 block mt-1">
+                    Last name is required
+                </small>
+            </div>
+        </div>
 
-    <div class="field">
-      <label for="email" class="block text-sm font-medium mb-2">Email *</label>
-      <input 
-        id="email" 
-        type="email" 
-        pInputText 
-        formControlName="email" 
-        class="w-full" 
-        placeholder="Enter email address">
-      <small *ngIf="cleanerForm.get('email')?.invalid && cleanerForm.get('email')?.touched" 
-             class="text-red-500 block mt-1">
-        Valid email is required
-      </small>
-    </div>
+        <div class="field">
+            <label for="email" class="block text-sm font-medium mb-2">Email *</label>
+            <input 
+                id="email" 
+                type="email" 
+                pInputText 
+                formControlName="email" 
+                class="w-full" 
+                placeholder="Enter email address">
+            <small *ngIf="cleanerForm.get('email')?.invalid && cleanerForm.get('email')?.touched" 
+                   class="text-red-500 block mt-1">
+                Valid email is required
+            </small>
+        </div>
 
-    <div class="field">
-      <label for="phone_number" class="block text-sm font-medium mb-2">Phone Number *</label>
-      <input 
-        id="phone_number" 
-        type="tel" 
-        pInputText 
-        formControlName="phone_number" 
-        class="w-full" 
-        placeholder="Enter phone number">
-      <small *ngIf="cleanerForm.get('phone_number')?.invalid && cleanerForm.get('phone_number')?.touched" 
-             class="text-red-500 block mt-1">
-        Phone number is required
-      </small>
-    </div>
+        <div class="field">
+            <label for="phone_number" class="block text-sm font-medium mb-2">Phone Number *</label>
+            <input 
+                id="phone_number" 
+                type="tel" 
+                pInputText 
+                formControlName="phone_number" 
+                class="w-full" 
+                placeholder="Enter phone number">
+            <small *ngIf="cleanerForm.get('phone_number')?.invalid && cleanerForm.get('phone_number')?.touched" 
+                   class="text-red-500 block mt-1">
+                Phone number is required
+            </small>
+        </div>
 
-    <div class="grid grid-cols-3 gap-4">
-      <div class="field">
-        <label for="city" class="block text-sm font-medium mb-2">City *</label>
-        <input 
-          id="city" 
-          type="text" 
-          pInputText 
-          formControlName="city" 
-          class="w-full" 
-          placeholder="City">
-        <small *ngIf="cleanerForm.get('city')?.invalid && cleanerForm.get('city')?.touched" 
-               class="text-red-500 block mt-1">
-          City is required
-        </small>
-      </div>
+        <div class="grid grid-cols-3 gap-4">
+            <div class="field">
+                <label for="city" class="block text-sm font-medium mb-2">City *</label>
+                <input 
+                    id="city" 
+                    type="text" 
+                    pInputText 
+                    formControlName="city" 
+                    class="w-full" 
+                    placeholder="City">
+                <small *ngIf="cleanerForm.get('city')?.invalid && cleanerForm.get('city')?.touched" 
+                       class="text-red-500 block mt-1">
+                    City is required
+                </small>
+            </div>
 
-      <div class="field">
-        <label for="state" class="block text-sm font-medium mb-2">State</label>
-        <input 
-          id="state" 
-          type="text" 
-          pInputText 
-          formControlName="state" 
-          class="w-full" 
-          placeholder="State">
-      </div>
+            <div class="field">
+                <label for="state" class="block text-sm font-medium mb-2">State</label>
+                <input 
+                    id="state" 
+                    type="text" 
+                    pInputText 
+                    formControlName="state" 
+                    class="w-full" 
+                    placeholder="State">
+            </div>
 
-      <div class="field">
-        <label for="country" class="block text-sm font-medium mb-2">Country *</label>
-        <input 
-          id="country" 
-          type="text" 
-          pInputText 
-          formControlName="country" 
-          class="w-full" 
-          placeholder="Country">
-        <small *ngIf="cleanerForm.get('country')?.invalid && cleanerForm.get('country')?.touched" 
-               class="text-red-500 block mt-1">
-          Country is required
-        </small>
-      </div>
-    </div>
+            <div class="field">
+                <label for="country" class="block text-sm font-medium mb-2">Country *</label>
+                <input 
+                    id="country" 
+                    type="text" 
+                    pInputText 
+                    formControlName="country" 
+                    class="w-full" 
+                    placeholder="Country">
+                <small *ngIf="cleanerForm.get('country')?.invalid && cleanerForm.get('country')?.touched" 
+                       class="text-red-500 block mt-1">
+                    Country is required
+                </small>
+            </div>
+        </div>
 
-    <div class="field">
-      <label for="password" class="block text-sm font-medium mb-2">
-        {{ isEditMode ? 'New Password (leave blank to keep current)' : 'Password *' }}
-      </label>
-      <input 
-        id="password" 
-        type="password" 
-        pInputText 
-        formControlName="password" 
-        class="w-full" 
-        [placeholder]="isEditMode ? 'Enter new password (optional)' : 'Enter password'">
-      <small *ngIf="!isEditMode && cleanerForm.get('password')?.invalid && cleanerForm.get('password')?.touched" 
-             class="text-red-500 block mt-1">
-        Password is required for new cleaners
-      </small>
-    </div>
+        <div class="field">
+            <label for="password" class="block text-sm font-medium mb-2">
+                {{ isEditMode ? 'New Password (leave blank to keep current)' : 'Password *' }}
+            </label>
+            <input 
+                id="password" 
+                type="password" 
+                pInputText 
+                formControlName="password" 
+                class="w-full" 
+                [placeholder]="isEditMode ? 'Enter new password (optional)' : 'Enter password'">
+            <small *ngIf="!isEditMode && cleanerForm.get('password')?.invalid && cleanerForm.get('password')?.touched" 
+                   class="text-red-500 block mt-1">
+                Password is required for new cleaners
+            </small>
+        </div>
 
-    <div class="field flex items-center gap-2">
-      <p-checkbox 
-        formControlName="dba_verification"
-        inputId="dba_verification"
-        [binary]="true">
-      </p-checkbox>
-      <label for="dba_verification" class="text-sm font-medium cursor-pointer">
-        DBA Verification
-      </label>
-    </div>
-  </form>
+        <!-- DBA Verification Toggle -->
+        <div class="field flex items-center gap-2">
+            <p-toggleSwitch 
+                formControlName="dba_verification"
+                inputId="dba_verification">
+            </p-toggleSwitch>
+            <label for="dba_verification" class="text-sm font-medium cursor-pointer">
+                DBA Verification
+            </label>
+        </div>
 
-  <ng-template pTemplate="footer">
-    <div class="flex gap-2 justify-end w-full">
-      <p-button 
-        icon="pi pi-times" 
-        label="Cancel" 
-        severity="secondary" 
-        (onClick)="showCleanerForm = false">
-      </p-button>
-      <p-button 
-        [icon]="isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-check'" 
-        [label]="isEditMode ? 'Update' : 'Create'" 
-        severity="primary" 
-        [loading]="isSubmitting"
-        (onClick)="saveCleaner()"
-        [disabled]="cleanerForm.invalid || isSubmitting">
-      </p-button>
-    </div>
-  </ng-template>
+        <!-- File Upload Section -->
+        <div class="field">
+            <label class="block text-sm font-medium mb-2">Upload Photo</label>
+            <p-fileUpload 
+                mode="basic"
+                chooseLabel="Choose Image"
+                accept="image/*"
+                maxFileSize="1000000"
+                (onUpload)="onUpload($event)">
+            </p-fileUpload>
+            <small class="text-gray-500 block mt-1">Max file size: 1MB</small>
+        </div>
+
+        <!-- DBA Document Upload -->
+        <div class="field">
+            <label class="block text-sm font-medium mb-2">DBA Verification Document</label>
+            <p-fileUpload 
+                mode="basic"
+                chooseLabel="Choose Document"
+                accept=".pdf,.doc,.docx,.jpg,.png"
+                maxFileSize="5000000"
+                (onUpload)="onUpload($event)">
+            </p-fileUpload>
+            <small class="text-gray-500 block mt-1">Supported formats: PDF, DOC, JPG, PNG (Max: 5MB)</small>
+        </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+        <div class="flex gap-2 justify-end w-full">
+            <p-button 
+                icon="pi pi-times" 
+                label="Cancel" 
+                severity="secondary" 
+                (onClick)="showCleanerForm = false">
+            </p-button>
+            <p-button 
+                [icon]="isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-check'" 
+                [label]="isEditMode ? 'Update' : 'Create'" 
+                severity="primary" 
+                [loading]="isSubmitting"
+                (onClick)="saveCleaner()"
+                [disabled]="cleanerForm.invalid || isSubmitting">
+            </p-button>
+        </div>
+    </ng-template>
 </p-dialog>
 
 <p-toast></p-toast>
