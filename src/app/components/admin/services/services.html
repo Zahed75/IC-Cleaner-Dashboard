@@ -8,9 +8,15 @@
     </div>
 
     <p-card>
+        <div class="loading-spinner" *ngIf="isLoading">
+            <p-progressSpinner styleClass="w-8 h-8" strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+            <span class="ml-2">Loading services...</span>
+        </div>
+
         <p-table [value]="services" [tableStyle]="{ 'min-width': '1000px' }" styleClass="p-datatable-striped"
             [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [loading]="isLoading">
 
             <ng-template pTemplate="header">
                 <tr>
@@ -20,17 +26,17 @@
                     <th pSortableColumn="name" style="width: 250px">
                         SERVICE NAME <p-sortIcon field="name" />
                     </th>
-                    <th pSortableColumn="cost" style="width: 150px">
-                        SERVICE COST <p-sortIcon field="cost" />
+                    <th pSortableColumn="price_per_hour" style="width: 150px">
+                        PRICE PER HOUR <p-sortIcon field="price_per_hour" />
                     </th>
-                    <th pSortableColumn="pricePerHour" style="width: 150px">
-                        PRICE PER HOUR <p-sortIcon field="pricePerHour" />
+                    <th pSortableColumn="platform_fee_per_hour" style="width: 150px">
+                        PLATFORM FEE <p-sortIcon field="platform_fee_per_hour" />
                     </th>
-                    <th pSortableColumn="platformFee" style="width: 150px">
-                        PLATFORM FEE <p-sortIcon field="platformFee" />
+                    <th pSortableColumn="created_at" style="width: 150px">
+                        CREATED AT <p-sortIcon field="created_at" />
                     </th>
-                    <th pSortableColumn="status" style="width: 120px">
-                        STATUS <p-sortIcon field="status" />
+                    <th pSortableColumn="is_active" style="width: 120px">
+                        STATUS <p-sortIcon field="is_active" />
                     </th>
                     <th style="width: 120px">
                         ACTIONS
@@ -46,23 +52,22 @@
                     <td>
                         <span class="service-name">{{ service.name }}</span>
                     </td>
-                    <td class="cost-cell">{{ service.cost | currency:'GBP' }}</td>
-                    <td class="price-cell">{{ service.pricePerHour | currency:'GBP' }}/hr</td>
-                    <td class="fee-cell">
-                        {{ service.platformFee | currency:'GBP' }}
-                        <small class="percentage">({{ service.platformFeePercentage | number:'1.0-2' }}%)</small>
+                    <td class="price-cell">{{ formatCurrency(service.price_per_hour) | currency:'GBP' }}/hr</td>
+                    <td class="fee-cell">{{ formatCurrency(service.platform_fee_per_hour) | currency:'GBP' }}/hr</td>
+                    <td class="date-cell">
+                        {{ service.created_at | date:'mediumDate' }}
                     </td>
                     <td>
-                        <p-tag [value]="service.status" [severity]="getSeverity(service.status)" />
+                        <p-tag [value]="getStatusText(service.is_active)" [severity]="getSeverity(service.is_active)" />
                     </td>
                     <td>
                         <div class="action-buttons">
                             <p-button icon="pi pi-pencil" severity="primary" text 
                                 (onClick)="openEditService(service)" title="Edit Service" />
-                            <p-button [icon]="service.status === 'Active' ? 'pi pi-pause' : 'pi pi-play'" 
-                                [severity]="service.status === 'Active' ? 'secondary' : 'primary'" text
+                            <p-button [icon]="service.is_active ? 'pi pi-pause' : 'pi pi-play'" 
+                                [severity]="service.is_active ? 'secondary' : 'primary'" text
                                 (onClick)="toggleServiceStatus(service)" 
-                                [title]="service.status === 'Active' ? 'Deactivate' : 'Activate'" />
+                                [title]="service.is_active ? 'Deactivate' : 'Activate'" />
                         </div>
                     </td>
                 </tr>
@@ -79,58 +84,53 @@
 
 <!-- Service Form Dialog -->
 <p-dialog [header]="isEditMode ? 'Edit Service' : 'Create New Service'" [(visible)]="showServiceForm" [modal]="true" 
-    [style]="{ width: '500px', 'max-width': '90vw' }" [draggable]="false" [resizable]="false">
+    [style]="{ width: '500px', 'max-width': '90vw' }" [draggable]="false" [resizable]="false"
+    [closable]="!isSubmitting">
 
     <div class="service-form" [formGroup]="serviceForm">
         <div class="field">
             <label class="block text-sm font-medium mb-2">Service Name/Type</label>
-            <input pInputText formControlName="name" placeholder="Enter service name" class="w-full" />
+            <input pInputText formControlName="name" placeholder="Enter service name" class="w-full" 
+                   [disabled]="isSubmitting" />
             <small *ngIf="serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched" class="text-red-500">
                 Service name is required
             </small>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 gap-4">
             <div class="field">
                 <label class="block text-sm font-medium mb-2">Price Per Hour (£)</label>
-                <p-inputNumber formControlName="pricePerHour" mode="currency" currency="GBP" locale="en-GB" 
-                    placeholder="0.00" class="w-full"></p-inputNumber>
+                <p-inputNumber formControlName="price_per_hour" mode="currency" currency="GBP" locale="en-GB" 
+                    placeholder="0.00" class="w-full" [disabled]="isSubmitting"></p-inputNumber>
+                <small *ngIf="serviceForm.get('price_per_hour')?.invalid && serviceForm.get('price_per_hour')?.touched" class="text-red-500">
+                    Price per hour must be greater than 0
+                </small>
             </div>
 
             <div class="field">
-                <label class="block text-sm font-medium mb-2">Cost of Service (£)</label>
-                <p-inputNumber formControlName="cost" mode="currency" currency="GBP" locale="en-GB" 
-                    placeholder="0.00" class="w-full"></p-inputNumber>
+                <label class="block text-sm font-medium mb-2">Platform Fee Per Hour (£)</label>
+                <p-inputNumber formControlName="platform_fee_per_hour" mode="currency" currency="GBP" locale="en-GB" 
+                    placeholder="0.00" class="w-full" [disabled]="isSubmitting"></p-inputNumber>
+                <small *ngIf="serviceForm.get('platform_fee_per_hour')?.invalid && serviceForm.get('platform_fee_per_hour')?.touched" class="text-red-500">
+                    Platform fee must be greater than 0
+                </small>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="field">
-                <label class="block text-sm font-medium mb-2">Platform Fee (£)</label>
-                <p-inputNumber formControlName="platformFee" mode="currency" currency="GBP" locale="en-GB" 
-                    placeholder="0.00" class="w-full" (onInput)="calculatePlatformFee()"></p-inputNumber>
-            </div>
-
-            <div class="field">
-                <label class="block text-sm font-medium mb-2">Platform Fee (%)</label>
-                <p-inputNumber formControlName="platformFeePercentage" suffix="%" minFractionDigits="2" maxFractionDigits="2"
-                    placeholder="0.00" class="w-full" (onInput)="calculatePlatformFeeFromPercentage()"></p-inputNumber>
-            </div>
-        </div>
-
-        <div class="field flex items-center gap-3">
-            <p-toggleSwitch formControlName="status" />
+        <div class="field flex items-center gap-3 mt-4">
+            <p-toggleSwitch formControlName="is_active" [disabled]="isSubmitting" />
             <label class="text-sm font-medium">Active</label>
         </div>
     </div>
 
     <ng-template pTemplate="footer">
         <p-button icon="pi pi-times" label="Cancel" severity="secondary" 
-            (onClick)="showServiceForm = false" />
-        <p-button [icon]="isEditMode ? 'pi pi-check' : 'pi pi-plus'" 
-                  [label]="isEditMode ? 'Edit Service' : 'Create Service'" 
+            (onClick)="showServiceForm = false" [disabled]="isSubmitting" />
+        <p-button [icon]="isSubmitting ? 'pi pi-spin pi-spinner' : (isEditMode ? 'pi pi-check' : 'pi pi-plus')" 
+                  [label]="isSubmitting ? 'Saving...' : (isEditMode ? 'Update Service' : 'Create Service')" 
                   severity="primary" 
-                  (onClick)="saveService()" />
+                  (onClick)="saveService()" 
+                  [disabled]="isSubmitting || serviceForm.invalid" />
     </ng-template>
 </p-dialog>
 

@@ -1,5 +1,5 @@
 // src/app/app.config.ts
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
@@ -7,10 +7,10 @@ import Aura from '@primeuix/themes/aura';
 
 // ✅ add this import
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-// (Alternatively use: import { provideAnimations } from '@angular/platform-browser/animations';)
 
 import { appRoutes } from './app.routes';
 import { MessageService } from 'primeng/api';
+import { authInterceptor } from '../src/app/interceptor/auth/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,12 +27,14 @@ export const appConfig: ApplicationConfig = {
       withEnabledBlockingInitialNavigation()
     ),
     
-    // HTTP client with fetch
-    provideHttpClient(withFetch()),
+    // HTTP client with fetch and interceptor
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor])
+    ),
 
-    // ✅ enable animations (pick ONE of async or sync)
+    // ✅ enable animations
     provideAnimationsAsync(),
-    // provideAnimations(),
 
     // PrimeNG configuration
     providePrimeNG({

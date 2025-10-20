@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -12,18 +12,10 @@ import { Toast } from 'primeng/toast';
 import { InputText } from 'primeng/inputtext';
 import { InputNumber } from 'primeng/inputnumber';
 import { ToggleSwitch } from 'primeng/toggleswitch';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 import { MessageService } from 'primeng/api';
-
-interface Service {
-  id: string;
-  name: string;
-  cost: number;
-  pricePerHour: number;
-  platformFee: number;
-  platformFeePercentage: number;
-  status: 'Active' | 'Inactive';
-}
+import { ServiceManagementService, Service, CreateServiceRequest, UpdateServiceRequest } from '../../../services/services/service-management';
 
 @Component({
   selector: 'app-services',
@@ -40,94 +32,57 @@ interface Service {
     Toast,
     InputText,
     InputNumber,
-    ToggleSwitch
-  ],
+    ToggleSwitch,
+    ProgressSpinner
+],
   providers: [MessageService],
   templateUrl: './services.html',
   styleUrls: ['./services.css']
 })
-export class ServicesComponent {
+export class ServicesComponent implements OnInit {
   private messageService = inject(MessageService);
   private fb = inject(FormBuilder);
+  private serviceManagementService = inject(ServiceManagementService);
 
   serviceForm: FormGroup;
   showServiceForm = false;
   isEditMode = false;
   editingService: Service | null = null;
+  isLoading = false;
+  isSubmitting = false;
 
-  services: Service[] = [
-    {
-      id: 'ICCSVM001',
-      name: 'Regular Cleaning',
-      cost: 299.99,
-      pricePerHour: 17.50,
-      platformFee: 4.00,
-      platformFeePercentage: 22.86,
-      status: 'Active'
-    },
-    {
-      id: 'ICCSVM002',
-      name: 'Deep Cleaning',
-      cost: 349.99,
-      pricePerHour: 20.00,
-      platformFee: 4.50,
-      platformFeePercentage: 22.50,
-      status: 'Active'
-    },
-    {
-      id: 'ICCSVM003',
-      name: 'Seasonal Cleaning',
-      cost: 399.99,
-      pricePerHour: 22.50,
-      platformFee: 5.00,
-      platformFeePercentage: 22.22,
-      status: 'Active'
-    },
-    {
-      id: 'ICCSVM004',
-      name: 'Post-Event Cleaning',
-      cost: 449.99,
-      pricePerHour: 25.00,
-      platformFee: 5.50,
-      platformFeePercentage: 22.00,
-      status: 'Inactive'
-    },
-    {
-      id: 'ICCSVM005',
-      name: 'Move-In/Move-Out Cleaning',
-      cost: 499.99,
-      pricePerHour: 28.00,
-      platformFee: 6.00,
-      platformFeePercentage: 21.43,
-      status: 'Inactive'
-    }
-  ];
+  services: Service[] = [];
 
   constructor() {
     this.serviceForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      cost: [0, [Validators.required, Validators.min(0)]],
-      pricePerHour: [0, [Validators.required, Validators.min(0)]],
-      platformFee: [0, [Validators.required, Validators.min(0)]],
-      platformFeePercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-      status: [true]
+      price_per_hour: [0, [Validators.required, Validators.min(0)]],
+      platform_fee_per_hour: [0, [Validators.required, Validators.min(0)]],
+      is_active: [true]
     });
+  }
 
-    // Calculate platform fee percentage when price per hour changes
-    this.serviceForm.get('pricePerHour')?.valueChanges.subscribe(price => {
-      const platformFee = this.serviceForm.get('platformFee')?.value;
-      if (price > 0 && platformFee > 0) {
-        const percentage = (platformFee / price) * 100;
-        this.serviceForm.patchValue({ platformFeePercentage: percentage }, { emitEvent: false });
-      }
-    });
+  ngOnInit() {
+    this.loadServices();
+  }
 
-    // Calculate platform fee when percentage changes
-    this.serviceForm.get('platformFeePercentage')?.valueChanges.subscribe(percentage => {
-      const pricePerHour = this.serviceForm.get('pricePerHour')?.value;
-      if (pricePerHour > 0 && percentage > 0) {
-        const fee = (pricePerHour * percentage) / 100;
-        this.serviceForm.patchValue({ platformFee: fee }, { emitEvent: false });
+  // Load all services from API
+  loadServices() {
+    this.isLoading = true;
+    this.serviceManagementService.getServices().subscribe({
+      next: (response) => {
+        this.services = response.data;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading services:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load services',
+          life: 5000
+        });
+        this.isLoading = false;
       }
     });
   }
@@ -137,11 +92,9 @@ export class ServicesComponent {
     this.editingService = null;
     this.serviceForm.reset({
       name: '',
-      cost: 0,
-      pricePerHour: 0,
-      platformFee: 0,
-      platformFeePercentage: 0,
-      status: true
+      price_per_hour: 0,
+      platform_fee_per_hour: 0,
+      is_active: true
     });
     this.showServiceForm = true;
   }
@@ -151,11 +104,9 @@ export class ServicesComponent {
     this.editingService = service;
     this.serviceForm.patchValue({
       name: service.name,
-      cost: service.cost,
-      pricePerHour: service.pricePerHour,
-      platformFee: service.platformFee,
-      platformFeePercentage: service.platformFeePercentage,
-      status: service.status === 'Active'
+      price_per_hour: parseFloat(service.price_per_hour),
+      platform_fee_per_hour: parseFloat(service.platform_fee_per_hour),
+      is_active: service.is_active
     });
     this.showServiceForm = true;
   }
@@ -171,68 +122,111 @@ export class ServicesComponent {
       return;
     }
 
+    this.isSubmitting = true;
     const formValue = this.serviceForm.value;
-    const serviceData: Service = {
-      id: this.isEditMode && this.editingService ? this.editingService.id : 'ICCSVM' + (this.services.length + 1).toString().padStart(3, '0'),
-      name: formValue.name,
-      cost: formValue.cost,
-      pricePerHour: formValue.pricePerHour,
-      platformFee: formValue.platformFee,
-      platformFeePercentage: formValue.platformFeePercentage,
-      status: formValue.status ? 'Active' : 'Inactive'
-    };
 
-    if (this.isEditMode) {
+    if (this.isEditMode && this.editingService) {
       // Update existing service
-      const index = this.services.findIndex(s => s.id === serviceData.id);
-      if (index !== -1) {
-        this.services[index] = serviceData;
-      }
-    } else {
-      // Add new service
-      this.services.unshift(serviceData);
-    }
+      const updateData: UpdateServiceRequest = {
+        name: formValue.name,
+        price_per_hour: formValue.price_per_hour,
+        platform_fee_per_hour: formValue.platform_fee_per_hour,
+        is_active: formValue.is_active
+      };
 
-    this.showServiceForm = false;
-    this.messageService.add({
-      severity: 'success',
-      summary: this.isEditMode ? 'Service Updated' : 'Service Created',
-      detail: this.isEditMode ? 'Service has been updated successfully' : 'New service has been created successfully',
-      life: 5000
-    });
+      this.serviceManagementService.updateService(this.editingService.id, updateData).subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          this.showServiceForm = false;
+          this.loadServices(); // Reload the services list
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Service Updated',
+            detail: response.message,
+            life: 5000
+          });
+        },
+        error: (error) => {
+          console.error('Error updating service:', error);
+          this.isSubmitting = false;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Update Failed',
+            detail: error.error?.message || 'Failed to update service',
+            life: 5000
+          });
+        }
+      });
+    } else {
+      // Create new service
+      const createData: CreateServiceRequest = {
+        name: formValue.name,
+        price_per_hour: formValue.price_per_hour,
+        platform_fee_per_hour: formValue.platform_fee_per_hour,
+        is_active: formValue.is_active
+      };
+
+      this.serviceManagementService.createService(createData).subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          this.showServiceForm = false;
+          this.loadServices(); // Reload the services list
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Service Created',
+            detail: 'Service has been created successfully',
+            life: 5000
+          });
+        },
+        error: (error) => {
+          console.error('Error creating service:', error);
+          this.isSubmitting = false;
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Creation Failed',
+            detail: error.error?.message || 'Failed to create service',
+            life: 5000
+          });
+        }
+      });
+    }
   }
 
   toggleServiceStatus(service: Service) {
-    service.status = service.status === 'Active' ? 'Inactive' : 'Active';
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Status Updated',
-      detail: `Service ${service.status === 'Active' ? 'activated' : 'deactivated'}`,
-      life: 3000
+    const newStatus = !service.is_active;
+    
+    this.serviceManagementService.toggleServiceStatus(service.id, newStatus).subscribe({
+      next: (response) => {
+        service.is_active = newStatus;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Status Updated',
+          detail: response.message,
+          life: 3000
+        });
+      },
+      error: (error) => {
+        console.error('Error updating service status:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Update Failed',
+          detail: error.error?.message || 'Failed to update service status',
+          life: 5000
+        });
+      }
     });
   }
 
-  getSeverity(status: string) {
-    return status === 'Active' ? 'success' : 'danger';
+  getSeverity(status: boolean) {
+    return status ? 'success' : 'danger';
   }
 
-  calculatePlatformFee() {
-    const pricePerHour = this.serviceForm.get('pricePerHour')?.value;
-    const platformFee = this.serviceForm.get('platformFee')?.value;
-    
-    if (pricePerHour > 0 && platformFee > 0) {
-      const percentage = (platformFee / pricePerHour) * 100;
-      this.serviceForm.patchValue({ platformFeePercentage: percentage });
-    }
+  getStatusText(status: boolean): string {
+    return status ? 'Active' : 'Inactive';
   }
 
-  calculatePlatformFeeFromPercentage() {
-    const pricePerHour = this.serviceForm.get('pricePerHour')?.value;
-    const percentage = this.serviceForm.get('platformFeePercentage')?.value;
-    
-    if (pricePerHour > 0 && percentage > 0) {
-      const fee = (pricePerHour * percentage) / 100;
-      this.serviceForm.patchValue({ platformFee: fee });
-    }
+  // Helper method to format currency
+  formatCurrency(amount: string): number {
+    return parseFloat(amount);
   }
 }
