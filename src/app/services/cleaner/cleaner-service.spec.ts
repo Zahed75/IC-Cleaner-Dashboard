@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Cleaner } from './cleaner';
+import { CleanerService } from './cleaner-service';
 
-describe('Cleaner', () => {
-  let service: Cleaner;
+describe('CleanerService', () => {
+  let service: CleanerService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Cleaner);
+    service = TestBed.inject(CleanerService);
   });
 
   it('should be created', () => {
