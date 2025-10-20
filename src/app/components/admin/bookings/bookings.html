@@ -1,20 +1,27 @@
+<!-- src/app/components/admin/bookings/bookings.html -->
 <div class="bookings-container">
     <div class="bookings-header">
         <div class="header-content">
             <h2>Booking Management</h2>
             <p>Here's what's happening with your cleaning services today</p>
         </div>
-        <p-button icon="pi pi-plus" label="Book a Cleaning" severity="primary" (onClick)="showBookingForm = true" />
+        <p-button icon="pi pi-plus" label="Book a Cleaning" severity="primary" (onClick)="openAddBooking()" />
     </div>
 
     <p-card>
+        <div class="loading-spinner" *ngIf="isLoading">
+            <p-progressSpinner styleClass="w-8 h-8" strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+            <span class="ml-2">Loading bookings...</span>
+        </div>
+
         <p-table [value]="bookings" [tableStyle]="{ 'min-width': '1200px' }" styleClass="p-datatable-striped"
             [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [loading]="isLoading">
 
             <ng-template pTemplate="header">
                 <tr>
-                    <th pSortableColumn="id" style="width: 180px">
+                    <th pSortableColumn="id" style="width: 120px">
                         Booking ID <p-sortIcon field="id" />
                     </th>
                     <th pSortableColumn="customer" style="width: 200px">
@@ -23,11 +30,11 @@
                     <th pSortableColumn="service" style="width: 200px">
                         Service <p-sortIcon field="service" />
                     </th>
-                    <th pSortableColumn="date" style="width: 220px">
-                        Date & Time <p-sortIcon field="date" />
+                    <th pSortableColumn="booking_date" style="width: 220px">
+                        Date & Time <p-sortIcon field="booking_date" />
                     </th>
-                    <th pSortableColumn="amount" style="width: 120px">
-                        Amount <p-sortIcon field="amount" />
+                    <th pSortableColumn="location" style="width: 200px">
+                        Location <p-sortIcon field="location" />
                     </th>
                     <th pSortableColumn="status" style="width: 150px">
                         Status <p-sortIcon field="status" />
@@ -38,21 +45,21 @@
             <ng-template pTemplate="body" let-booking>
                 <tr (click)="showBookingDetails(booking)" class="clickable-row">
                     <td>
-                        <span class="booking-id">{{ booking.id }}</span>
+                        <span class="booking-id">#{{ booking.id }}</span>
                     </td>
-                    <td>{{ booking.customer }}</td>
+                    <td>{{ getCustomerFullName(booking) }}</td>
                     <td>
-                        <span class="service-badge">{{ booking.service }}</span>
+                        <span class="service-badge">{{ getServiceName(booking) }}</span>
                     </td>
                     <td>
                         <div class="datetime-cell">
-                            <span class="date">{{ getDatePart(booking.date) }}</span>
-                            <span class="time">{{ getTimePart(booking.date) }}</span>
+                            <span class="date">{{ getDatePart(booking.booking_date) }}</span>
+                            <span class="time">{{ getTimePart(booking.time_slot) }}</span>
                         </div>
                     </td>
-                    <td class="amount-cell">{{ booking.amount | currency:'GBP' }}</td>
+                    <td class="location-cell">{{ booking.location }}</td>
                     <td>
-                        <p-tag [value]="booking.status" [severity]="getSeverity(booking.status)" />
+                        <p-tag [value]="getStatusText(booking.status)" [severity]="getSeverity(booking.status)" />
                     </td>
                 </tr>
             </ng-template>
@@ -67,8 +74,8 @@
 </div>
 
 <!-- Book a Cleaning Service Dialog -->
-<p-dialog header="Book a Cleaning Service" [(visible)]="showBookingForm" [modal]="true" [style]="{ width: '600px', 'max-width': '90vw' }"
-    [draggable]="false" [resizable]="false" (onHide)="resetForm()">
+<p-dialog [header]="isEditMode ? 'Edit Booking' : 'Book a Cleaning Service'" [(visible)]="showBookingForm" [modal]="true" [style]="{ width: '600px', 'max-width': '90vw' }"
+    [draggable]="false" [resizable]="false" (onHide)="resetForm()" [closable]="!isSubmitting">
 
     <div class="booking-form" [formGroup]="bookingForm">
         <!-- Steps -->
@@ -82,22 +89,29 @@
                 <label class="block text-sm font-medium mb-2">Customer</label>
                 <div class="flex gap-2">
                     <p-select [options]="customers" formControlName="customer" placeholder="Select a Customer"
-                        optionLabel="name" styleClass="w-full" [showClear]="true"></p-select>
-                    <p-button icon="pi pi-plus" severity="secondary" styleClass="h-10" title="Add New Customer" />
+                        optionLabel="first_name" styleClass="w-full" [showClear]="true"
+                        [disabled]="isSubmitting">
+                        <ng-template let-customer pTemplate="item">
+                            <div class="flex items-center">
+                                <span>{{ customer.first_name }} {{ customer.last_name }}</span>
+                                <small class="ml-2 text-gray-500">({{ customer.email }})</small>
+                            </div>
+                        </ng-template>
+                    </p-select>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="field">
                     <label class="block text-sm font-medium mb-2">Service Type</label>
-                    <p-select [options]="serviceTypes" formControlName="service" placeholder="Select Service Type"
-                        styleClass="w-full"></p-select>
+                    <p-select [options]="services" formControlName="service" placeholder="Select Service Type"
+                        optionLabel="name" styleClass="w-full" [disabled]="isSubmitting"></p-select>
                 </div>
 
                 <div class="field">
                     <label class="block text-sm font-medium mb-2">Date</label>
                     <p-datepicker formControlName="date" placeholder="Pick a date" 
-                        [showIcon]="true" dateFormat="dd M yy"></p-datepicker>
+                        [showIcon]="true" dateFormat="dd M yy" [disabled]="isSubmitting"></p-datepicker>
                 </div>
             </div>
 
@@ -105,23 +119,24 @@
                 <div class="field">
                     <label class="block text-sm font-medium mb-2">Time</label>
                     <p-select [options]="timeSlots" formControlName="time" placeholder="Select a time"
-                        styleClass="w-full"></p-select>
+                        styleClass="w-full" [disabled]="isSubmitting"></p-select>
                 </div>
 
                 <div class="field">
                     <label class="block text-sm font-medium mb-2">Location</label>
                     <p-select [options]="locations" formControlName="location" placeholder="Select a location" 
-                        styleClass="w-full"></p-select>
+                        styleClass="w-full" [disabled]="isSubmitting"></p-select>
                 </div>
             </div>
 
             <div class="field">
                 <label class="block text-sm font-medium mb-2">Special Requests</label>
                 <textarea 
-                    formControlName="requests" 
+                    formControlName="special_requirements" 
                     placeholder="Any special instructions or requests"
                     rows="3" 
-                    class="w-full p-inputtext p-component p-inputtextarea">
+                    class="w-full p-inputtext p-component p-inputtextarea"
+                    [disabled]="isSubmitting">
                 </textarea>
             </div>
         </div>
@@ -136,10 +151,10 @@
                      [class.selected]="selectedCleaner?.id === cleaner.id"
                      (click)="selectCleaner(cleaner)">
                     <div class="cleaner-info">
-                        <h4 class="cleaner-name">{{ cleaner.name }}</h4>
+                        <h4 class="cleaner-name">{{ getCleanerFullName(cleaner) }}</h4>
                         <div class="cleaner-stats">
-                            <span class="completed-jobs">© {{ cleaner.completedJobs }}+ Cleaning Completed</span>
-                            <span class="rating">{{ cleaner.rating }}/5</span>
+                            <span class="completed-jobs">© {{ getCleanerCompletedJobs(cleaner) }}+ Cleaning Completed</span>
+                            <span class="rating">{{ getCleanerRating(cleaner) }}/5</span>
                         </div>
                     </div>
                 </div>
@@ -154,31 +169,39 @@
                 <div class="success-icon">
                     <i class="pi pi-check-circle"></i>
                 </div>
-                <h4 class="confirmation-title">Booking Successful!</h4>
+                <h4 class="confirmation-title">{{ isEditMode ? 'Update Booking' : 'Ready to Book!' }}</h4>
                 <p class="confirmation-message">
-                    New booking is placed successfully, and customer will be notified shortly.
+                    {{ isEditMode ? 'Review your updated booking details.' : 'Review your booking details before confirming.' }}
                 </p>
                 
-                <div class="booking-summary" *ngIf="bookingForm.valid && selectedCleaner">
+                <div class="booking-summary" *ngIf="bookingForm.valid">
                     <div class="summary-item">
                         <span class="label">Customer:</span>
-                        <span class="value">{{ bookingForm.get('customer')?.value?.name }}</span>
+                        <span class="value">{{ bookingForm.get('customer')?.value?.first_name }} {{ bookingForm.get('customer')?.value?.last_name }}</span>
                     </div>
                     <div class="summary-item">
                         <span class="label">Service:</span>
-                        <span class="value">{{ bookingForm.get('service')?.value }}</span>
+                        <span class="value">{{ bookingForm.get('service')?.value?.name }}</span>
                     </div>
                     <div class="summary-item">
                         <span class="label">Date & Time:</span>
                         <span class="value">{{ formatDateTime(bookingForm.get('date')?.value, bookingForm.get('time')?.value) }}</span>
                     </div>
-                    <div class="summary-item">
+                    <div class="summary-item" *ngIf="selectedCleaner">
                         <span class="label">Cleaner:</span>
-                        <span class="value">{{ selectedCleaner.name }}</span>
+                        <span class="value">{{ getCleanerFullName(selectedCleaner) }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Location:</span>
+                        <span class="value">{{ bookingForm.get('location')?.value }}</span>
                     </div>
                     <div class="summary-item">
                         <span class="label">Amount:</span>
                         <span class="value amount">{{ calculateAmount(bookingForm.get('service')?.value) | currency:'GBP' }}</span>
+                    </div>
+                    <div class="summary-item" *ngIf="bookingForm.get('special_requirements')?.value">
+                        <span class="label">Special Requests:</span>
+                        <span class="value">{{ bookingForm.get('special_requirements')?.value }}</span>
                     </div>
                 </div>
             </div>
@@ -187,72 +210,92 @@
 
     <ng-template pTemplate="footer">
         <div class="flex justify-between w-full">
-            <p-button *ngIf="currentStep > 0" icon="pi pi-arrow-left" label="Back" severity="secondary" (onClick)="prevStep()" />
+            <p-button *ngIf="currentStep > 0" icon="pi pi-arrow-left" label="Back" severity="secondary" 
+                (onClick)="prevStep()" [disabled]="isSubmitting" />
             <div *ngIf="currentStep === 0"></div>
             
             <p-button *ngIf="currentStep < 2" 
                      icon="pi pi-arrow-right" 
                      label="Next" 
                      severity="primary" 
-                     (onClick)="nextStep()" />
+                     (onClick)="nextStep()" 
+                     [disabled]="isSubmitting" />
             
             <p-button *ngIf="currentStep === 2" 
-                     icon="pi pi-check" 
-                     label="Book Cleaning" 
+                     [icon]="isSubmitting ? 'pi pi-spin pi-spinner' : 'pi pi-check'" 
+                     [label]="isSubmitting ? (isEditMode ? 'Updating...' : 'Booking...') : (isEditMode ? 'Update Booking' : 'Confirm Booking')" 
                      severity="primary" 
-                     (onClick)="confirmBooking()" />
+                     (onClick)="saveBooking()" 
+                     [disabled]="isSubmitting || bookingForm.invalid" />
         </div>
     </ng-template>
 </p-dialog>
 
-<!-- Existing details dialog remains the same -->
+<!-- Booking Details Dialog -->
 <p-dialog header="Cleaning Service Details" [(visible)]="showBookingDetailsDialog" [modal]="true"
     [style]="{ width: '500px' }" [draggable]="false" [resizable]="false">
 
     <div class="booking-details" *ngIf="selectedBooking">
         <div class="detail-item">
+            <label class="block text-sm font-medium text-gray-600 mb-1">Booking ID</label>
+            <p class="text-gray-900 font-mono">#{{ selectedBooking.id }}</p>
+        </div>
+
+        <div class="detail-item">
             <label class="block text-sm font-medium text-gray-600 mb-1">Customer Name</label>
-            <p class="text-gray-900">{{ selectedBooking.customer }}</p>
+            <p class="text-gray-900">{{ getCustomerFullName(selectedBooking) }}</p>
         </div>
 
         <div class="detail-item">
             <label class="block text-sm font-medium text-gray-600 mb-1">Service Type</label>
-            <p class="text-gray-900">{{ selectedBooking.service }}</p>
+            <p class="text-gray-900">{{ getServiceName(selectedBooking) }}</p>
         </div>
 
         <div class="detail-item">
             <label class="block text-sm font-medium text-gray-600 mb-1">Date & Time</label>
             <div class="text-gray-900">
-                <div class="font-medium">{{ getDatePart(selectedBooking.date) }}</div>
-                <div class="text-sm text-gray-600">{{ getTimePart(selectedBooking.date) }}</div>
+                <div class="font-medium">{{ getDatePart(selectedBooking.booking_date) }}</div>
+                <div class="text-sm text-gray-600">{{ getTimePart(selectedBooking.time_slot) }}</div>
             </div>
         </div>
 
-        <div class="detail-item" *ngIf="selectedBooking.address">
-            <label class="block text-sm font-medium text-gray-600 mb-1">Address</label>
-            <p class="text-gray-900 whitespace-pre-line">{{ selectedBooking.address }}</p>
+        <div class="detail-item">
+            <label class="block text-sm font-medium text-gray-600 mb-1">Location</label>
+            <p class="text-gray-900">{{ selectedBooking.location }}</p>
         </div>
 
-        <div class="detail-item">
-            <label class="block text-sm font-medium text-gray-600 mb-1">Service Pay</label>
-            <p class="text-2xl font-semibold text-green-600">{{ selectedBooking.amount | currency:'GBP' }}</p>
+        <div class="detail-item" *ngIf="selectedBooking.assign_cleaner_detail">
+            <label class="block text-sm font-medium text-gray-600 mb-1">Assigned Cleaner</label>
+            <p class="text-gray-900">
+                {{ selectedBooking.assign_cleaner_detail.first_name }} {{ selectedBooking.assign_cleaner_detail.last_name }}
+            </p>
         </div>
 
         <div class="detail-item">
             <label class="block text-sm font-medium text-gray-600 mb-1">Status</label>
-            <p-tag [value]="selectedBooking.status" [severity]="getSeverity(selectedBooking.status)" />
+            <p-tag [value]="getStatusText(selectedBooking.status)" [severity]="getSeverity(selectedBooking.status)" />
         </div>
 
-        <div class="detail-item" *ngIf="selectedBooking.notes">
+        <div class="detail-item" *ngIf="selectedBooking.special_requirements">
             <label class="block text-sm font-medium text-gray-600 mb-1">Special Requests</label>
-            <p class="text-gray-900">{{ selectedBooking.notes }}</p>
+            <p class="text-gray-900">{{ selectedBooking.special_requirements }}</p>
+        </div>
+
+        <div class="detail-item">
+            <label class="block text-sm font-medium text-gray-600 mb-1">Created</label>
+            <p class="text-gray-900 text-sm">{{ getDatePart(selectedBooking.created_at) }}</p>
+        </div>
+
+        <div class="detail-item">
+            <label class="block text-sm font-medium text-gray-600 mb-1">Last Updated</label>
+            <p class="text-gray-900 text-sm">{{ getDatePart(selectedBooking.updated_at) }}</p>
         </div>
     </div>
 
     <ng-template pTemplate="footer">
         <div class="flex gap-2 justify-between w-full">
             <p-button icon="pi pi-pencil" label="Edit Booking" severity="primary" (onClick)="editBooking()" />
-            <p-button icon="pi pi-times" label="Cancel" severity="secondary" (onClick)="showBookingDetailsDialog = false" />
+            <p-button icon="pi pi-times" label="Close" severity="secondary" (onClick)="showBookingDetailsDialog = false" />
         </div>
     </ng-template>
 </p-dialog>
