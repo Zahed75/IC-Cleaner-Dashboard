@@ -64,6 +64,10 @@ export class Cleaners implements OnInit {
   isSubmitting = false;
   isLoadingDetails = false;
 
+  // File upload variables
+  profilePictureFile: File | null = null;
+  dbaDocumentFile: File | null = null;
+
   cleaners: Cleaner[] = [];
 
   constructor() {
@@ -76,7 +80,10 @@ export class Cleaners implements OnInit {
       state: [''],
       country: ['USA', [Validators.required]],
       password: ['', this.isEditMode ? [] : [Validators.required]],
-      dba_verification: [false]
+      dba_verification: [false],
+      rating: [5],
+      total_services_done: [0],
+      pending_services: [0]
     });
   }
 
@@ -143,7 +150,9 @@ export class Cleaners implements OnInit {
           dba_verification: cleaner.profile.dba_verification,
           rating: parseFloat(cleaner.profile.rating),
           total_services_done: cleaner.profile.total_services_done,
-          pending_services: cleaner.profile.pending_services
+          pending_services: cleaner.profile.pending_services,
+          profile_picture: cleaner.profile.profile_picture,
+          dba_document: cleaner.profile.dba_document
         };
       }
     });
@@ -152,6 +161,8 @@ export class Cleaners implements OnInit {
   openAddCleaner() {
     this.isEditMode = false;
     this.editingCleaner = null;
+    this.profilePictureFile = null;
+    this.dbaDocumentFile = null;
     this.cleanerForm.reset({
       first_name: '',
       last_name: '',
@@ -161,27 +172,73 @@ export class Cleaners implements OnInit {
       state: '',
       country: 'USA',
       password: '',
-      dba_verification: false
+      dba_verification: false,
+      rating: 5,
+      total_services_done: 0,
+      pending_services: 0
     });
     this.showCleanerForm = true;
   }
 
   openEditCleaner(cleaner: Cleaner) {
-    this.isEditMode = true;
-    this.editingCleaner = cleaner;
-    this.cleanerForm.patchValue({
-      first_name: cleaner.first_name,
-      last_name: cleaner.last_name,
-      email: cleaner.email,
-      phone_number: cleaner.profile.phone_number,
-      city: cleaner.profile.city,
-      state: cleaner.profile.state,
-      country: cleaner.profile.country,
-      dba_verification: cleaner.profile.dba_verification,
-      password: '' // Password is optional for updates
-    });
-    this.showCleanerForm = true;
+  console.log('Editing cleaner:', cleaner);
+  console.log('Cleaner profile:', cleaner.profile);
+  
+  this.isEditMode = true;
+  this.editingCleaner = cleaner;
+  this.profilePictureFile = null;
+  this.dbaDocumentFile = null;
+
+  // Safe data extraction with fallbacks
+  const profile = cleaner.profile || {};
+  
+  this.cleanerForm.patchValue({
+    first_name: cleaner.first_name || '',
+    last_name: cleaner.last_name || '',
+    email: cleaner.email || '',
+    phone_number: profile.phone_number || '',
+    city: profile.city || '',
+    state: profile.state || '',
+    country: profile.country || 'USA',
+    dba_verification: profile.dba_verification || false,
+    rating: profile.rating ? parseFloat(profile.rating) : 5,
+    total_services_done: profile.total_services_done || 0,
+    pending_services: profile.pending_services || 0,
+    password: '' // Password is optional for updates
+  });
+  
+  this.showCleanerForm = true;
+}
+
+ // Handle profile picture upload
+onProfilePictureUpload(event: any) {
+  if (event.files && event.files.length > 0) {
+    this.profilePictureFile = event.files[0];
+    if (this.profilePictureFile) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Profile Picture Selected',
+        detail: `File: ${this.profilePictureFile.name}`,
+        life: 3000
+      });
+    }
   }
+}
+
+// Handle DBA document upload
+onDbaDocumentUpload(event: any) {
+  if (event.files && event.files.length > 0) {
+    this.dbaDocumentFile = event.files[0];
+    if (this.dbaDocumentFile) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'DBA Document Selected',
+        detail: `File: ${this.dbaDocumentFile.name}`,
+        life: 3000
+      });
+    }
+  }
+}
 
   saveCleaner() {
     if (this.cleanerForm.invalid) {
@@ -208,12 +265,23 @@ export class Cleaners implements OnInit {
         city: formValue.city,
         state: formValue.state,
         country: formValue.country,
-        dba_verification: formValue.dba_verification
+        dba_verification: formValue.dba_verification,
+        rating: formValue.rating,
+        total_services_done: formValue.total_services_done,
+        pending_services: formValue.pending_services
       };
 
       // Only include password if provided
       if (formValue.password) {
         updateData.password = formValue.password;
+      }
+
+      // Add files if they exist
+      if (this.profilePictureFile) {
+        updateData.profile_picture = this.profilePictureFile;
+      }
+      if (this.dbaDocumentFile) {
+        updateData.dba_document = this.dbaDocumentFile;
       }
 
       this.cleanerService.updateCleaner(this.editingCleaner.id, updateData).subscribe({
@@ -251,7 +319,12 @@ export class Cleaners implements OnInit {
         city: formValue.city,
         state: formValue.state,
         country: formValue.country,
-        dba_verification: formValue.dba_verification
+        dba_verification: formValue.dba_verification,
+        rating: formValue.rating,
+        total_services_done: formValue.total_services_done,
+        pending_services: formValue.pending_services,
+        profile_picture: this.profilePictureFile || undefined,
+        dba_document: this.dbaDocumentFile || undefined
       };
 
       this.cleanerService.createCleaner(createData).subscribe({
@@ -381,11 +454,23 @@ export class Cleaners implements OnInit {
     });
   }
 
-  onUpload(event: any) {
+  // Remove file from upload
+  removeProfilePicture() {
+    this.profilePictureFile = null;
     this.messageService.add({
       severity: 'info',
-      summary: 'File Uploaded',
-      detail: 'File has been uploaded successfully',
+      summary: 'Profile Picture Removed',
+      detail: 'Profile picture has been removed',
+      life: 3000
+    });
+  }
+
+  removeDbaDocument() {
+    this.dbaDocumentFile = null;
+    this.messageService.add({
+      severity: 'info',
+      summary: 'DBA Document Removed',
+      detail: 'DBA document has been removed',
       life: 3000
     });
   }

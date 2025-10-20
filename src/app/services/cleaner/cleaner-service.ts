@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { environment } from '../../../enviornments/environment'; // Fixed spelling
+import { environment } from '../../../enviornments/environment';
 
 export interface Cleaner {
   id: number;
@@ -35,6 +35,7 @@ export interface Cleaner {
     sms_notifications: boolean;
     created_at: string;
     updated_at: string;
+    dba_document?: string;
   };
 }
 
@@ -49,6 +50,11 @@ export interface CreateCleanerRequest {
   state: string;
   country: string;
   dba_verification: boolean;
+  rating?: number;
+  total_services_done?: number;
+  pending_services?: number;
+  profile_picture?: File;
+  dba_document?: File;
 }
 
 export interface UpdateCleanerRequest {
@@ -62,6 +68,11 @@ export interface UpdateCleanerRequest {
   state?: string;
   country?: string;
   dba_verification?: boolean;
+  rating?: number;
+  total_services_done?: number;
+  pending_services?: number;
+  profile_picture?: File;
+  dba_document?: File;
 }
 
 export interface CleanerListResponse {
@@ -73,7 +84,29 @@ export interface CleanerListResponse {
 export interface CleanerResponse {
   code: number;
   message: string;
-  data: Cleaner;
+  data: {
+    id: number;
+    email: string;
+    username: string;
+    first_name: string;
+    last_name: string;
+    is_active: boolean;
+    role: string;
+    status: string;
+    phone_number: string;
+    is_verified: boolean;
+    city: string;
+    state: string;
+    country: string;
+    created_at: string;
+    dba_verification: boolean;
+    rating: number;
+    total_services_done: number;
+    pending_services: number;
+    on_hold_services: number;
+    profile_picture: string;
+    dba_document: string;
+  };
 }
 
 export interface UserResponse {
@@ -98,6 +131,8 @@ export interface UserResponse {
     rating: number;
     total_services_done: number;
     pending_services: number;
+    profile_picture: string;
+    dba_document: string;
   };
 }
 
@@ -132,16 +167,102 @@ export class CleanerService {
     );
   }
 
-  // Create new cleaner
+  // Create new cleaner with file upload
   createCleaner(cleanerData: CreateCleanerRequest): Observable<CleanerResponse> {
-    return this.http.post<CleanerResponse>(`${this.baseURL}/create/`, cleanerData).pipe(
+    const formData = new FormData();
+    
+    // Append all fields to FormData
+    formData.append('email', cleanerData.email);
+    formData.append('first_name', cleanerData.first_name);
+    formData.append('last_name', cleanerData.last_name);
+    formData.append('phone_number', cleanerData.phone_number);
+    formData.append('role', cleanerData.role);
+    formData.append('password', cleanerData.password);
+    formData.append('city', cleanerData.city);
+    formData.append('state', cleanerData.state);
+    formData.append('country', cleanerData.country);
+    
+    // Convert boolean to proper string format for Django
+    formData.append('dba_verification', cleanerData.dba_verification ? 'True' : 'False');
+    
+    formData.append('rating', (cleanerData.rating || 5).toString());
+    formData.append('total_services_done', (cleanerData.total_services_done || 0).toString());
+    formData.append('pending_services', (cleanerData.pending_services || 0).toString());
+    
+    // Append files if they exist
+    if (cleanerData.profile_picture) {
+      formData.append('profile_picture', cleanerData.profile_picture);
+    }
+    if (cleanerData.dba_document) {
+      formData.append('dba_document', cleanerData.dba_document);
+    }
+
+    console.log('Creating cleaner with data:', {
+      email: cleanerData.email,
+      first_name: cleanerData.first_name,
+      last_name: cleanerData.last_name,
+      phone_number: cleanerData.phone_number,
+      role: cleanerData.role,
+      city: cleanerData.city,
+      state: cleanerData.state,
+      country: cleanerData.country,
+      dba_verification: cleanerData.dba_verification ? 'True' : 'False',
+      rating: cleanerData.rating || 5,
+      total_services_done: cleanerData.total_services_done || 0,
+      pending_services: cleanerData.pending_services || 0,
+      has_profile_picture: !!cleanerData.profile_picture,
+      has_dba_document: !!cleanerData.dba_document
+    });
+
+    return this.http.post<CleanerResponse>(`${this.baseURL}/create/`, formData).pipe(
       catchError(error => this.handleError(error))
     );
   }
 
-  // Update cleaner by ID
+  // Update cleaner by ID with file upload
   updateCleaner(id: number, cleanerData: UpdateCleanerRequest): Observable<CleanerResponse> {
-    return this.http.put<CleanerResponse>(`${this.baseURL}/${id}/update/`, cleanerData).pipe(
+    const formData = new FormData();
+    
+    // Append all fields to FormData if they exist
+    if (cleanerData.email) formData.append('email', cleanerData.email);
+    if (cleanerData.first_name) formData.append('first_name', cleanerData.first_name);
+    if (cleanerData.last_name) formData.append('last_name', cleanerData.last_name);
+    if (cleanerData.phone_number) formData.append('phone_number', cleanerData.phone_number);
+    if (cleanerData.role) formData.append('role', cleanerData.role);
+    if (cleanerData.password) formData.append('password', cleanerData.password);
+    if (cleanerData.city) formData.append('city', cleanerData.city);
+    if (cleanerData.state) formData.append('state', cleanerData.state);
+    if (cleanerData.country) formData.append('country', cleanerData.country);
+    
+    // Convert boolean to proper string format for Django
+    if (cleanerData.dba_verification !== undefined) {
+      formData.append('dba_verification', cleanerData.dba_verification ? 'True' : 'False');
+    }
+    
+    if (cleanerData.rating !== undefined) formData.append('rating', cleanerData.rating.toString());
+    if (cleanerData.total_services_done !== undefined) formData.append('total_services_done', cleanerData.total_services_done.toString());
+    if (cleanerData.pending_services !== undefined) formData.append('pending_services', cleanerData.pending_services.toString());
+    
+    // Append files if they exist
+    if (cleanerData.profile_picture) {
+      formData.append('profile_picture', cleanerData.profile_picture);
+    }
+    if (cleanerData.dba_document) {
+      formData.append('dba_document', cleanerData.dba_document);
+    }
+
+    console.log('Updating cleaner with data:', {
+      id,
+      email: cleanerData.email,
+      first_name: cleanerData.first_name,
+      last_name: cleanerData.last_name,
+      phone_number: cleanerData.phone_number,
+      dba_verification: cleanerData.dba_verification ? 'True' : 'False',
+      has_profile_picture: !!cleanerData.profile_picture,
+      has_dba_document: !!cleanerData.dba_document
+    });
+
+    return this.http.put<CleanerResponse>(`${this.baseURL}/${id}/update/`, formData).pipe(
       catchError(error => this.handleError(error))
     );
   }

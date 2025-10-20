@@ -69,6 +69,20 @@
                        [severity]="selectedCleaner.is_verified ? 'success' : 'warn'" />
             </div>
 
+            <!-- Profile Picture Display -->
+            <div class="detail-item" *ngIf="selectedCleaner.profile_picture">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Profile Picture</label>
+                <img [src]="selectedCleaner.profile_picture" alt="Profile Picture" class="w-20 h-20 rounded-full object-cover">
+            </div>
+
+            <!-- DBA Document Display -->
+            <div class="detail-item" *ngIf="selectedCleaner.dba_document">
+                <label class="block text-sm font-medium text-gray-600 mb-1">DBA Document</label>
+                <a [href]="selectedCleaner.dba_document" target="_blank" class="text-blue-600 hover:underline">
+                    View DBA Document
+                </a>
+            </div>
+
             <div class="detail-item">
                 <label class="block text-sm font-medium text-gray-600 mb-1">Member Since</label>
                 <p class="text-gray-900">{{ formatDate(selectedCleaner.created_at) }}</p>
@@ -188,7 +202,7 @@
     [header]="isEditMode ? 'Edit Cleaner' : 'Add New Cleaner'" 
     [(visible)]="showCleanerForm" 
     [modal]="true"
-    [style]="{ width: '600px' }" 
+    [style]="{ width: '700px' }" 
     [draggable]="false" 
     [resizable]="false">
 
@@ -315,6 +329,47 @@
             </small>
         </div>
 
+        <!-- Stats Section -->
+        <div class="grid grid-cols-3 gap-4">
+            <div class="field">
+                <label for="rating" class="block text-sm font-medium mb-2">Rating</label>
+                <input 
+                    id="rating" 
+                    type="number" 
+                    pInputText 
+                    formControlName="rating" 
+                    class="w-full" 
+                    min="0" 
+                    max="5" 
+                    step="0.1"
+                    placeholder="Rating">
+            </div>
+
+            <div class="field">
+                <label for="total_services_done" class="block text-sm font-medium mb-2">Total Services</label>
+                <input 
+                    id="total_services_done" 
+                    type="number" 
+                    pInputText 
+                    formControlName="total_services_done" 
+                    class="w-full" 
+                    min="0"
+                    placeholder="Total Services">
+            </div>
+
+            <div class="field">
+                <label for="pending_services" class="block text-sm font-medium mb-2">Pending Services</label>
+                <input 
+                    id="pending_services" 
+                    type="number" 
+                    pInputText 
+                    formControlName="pending_services" 
+                    class="w-full" 
+                    min="0"
+                    placeholder="Pending Services">
+            </div>
+        </div>
+
         <!-- DBA Verification Toggle -->
         <div class="field flex items-center gap-2">
             <p-toggleSwitch 
@@ -331,12 +386,16 @@
             <label class="block text-sm font-medium mb-2">Upload Photo</label>
             <p-fileUpload 
                 mode="basic"
-                chooseLabel="Choose Image"
+                chooseLabel="Choose Profile Picture"
                 accept="image/*"
                 maxFileSize="1000000"
-                (onUpload)="onUpload($event)">
+                (onSelect)="onProfilePictureUpload($event)"
+                (onClear)="removeProfilePicture()">
             </p-fileUpload>
             <small class="text-gray-500 block mt-1">Max file size: 1MB</small>
+            <small *ngIf="profilePictureFile" class="text-green-600 block mt-1">
+                Selected: {{ profilePictureFile.name }}
+            </small>
         </div>
 
         <!-- DBA Document Upload -->
@@ -344,12 +403,16 @@
             <label class="block text-sm font-medium mb-2">DBA Verification Document</label>
             <p-fileUpload 
                 mode="basic"
-                chooseLabel="Choose Document"
+                chooseLabel="Choose DBA Document"
                 accept=".pdf,.doc,.docx,.jpg,.png"
                 maxFileSize="5000000"
-                (onUpload)="onUpload($event)">
+                (onSelect)="onDbaDocumentUpload($event)"
+                (onClear)="removeDbaDocument()">
             </p-fileUpload>
             <small class="text-gray-500 block mt-1">Supported formats: PDF, DOC, JPG, PNG (Max: 5MB)</small>
+            <small *ngIf="dbaDocumentFile" class="text-green-600 block mt-1">
+                Selected: {{ dbaDocumentFile.name }}
+            </small>
         </div>
     </form>
 
