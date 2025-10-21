@@ -1,3 +1,9 @@
+
+
+
+
+
+
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -79,7 +85,7 @@ export class Cleaners implements OnInit {
       city: ['', [Validators.required]],
       state: [''],
       country: ['USA', [Validators.required]],
-      password: ['', this.isEditMode ? [] : [Validators.required]],
+      password: [''],
       dba_verification: [false],
       rating: [5],
       total_services_done: [0],
@@ -140,19 +146,19 @@ export class Cleaners implements OnInit {
           last_name: cleaner.last_name,
           is_active: cleaner.is_active,
           role: 'cleaner',
-          status: cleaner.profile.status,
-          phone_number: cleaner.profile.phone_number,
-          is_verified: cleaner.profile.is_verified,
-          city: cleaner.profile.city,
-          state: cleaner.profile.state,
-          country: cleaner.profile.country,
-          created_at: cleaner.profile.created_at,
-          dba_verification: cleaner.profile.dba_verification,
-          rating: parseFloat(cleaner.profile.rating),
-          total_services_done: cleaner.profile.total_services_done,
-          pending_services: cleaner.profile.pending_services,
-          profile_picture: cleaner.profile.profile_picture,
-          dba_document: cleaner.profile.dba_document
+          status: this.getCleanerStatus(cleaner),
+          phone_number: this.getCleanerPhone(cleaner),
+          is_verified: cleaner.profile?.is_verified || false,
+          city: this.getCleanerLocation(cleaner),
+          state: this.getCleanerState(cleaner),
+          country: this.getCleanerCountry(cleaner),
+          created_at: cleaner.profile?.created_at || '',
+          dba_verification: this.getDbaVerification(cleaner),
+          rating: this.parseRating(this.getCleanerRating(cleaner)),
+          total_services_done: this.getTotalServicesDone(cleaner),
+          pending_services: this.getPendingServices(cleaner),
+          profile_picture: cleaner.profile?.profile_picture || null,
+          dba_document: cleaner.profile?.dba_document || null
         };
       }
     });
@@ -181,64 +187,96 @@ export class Cleaners implements OnInit {
   }
 
   openEditCleaner(cleaner: Cleaner) {
-  console.log('Editing cleaner:', cleaner);
-  console.log('Cleaner profile:', cleaner.profile);
-  
-  this.isEditMode = true;
-  this.editingCleaner = cleaner;
-  this.profilePictureFile = null;
-  this.dbaDocumentFile = null;
+    console.log('Editing cleaner:', cleaner);
+    
+    this.isEditMode = true;
+    this.editingCleaner = cleaner;
+    this.profilePictureFile = null;
+    this.dbaDocumentFile = null;
 
-  // Safe data extraction with fallbacks
-  const profile = cleaner.profile || {};
-  
-  this.cleanerForm.patchValue({
-    first_name: cleaner.first_name || '',
-    last_name: cleaner.last_name || '',
-    email: cleaner.email || '',
-    phone_number: profile.phone_number || '',
-    city: profile.city || '',
-    state: profile.state || '',
-    country: profile.country || 'USA',
-    dba_verification: profile.dba_verification || false,
-    rating: profile.rating ? parseFloat(profile.rating) : 5,
-    total_services_done: profile.total_services_done || 0,
-    pending_services: profile.pending_services || 0,
-    password: '' // Password is optional for updates
-  });
-  
-  this.showCleanerForm = true;
-}
+    // Get fresh data from API to ensure correct structure
+    this.cleanerService.getCleanerById(cleaner.id).subscribe({
+      next: (response: UserResponse) => {
+        const apiData = response.data;
+        
+        // Map API response to form
+        this.cleanerForm.patchValue({
+          first_name: apiData.first_name || '',
+          last_name: apiData.last_name || '',
+          email: apiData.email || '',
+          phone_number: apiData.phone_number || '',
+          city: apiData.city || '',
+          state: apiData.state || '',
+          country: apiData.country || 'USA',
+          dba_verification: apiData.dba_verification || false,
+          rating: apiData.rating || 5,
+          total_services_done: apiData.total_services_done || 0,
+          pending_services: apiData.pending_services || 0,
+          password: '' // Leave empty for updates
+        });
+        
+        this.showCleanerForm = true;
+      },
+      error: (error: any) => {
+        console.error('Error loading cleaner details for edit:', error);
+        
+        // Fallback: Use available data
+        this.cleanerForm.patchValue({
+          first_name: cleaner.first_name || '',
+          last_name: cleaner.last_name || '',
+          email: cleaner.email || '',
+          phone_number: this.getCleanerPhone(cleaner),
+          city: this.getCleanerLocation(cleaner),
+          state: this.getCleanerState(cleaner),
+          country: this.getCleanerCountry(cleaner),
+          dba_verification: this.getDbaVerification(cleaner),
+          rating: this.parseRating(this.getCleanerRating(cleaner)),
+          total_services_done: this.getTotalServicesDone(cleaner),
+          pending_services: this.getPendingServices(cleaner),
+          password: '' // Leave empty for updates
+        });
+        
+        this.showCleanerForm = true;
+        
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Using Available Data',
+          detail: 'Could not load latest details. Using available data.',
+          life: 3000
+        });
+      }
+    });
+  }
 
- // Handle profile picture upload
-onProfilePictureUpload(event: any) {
-  if (event.files && event.files.length > 0) {
-    this.profilePictureFile = event.files[0];
-    if (this.profilePictureFile) {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Profile Picture Selected',
-        detail: `File: ${this.profilePictureFile.name}`,
-        life: 3000
-      });
+  // Handle profile picture upload
+  onProfilePictureUpload(event: any) {
+    if (event.files && event.files.length > 0) {
+      this.profilePictureFile = event.files[0];
+      if (this.profilePictureFile) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Profile Picture Selected',
+          detail: `File: ${this.profilePictureFile.name}`,
+          life: 3000
+        });
+      }
     }
   }
-}
 
-// Handle DBA document upload
-onDbaDocumentUpload(event: any) {
-  if (event.files && event.files.length > 0) {
-    this.dbaDocumentFile = event.files[0];
-    if (this.dbaDocumentFile) {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'DBA Document Selected',
-        detail: `File: ${this.dbaDocumentFile.name}`,
-        life: 3000
-      });
+  // Handle DBA document upload
+  onDbaDocumentUpload(event: any) {
+    if (event.files && event.files.length > 0) {
+      this.dbaDocumentFile = event.files[0];
+      if (this.dbaDocumentFile) {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'DBA Document Selected',
+          detail: `File: ${this.dbaDocumentFile.name}`,
+          life: 3000
+        });
+      }
     }
   }
-}
 
   saveCleaner() {
     if (this.cleanerForm.invalid) {
@@ -271,8 +309,8 @@ onDbaDocumentUpload(event: any) {
         pending_services: formValue.pending_services
       };
 
-      // Only include password if provided
-      if (formValue.password) {
+      // Only include password if provided and not empty
+      if (formValue.password && formValue.password.trim() !== '') {
         updateData.password = formValue.password;
       }
 
@@ -308,7 +346,18 @@ onDbaDocumentUpload(event: any) {
         }
       });
     } else {
-      // Create new cleaner
+      // Create new cleaner - password is required
+      if (!formValue.password || formValue.password.trim() === '') {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Password Required',
+          detail: 'Password is required for new cleaners',
+          life: 3000
+        });
+        this.isSubmitting = false;
+        return;
+      }
+
       const createData: CreateCleanerRequest = {
         email: formValue.email,
         first_name: formValue.first_name,
@@ -402,7 +451,8 @@ onDbaDocumentUpload(event: any) {
       return 'Terminated';
     }
     
-    switch (cleaner.profile.status) {
+    const status = this.getCleanerStatus(cleaner);
+    switch (status) {
       case 'approved':
         return 'Active';
       case 'pending':
@@ -410,7 +460,7 @@ onDbaDocumentUpload(event: any) {
       case 'terminated':
         return 'Terminated';
       default:
-        return cleaner.profile.status;
+        return status || 'Unknown';
     }
   }
 
@@ -427,11 +477,11 @@ onDbaDocumentUpload(event: any) {
   }
 
   getCleanerLocation(cleaner: Cleaner): string {
-    return cleaner.profile.city || 'N/A';
+    return cleaner.profile?.city || 'N/A';
   }
 
   getCleanerPhone(cleaner: Cleaner): string {
-    return cleaner.profile.phone_number || 'N/A';
+    return cleaner.profile?.phone_number || 'N/A';
   }
 
   getCleanerId(cleaner: Cleaner): string {
@@ -473,5 +523,34 @@ onDbaDocumentUpload(event: any) {
       detail: 'DBA document has been removed',
       life: 3000
     });
+  }
+
+  // New helper methods to handle data structure differences
+  getCleanerRating(cleaner: Cleaner): string {
+    return cleaner.profile?.rating || '0';
+  }
+
+  getTotalServicesDone(cleaner: Cleaner): number {
+    return cleaner.profile?.total_services_done || 0;
+  }
+
+  getPendingServices(cleaner: Cleaner): number {
+    return cleaner.profile?.pending_services || 0;
+  }
+
+  getCleanerStatus(cleaner: Cleaner): string {
+    return cleaner.profile?.status || '';
+  }
+
+  getCleanerState(cleaner: Cleaner): string {
+    return cleaner.profile?.state || '';
+  }
+
+  getCleanerCountry(cleaner: Cleaner): string {
+    return cleaner.profile?.country || 'USA';
+  }
+
+  getDbaVerification(cleaner: Cleaner): boolean {
+    return cleaner.profile?.dba_verification || false;
   }
 }

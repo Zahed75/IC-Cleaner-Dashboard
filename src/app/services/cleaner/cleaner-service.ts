@@ -1,3 +1,6 @@
+
+
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -197,23 +200,6 @@ export class CleanerService {
       formData.append('dba_document', cleanerData.dba_document);
     }
 
-    console.log('Creating cleaner with data:', {
-      email: cleanerData.email,
-      first_name: cleanerData.first_name,
-      last_name: cleanerData.last_name,
-      phone_number: cleanerData.phone_number,
-      role: cleanerData.role,
-      city: cleanerData.city,
-      state: cleanerData.state,
-      country: cleanerData.country,
-      dba_verification: cleanerData.dba_verification ? 'True' : 'False',
-      rating: cleanerData.rating || 5,
-      total_services_done: cleanerData.total_services_done || 0,
-      pending_services: cleanerData.pending_services || 0,
-      has_profile_picture: !!cleanerData.profile_picture,
-      has_dba_document: !!cleanerData.dba_document
-    });
-
     return this.http.post<CleanerResponse>(`${this.baseURL}/create/`, formData).pipe(
       catchError(error => this.handleError(error))
     );
@@ -250,17 +236,6 @@ export class CleanerService {
     if (cleanerData.dba_document) {
       formData.append('dba_document', cleanerData.dba_document);
     }
-
-    console.log('Updating cleaner with data:', {
-      id,
-      email: cleanerData.email,
-      first_name: cleanerData.first_name,
-      last_name: cleanerData.last_name,
-      phone_number: cleanerData.phone_number,
-      dba_verification: cleanerData.dba_verification ? 'True' : 'False',
-      has_profile_picture: !!cleanerData.profile_picture,
-      has_dba_document: !!cleanerData.dba_document
-    });
 
     return this.http.put<CleanerResponse>(`${this.baseURL}/${id}/update/`, formData).pipe(
       catchError(error => this.handleError(error))
