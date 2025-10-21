@@ -1,4 +1,7 @@
 <div class="min-h-screen bg-gray-50 p-6">
+  <!-- Toast for messages -->
+  <p-toast></p-toast>
+
   <!-- Header Section -->
   <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">Dispute Management</h1>
@@ -65,6 +68,7 @@
       [paginator]="true" 
       [rows]="5"
       [rowsPerPageOptions]="[5, 10, 20]"
+      [loading]="loading"
       styleClass="custom-table"
       [tableStyle]="{'min-width': '1000px'}"
     >
@@ -86,41 +90,41 @@
               (click)="showDisputeDetails(dispute)"
               class="text-blue-600 hover:text-blue-800 font-mono font-bold underline cursor-pointer transition-colors"
             >
-              {{ dispute.id }}
+              {{ getDisputeId(dispute) }}
             </a>
           </td>
           
           <!-- Client -->
           <td class="p-4">
             <div>
-              <p class="font-medium text-gray-900">{{ dispute.client }}</p>
-              <p class="text-sm text-gray-500">Cleaner: {{ dispute.cleaner }}</p>
+              <p class="font-medium text-gray-900">{{ dispute.created_by_name }}</p>
+              <p class="text-sm text-gray-500">Cleaner: {{ dispute.cleaner_name }}</p>
             </div>
           </td>
           
           <!-- Reason -->
           <td class="p-4">
             <div>
-              <p class="font-medium text-gray-900">{{ dispute.reason }}</p>
-              <p class="text-sm text-gray-500">{{ dispute.serviceProvided }}</p>
+              <p class="font-medium text-gray-900">{{ getDisputeReason(dispute) }}</p>
+              <p class="text-sm text-gray-500">{{ getServiceProvided() }}</p>
             </div>
           </td>
           
           <!-- Comment -->
           <td class="p-4">
-            <p class="text-gray-700 line-clamp-2" [title]="dispute.comment">{{ dispute.comment }}</p>
+            <p class="text-gray-700 line-clamp-2" [title]="dispute.title">{{ dispute.title }}</p>
           </td>
           
           <!-- Status -->
           <td class="p-4">
             <div class="flex flex-col gap-2">
               <p-tag 
-                [value]="dispute.status" 
+                [value]="dispute.status | titlecase" 
                 [severity]="getStatusSeverity(dispute.status)"
                 class="text-xs font-semibold"
               ></p-tag>
               <p-tag 
-                [value]="dispute.priority" 
+                [value]="dispute.priority | titlecase" 
                 [severity]="getPrioritySeverity(dispute.priority)"
                 class="text-xs"
               ></p-tag>
@@ -142,9 +146,9 @@
                 icon="pi pi-pound" 
                 class="p-button-outlined p-button-sm p-button-success"
                 (click)="showRefundDialog(dispute)"
-                [disabled]="dispute.status !== 'Pending'"
+                [disabled]="dispute.status !== 'pending'"
                 title="Process Refund"
-                *ngIf="dispute.status === 'Pending'"
+                *ngIf="dispute.status === 'pending'"
               ></button>
             </div>
           </td>
@@ -154,7 +158,7 @@
         <tr>
           <td colspan="6" class="p-8 text-center text-gray-500">
             <i class="pi pi-inbox text-4xl text-gray-300 mb-2"></i>
-            <p class="text-lg">No disputes found</p>
+            <p class="text-lg">{{ loading ? 'Loading disputes...' : 'No disputes found' }}</p>
           </td>
         </tr>
       </ng-template>
@@ -173,27 +177,27 @@
     <div *ngIf="selectedDispute" class="space-y-6">
       <!-- Header -->
       <div class="text-center border-b border-gray-200 pb-4">
-        <h3 class="text-lg font-semibold text-gray-900">Dispute #{{ selectedDispute.id }}</h3>
-        <p class="text-sm text-gray-500">Created: {{ formatDate(selectedDispute.createdDate) }}</p>
+        <h3 class="text-lg font-semibold text-gray-900">Dispute #{{ getDisputeId(selectedDispute) }}</h3>
+        <p class="text-sm text-gray-500">Created: {{ formatDate(selectedDispute.created_at) }}</p>
       </div>
 
       <!-- Details Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-500 mb-1">Client Name</label>
-          <p class="text-lg font-semibold text-gray-900">{{ selectedDispute.client }}</p>
+          <p class="text-lg font-semibold text-gray-900">{{ selectedDispute.created_by_name }}</p>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-500 mb-1">Cleaner Name</label>
-          <p class="text-lg font-semibold text-gray-900">{{ selectedDispute.cleaner }}</p>
+          <p class="text-lg font-semibold text-gray-900">{{ selectedDispute.cleaner_name }}</p>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-500 mb-1">Service Provided</label>
-          <p class="text-lg font-semibold text-gray-900">{{ selectedDispute.serviceProvided }}</p>
+          <p class="text-lg font-semibold text-gray-900">{{ getServiceProvided() }}</p>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-500 mb-1">Dispute Reason</label>
-          <p class="text-lg font-semibold text-gray-900">{{ selectedDispute.reason }}</p>
+          <p class="text-lg font-semibold text-gray-900">{{ getDisputeReason(selectedDispute) }}</p>
         </div>
       </div>
 
@@ -201,34 +205,69 @@
       <div>
         <label class="block text-sm font-medium text-gray-500 mb-2">Comment</label>
         <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-          <p class="text-gray-700 leading-relaxed">{{ selectedDispute.comment }}</p>
+          <p class="text-gray-700 leading-relaxed">{{ selectedDispute.title }}</p>
+          <p *ngIf="selectedDisputeDetail && selectedDisputeDetail.description" class="text-gray-600 mt-2 text-sm">
+            {{ selectedDisputeDetail.description }}
+          </p>
         </div>
       </div>
 
       <!-- Service Fee -->
       <div>
         <label class="block text-sm font-medium text-gray-500 mb-1">Service Fee Charged</label>
-        <p class="text-2xl font-bold text-gray-900">£{{ selectedDispute.serviceFee }}</p>
+        <p class="text-2xl font-bold text-gray-900">£{{ getServiceFee(selectedDispute) }}</p>
       </div>
 
       <!-- Refund Amount if exists -->
-      <div *ngIf="selectedDispute.refundAmount">
+      <div *ngIf="getRefundAmount(selectedDispute) > 0">
         <label class="block text-sm font-medium text-gray-500 mb-1">Refunded Amount</label>
-        <p class="text-xl font-bold text-green-600">£{{ selectedDispute.refundAmount }}</p>
+        <p class="text-xl font-bold text-green-600">£{{ getRefundAmount(selectedDispute) }}</p>
       </div>
 
       <!-- Status -->
       <div>
         <label class="block text-sm font-medium text-gray-500 mb-2">Current Status</label>
         <p-tag 
-          [value]="selectedDispute.status" 
+          [value]="selectedDispute.status | titlecase" 
           [severity]="getStatusSeverity(selectedDispute.status)"
           class="text-sm font-semibold px-3 py-2"
         ></p-tag>
       </div>
 
+      <!-- Comment Section -->
+      <div *ngIf="selectedDisputeDetail && selectedDisputeDetail.comments && selectedDisputeDetail.comments.length > 0">
+        <label class="block text-sm font-medium text-gray-500 mb-2">Comments</label>
+        <div class="space-y-3 max-h-40 overflow-y-auto">
+          <div *ngFor="let comment of selectedDisputeDetail.comments" 
+               class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+            <p class="text-sm font-semibold text-gray-900">{{ comment.user_name }}</p>
+            <p class="text-gray-700 text-sm mt-1">{{ comment.comment }}</p>
+            <p class="text-xs text-gray-500 mt-1">{{ formatDate(comment.created_at) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Comment -->
+      <div *ngIf="selectedDispute.status === 'pending'">
+        <label class="block text-sm font-medium text-gray-500 mb-2">Add Comment</label>
+        <textarea 
+          [(ngModel)]="commentText"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          rows="3"
+          placeholder="Add a comment..."
+        ></textarea>
+        <button 
+          pButton 
+          icon="pi pi-send" 
+          label="Add Comment" 
+          class="p-button-outlined p-button-sm mt-2"
+          (click)="addComment()"
+          [disabled]="!commentText.trim()"
+        ></button>
+      </div>
+
       <!-- Action Buttons -->
-      <div class="flex gap-3 pt-4 border-t border-gray-200" *ngIf="selectedDispute.status === 'Pending'">
+      <div class="flex gap-3 pt-4 border-t border-gray-200" *ngIf="selectedDispute.status === 'pending'">
         <button 
           pButton 
           icon="pi pi-check" 
@@ -252,14 +291,16 @@
         ></button>
       </div>
 
-      <div *ngIf="selectedDispute.status === 'Resolved'" class="text-center">
+      <div *ngIf="selectedDispute.status === 'resolved'" class="text-center">
         <p-tag 
           icon="pi pi-check-circle" 
           value="Dispute Resolved" 
           severity="success" 
           class="text-sm font-semibold px-4 py-2"
         ></p-tag>
-        <p class="text-sm text-gray-500 mt-2">Resolved on: {{ formatDate(selectedDispute.resolvedDate!) }}</p>
+        <p class="text-sm text-gray-500 mt-2" *ngIf="selectedDispute.updated_at">
+          Resolved on: {{ formatDate(selectedDispute.updated_at) }}
+        </p>
       </div>
     </div>
   </p-dialog>
@@ -275,8 +316,8 @@
   >
     <div *ngIf="selectedDispute" class="space-y-6">
       <div class="text-center">
-        <h4 class="text-lg font-semibold text-gray-900 mb-2">Process Refund for Dispute #{{ selectedDispute.id }}</h4>
-        <p class="text-gray-600">Service Fee: <span class="font-semibold">£{{ selectedDispute.serviceFee }}</span></p>
+        <h4 class="text-lg font-semibold text-gray-900 mb-2">Process Refund for Dispute #{{ getDisputeId(selectedDispute) }}</h4>
+        <p class="text-gray-600">Service Fee: <span class="font-semibold">£{{ getServiceFee(selectedDispute) }}</span></p>
       </div>
 
       <div>
@@ -284,11 +325,21 @@
         <input 
           type="number" 
           [(ngModel)]="refundAmount"
-          [max]="selectedDispute.serviceFee"
+          [max]="getServiceFee(selectedDispute)"
           [min]="0"
           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg font-semibold"
         />
-        <p class="text-sm text-gray-500 mt-2">Maximum refundable amount: £{{ selectedDispute.serviceFee }}</p>
+        <p class="text-sm text-gray-500 mt-2">Maximum refundable amount: £{{ getServiceFee(selectedDispute) }}</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Resolution Notes</label>
+        <textarea 
+          [(ngModel)]="resolutionNotes"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          rows="3"
+          placeholder="Add resolution notes..."
+        ></textarea>
       </div>
 
       <div class="flex gap-3 pt-4">
@@ -305,7 +356,7 @@
           label="Confirm Refund" 
           class="p-button-success flex-1"
           (click)="confirmRefund()"
-          [disabled]="refundAmount <= 0 || refundAmount > selectedDispute.serviceFee"
+          [disabled]="refundAmount <= 0 || refundAmount > getServiceFee(selectedDispute)"
         ></button>
       </div>
     </div>

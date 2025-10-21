@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
@@ -7,21 +7,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TagModule, Tag } from 'primeng/tag';
 import { DialogModule, Dialog } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
-
-interface Dispute {
-  id: string;
-  client: string;
-  cleaner: string;
-  serviceProvided: string;
-  reason: string;
-  comment: string;
-  status: string;
-  serviceFee: number;
-  refundAmount?: number;
-  priority: 'Low' | 'Medium' | 'High';
-  createdDate: string;
-  resolvedDate?: string;
-}
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { DisputeService, Dispute, DisputeStats, DisputeDetail } from '../../../services/disputes/dispute-service';
 
 @Component({
   selector: 'app-disputes',
@@ -35,163 +23,265 @@ interface Dispute {
     TagModule,
     DialogModule,
     FormsModule,
-      Tag,
-      Dialog
-],
+    Tag,
+    Dialog,
+    ToastModule
+  ],
   templateUrl: './disputes.html',
-  styleUrls: ['./disputes.css']
+  styleUrls: ['./disputes.css'],
+  providers: [MessageService]
 })
-export class Disputes {
-  disputes: Dispute[] = [
-    {
-      id: 'LCD42508',
-      client: 'Joseph Tribbiani',
-      cleaner: 'Hogar Nati',
-      serviceProvided: 'Regular Cleaning',
-      reason: 'Late Arrival',
-      comment: 'Cleaner arrived 45 minutes late, client requesting partial refund.',
-      status: 'Pending',
-      serviceFee: 50.00,
-      priority: 'High',
-      createdDate: '2024-01-15'
-    },
-    {
-      id: 'LCD42509',
-      client: 'Joseph Tribbiani',
-      cleaner: 'Hogar Nati',
-      serviceProvided: 'Deep Cleaning',
-      reason: 'Quality Issues',
-      comment: 'Client claims bathroom wasn\'t properly cleaned, requesting reclean.',
-      status: 'Resolved',
-      serviceFee: 120.00,
-      refundAmount: 30.00,
-      priority: 'Medium',
-      createdDate: '2024-01-14',
-      resolvedDate: '2024-01-15'
-    },
-    {
-      id: 'LCD42510',
-      client: 'Joseph Tribbiani',
-      cleaner: 'Hogar Nati',
-      serviceProvided: 'Regular Cleaning',
-      reason: 'Cancelled Service',
-      comment: 'Client cancelled last minute, cleaner requesting cancellation fee.',
-      status: 'Cancelled',
-      serviceFee: 50.00,
-      priority: 'Low',
-      createdDate: '2024-01-13'
-    },
-    {
-      id: 'LCD42511',
-      client: 'Monica Geller',
-      cleaner: 'Hogar Nati',
-      serviceProvided: 'Move Out Cleaning',
-      reason: 'Damage Claim',
-      comment: 'Client claims items were damaged during cleaning process.',
-      status: 'Pending',
-      serviceFee: 200.00,
-      priority: 'High',
-      createdDate: '2024-01-16'
-    },
-    {
-      id: 'LCD42512',
-      client: 'Chandler Bing',
-      cleaner: 'Hogar Nati',
-      serviceProvided: 'Regular Cleaning',
-      reason: 'Incomplete Service',
-      comment: 'Client states kitchen area was not cleaned as promised.',
-      status: 'Resolved',
-      serviceFee: 60.00,
-      refundAmount: 25.00,
-      priority: 'Medium',
-      createdDate: '2024-01-12',
-      resolvedDate: '2024-01-13'
-    }
-  ];
-
+export class Disputes implements OnInit {
+  disputes: Dispute[] = [];
   stats = {
-    totalDisputes: 79,
-    pending: 1,
-    resolved: 78,
-    highPriority: 1
+    totalDisputes: 0,
+    pending: 0,
+    resolved: 0,
+    highPriority: 0
   };
 
   searchText: string = '';
   disputeDialog: boolean = false;
   refundDialog: boolean = false;
   selectedDispute: Dispute | null = null;
+  selectedDisputeDetail: DisputeDetail | null = null;
   refundAmount: number = 0;
+  loading: boolean = false;
+  commentText: string = '';
+  resolutionNotes: string = '';
+
+  constructor(
+    private disputeService: DisputeService,
+    private messageService: MessageService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadDisputes();
+    this.loadDisputeStats();
+  }
+
+  loadDisputes(): void {
+    this.loading = true;
+    this.disputeService.getDisputes().subscribe({
+      next: (response) => {
+        this.disputes = response.data;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading disputes:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load disputes'
+        });
+        this.loading = false;
+      }
+    });
+  }
+
+  loadDisputeStats(): void {
+    this.disputeService.getDisputeStats().subscribe({
+      next: (response) => {
+        const stats = response.data;
+        this.stats = {
+          totalDisputes: stats.total_disputes,
+          pending: stats.pending_disputes,
+          resolved: stats.resolved_disputes,
+          highPriority: stats.disputes_by_priority.find(p => p.priority === 'high')?.count || 0
+        };
+      },
+      error: (error) => {
+        console.error('Error loading dispute stats:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load dispute statistics'
+        });
+      }
+    });
+  }
 
   get filteredDisputes(): Dispute[] {
     if (!this.searchText) return this.disputes;
     
     return this.disputes.filter(dispute => 
-      dispute.id.toLowerCase().includes(this.searchText.toLowerCase()) ||
-      dispute.client.toLowerCase().includes(this.searchText.toLowerCase()) ||
-      dispute.cleaner.toLowerCase().includes(this.searchText.toLowerCase())
+      dispute.id.toString().toLowerCase().includes(this.searchText.toLowerCase()) ||
+      dispute.created_by_name.toLowerCase().includes(this.searchText.toLowerCase()) ||
+      dispute.cleaner_name.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 
   getStatusSeverity(status: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | null | undefined {
-  switch (status) {
-    case 'Resolved': return 'success';
-    case 'Pending': return 'warn';  // Changed from 'warning' to 'warn'
-    case 'Cancelled': return 'danger';
-    default: return 'secondary';
+    switch (status.toLowerCase()) {
+      case 'resolved': return 'success';
+      case 'pending': return 'warn';
+      case 'cancelled': return 'danger';
+      case 'in_review': return 'info';
+      case 'escalated': return 'danger';
+      default: return 'secondary';
+    }
   }
-}
 
-getPrioritySeverity(priority: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | null | undefined {
-  switch (priority) {
-    case 'High': return 'danger';
-    case 'Medium': return 'warn';  // Changed from 'warning' to 'warn'
-    case 'Low': return 'info';
-    default: return 'secondary';
+  getPrioritySeverity(priority: string): 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | null | undefined {
+    switch (priority.toLowerCase()) {
+      case 'high': return 'danger';
+      case 'medium': return 'warn';
+      case 'low': return 'info';
+      case 'normal': return 'info';
+      default: return 'secondary';
+    }
   }
-}
 
   showDisputeDetails(dispute: Dispute): void {
     this.selectedDispute = { ...dispute };
+    this.selectedDisputeDetail = null; // Reset detail when opening new dispute
+    this.loadDisputeDetail(dispute.id);
     this.disputeDialog = true;
+  }
+
+  loadDisputeDetail(disputeId: number): void {
+    this.disputeService.getDisputeById(disputeId).subscribe({
+      next: (response) => {
+        this.selectedDisputeDetail = response.data;
+      },
+      error: (error) => {
+        console.error('Error loading dispute detail:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load dispute details'
+        });
+      }
+    });
   }
 
   showRefundDialog(dispute: Dispute): void {
     this.selectedDispute = { ...dispute };
-    this.refundAmount = dispute.serviceFee * 0.5; // Default to 50% refund
+    this.refundAmount = parseFloat(dispute.payout_amount) * 0.5; // Default to 50% refund
     this.refundDialog = true;
   }
 
   resolveDispute(): void {
     if (this.selectedDispute) {
-      const disputeIndex = this.disputes.findIndex(d => d.id === this.selectedDispute!.id);
-      if (disputeIndex !== -1) {
-        this.disputes[disputeIndex].status = 'Resolved';
-        this.disputes[disputeIndex].resolvedDate = new Date().toISOString().split('T')[0];
-      }
-      this.disputeDialog = false;
+      this.disputeService.updateDisputeStatus(this.selectedDispute.id, {
+        status: 'resolved'
+      }).subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Dispute resolved successfully'
+          });
+          this.updateLocalDisputeStatus(this.selectedDispute!.id, 'resolved');
+          this.loadDisputeStats();
+          this.disputeDialog = false;
+        },
+        error: (error) => {
+          console.error('Error resolving dispute:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to resolve dispute'
+          });
+        }
+      });
     }
   }
 
   cancelDispute(): void {
     if (this.selectedDispute) {
-      const disputeIndex = this.disputes.findIndex(d => d.id === this.selectedDispute!.id);
-      if (disputeIndex !== -1) {
-        this.disputes[disputeIndex].status = 'Cancelled';
-      }
-      this.disputeDialog = false;
+      this.disputeService.updateDisputeStatus(this.selectedDispute.id, {
+        status: 'cancelled'
+      }).subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Dispute cancelled successfully'
+          });
+          this.updateLocalDisputeStatus(this.selectedDispute!.id, 'cancelled');
+          this.loadDisputeStats();
+          this.disputeDialog = false;
+        },
+        error: (error) => {
+          console.error('Error cancelling dispute:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to cancel dispute'
+          });
+        }
+      });
     }
   }
 
   confirmRefund(): void {
     if (this.selectedDispute && this.refundAmount > 0) {
-      const disputeIndex = this.disputes.findIndex(d => d.id === this.selectedDispute!.id);
-      if (disputeIndex !== -1) {
-        this.disputes[disputeIndex].status = 'Resolved';
-        this.disputes[disputeIndex].refundAmount = this.refundAmount;
-        this.disputes[disputeIndex].resolvedDate = new Date().toISOString().split('T')[0];
-      }
-      this.refundDialog = false;
-      this.disputeDialog = false;
+      const resolveData = {
+        resolution_notes: this.resolutionNotes || `Refund processed for amount: $${this.refundAmount}`,
+        service_fee_refunded: true,
+        refund_amount: this.refundAmount.toFixed(2),
+        cleaner_payment_released: true
+      };
+
+      this.disputeService.resolveDispute(this.selectedDispute.id, resolveData).subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Refund processed successfully'
+          });
+          this.updateLocalDisputeStatus(this.selectedDispute!.id, 'resolved');
+          this.loadDisputeStats();
+          this.refundDialog = false;
+          this.disputeDialog = false;
+        },
+        error: (error) => {
+          console.error('Error processing refund:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to process refund'
+          });
+        }
+      });
+    }
+  }
+
+  addComment(): void {
+    if (this.selectedDispute && this.commentText.trim()) {
+      this.disputeService.addComment(this.selectedDispute.id, {
+        comment: this.commentText,
+        is_internal: false
+      }).subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Comment added successfully'
+          });
+          this.commentText = '';
+          if (this.selectedDispute) {
+            this.loadDisputeDetail(this.selectedDispute.id);
+          }
+        },
+        error: (error) => {
+          console.error('Error adding comment:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to add comment'
+          });
+        }
+      });
+    }
+  }
+
+  private updateLocalDisputeStatus(disputeId: number, status: string): void {
+    const disputeIndex = this.disputes.findIndex(d => d.id === disputeId);
+    if (disputeIndex !== -1) {
+      this.disputes[disputeIndex].status = status;
+      this.disputes[disputeIndex].updated_at = new Date().toISOString();
     }
   }
 
@@ -209,10 +299,35 @@ getPrioritySeverity(priority: string): 'success' | 'info' | 'warn' | 'danger' | 
     if (!this.selectedDispute) return [];
     
     switch (this.selectedDispute.status) {
-      case 'Pending':
+      case 'pending':
         return ['resolve', 'cancel', 'refund'];
       default:
         return [];
     }
+  }
+
+  // Helper methods to map API data to UI expectations
+  getDisputeId(dispute: Dispute): string {
+    return `LCD${dispute.id.toString().padStart(5, '0')}`;
+  }
+
+  getServiceFee(dispute: Dispute): number {
+    return parseFloat(dispute.payout_amount);
+  }
+
+  getRefundAmount(dispute: Dispute): number {
+    return parseFloat(dispute.refund_amount) || 0;
+  }
+
+  getDisputeReason(dispute: Dispute): string {
+    return dispute.dispute_type.replace('_', ' ').toUpperCase();
+  }
+
+  getServiceProvided(): string {
+    return 'Regular Cleaning'; // You might want to get this from actual data
+  }
+
+  getComment(dispute: Dispute): string {
+    return dispute.title;
   }
 }
