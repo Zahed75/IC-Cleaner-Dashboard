@@ -1,4 +1,7 @@
 <div class="payouts-container">
+  <!-- Toast for messages -->
+  <p-toast></p-toast>
+
   <!-- Header Section -->
   <div class="header-section">
     <h1 class="company-title">1C-Cleaners</h1>
@@ -10,29 +13,29 @@
   <div class="stats-container">
     <p-card class="stat-card">
       <div class="stat-content">
-        <h3 class="stat-label">Total Disputes</h3>
-        <span class="stat-value">{{ stats.totalDisputes }}</span>
+        <h3 class="stat-label">Total Payouts</h3>
+        <span class="stat-value">{{ stats.total_payouts }}</span>
       </div>
     </p-card>
 
     <p-card class="stat-card">
       <div class="stat-content">
         <h3 class="stat-label">Pending</h3>
-        <span class="stat-value">{{ stats.pending }}</span>
+        <span class="stat-value">{{ stats.pending_payouts }}</span>
       </div>
     </p-card>
 
     <p-card class="stat-card">
       <div class="stat-content">
-        <h3 class="stat-label">Resolved</h3>
-        <span class="stat-value">{{ stats.resolved }}</span>
+        <h3 class="stat-label">Paid</h3>
+        <span class="stat-value">{{ stats.paid_payouts }}</span>
       </div>
     </p-card>
 
     <p-card class="stat-card high-priority-card">
       <div class="stat-content">
-        <h3 class="stat-label">High Priority</h3>
-        <span class="stat-value">{{ stats.highPriority }}</span>
+        <h3 class="stat-label">Rejected</h3>
+        <span class="stat-value">{{ stats.rejected_payouts }}</span>
       </div>
     </p-card>
   </div>
@@ -61,6 +64,7 @@
       [value]="filteredPayouts" 
       [paginator]="true" 
       [rows]="5"
+      [loading]="loading"
       styleClass="payouts-table"
       [tableStyle]="{'min-width': '800px'}"
     >
@@ -82,15 +86,15 @@
               (click)="showPayoutDetails(payout)"
               title="Click to view details"
             >
-              {{ payout.id }}
+              {{ payout.payout_id }}
             </a>
           </td>
-          <td class="table-data cleaner-name">{{ payout.cleaner }}</td>
-          <td class="table-data payout-method">{{ payout.payoutMethod }}</td>
-          <td class="table-data amount">{{ payout.currency }}{{ payout.amount }}</td>
+          <td class="table-data cleaner-name">{{ payout.cleaner.name }}</td>
+          <td class="table-data payout-method">{{ payout.payment_method.method }}</td>
+          <td class="table-data amount">{{ getCurrencySymbol() }}{{ payout.amount }}</td>
           <td class="table-data status">
             <p-tag 
-              [value]="payout.status" 
+              [value]="payout.status | titlecase" 
               [severity]="getStatusSeverity(payout.status)"
               class="status-tag"
             ></p-tag>
@@ -107,7 +111,9 @@
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="6" class="empty-message">No payouts found</td>
+          <td colspan="6" class="empty-message">
+            {{ loading ? 'Loading...' : 'No payouts found' }}
+          </td>
         </tr>
       </ng-template>
     </p-table>
@@ -126,44 +132,44 @@
       <!-- Payout ID Header -->
       <div class="payout-header">
         <h3 class="payout-title">Payout Details</h3>
-        <p class="payout-id-display">{{ selectedPayout.id }}</p>
+        <p class="payout-id-display">{{ selectedPayout.payout_id }}</p>
       </div>
 
       <div class="details-grid">
         <div class="detail-item">
           <label class="detail-label">Cleaner Name</label>
-          <strong class="detail-value">{{ selectedPayout.cleaner }}</strong>
+          <strong class="detail-value">{{ selectedPayout.cleaner.name }}</strong>
         </div>
 
         <div class="detail-item">
           <label class="detail-label">Balance Amount</label>
-          <strong class="detail-value">{{ selectedPayout.currency }}{{ selectedPayout.balanceAmount }}</strong>
+          <strong class="detail-value">{{ getCurrencySymbol() }}{{ getBalanceAmount(selectedPayout) }}</strong>
         </div>
 
         <div class="detail-item">
           <label class="detail-label">Payout Amount</label>
-          <strong class="detail-value highlight-amount">{{ selectedPayout.currency }}{{ selectedPayout.amount }}</strong>
+          <strong class="detail-value highlight-amount">{{ getCurrencySymbol() }}{{ selectedPayout.amount }}</strong>
         </div>
 
         <div class="detail-item">
           <label class="detail-label">Request Date</label>
-          <span class="detail-value">{{ formatDate(selectedPayout.requestDate) }}</span>
+          <span class="detail-value">{{ formatDate(selectedPayout.created_at) }}</span>
         </div>
 
-        <div class="detail-item" *ngIf="selectedPayout.approvedDate">
+        <div class="detail-item" *ngIf="selectedPayout.status === 'approved' || selectedPayout.status === 'paid'">
           <label class="detail-label">Approved Date</label>
-          <span class="detail-value">{{ formatDate(selectedPayout.approvedDate) }}</span>
+          <span class="detail-value">{{ formatDate(selectedPayout.updated_at) }}</span>
         </div>
 
-        <div class="detail-item" *ngIf="selectedPayout.paidDate">
+        <div class="detail-item" *ngIf="selectedPayout.status === 'paid'">
           <label class="detail-label">Paid Date</label>
-          <span class="detail-value">{{ formatDate(selectedPayout.paidDate) }}</span>
+          <span class="detail-value">{{ formatDate(selectedPayout.updated_at) }}</span>
         </div>
 
         <div class="detail-item">
           <label class="detail-label">Payout Status</label>
           <p-tag 
-            [value]="selectedPayout.status" 
+            [value]="selectedPayout.status | titlecase" 
             [severity]="getStatusSeverity(selectedPayout.status)"
             class="status-tag-large"
           ></p-tag>
@@ -173,19 +179,16 @@
       <div class="detail-item full-width">
         <label class="detail-label">Payout Method</label>
         <div class="bank-details">
-          <strong>{{ selectedPayout.payoutMethod }}</strong><br>
-          <span *ngIf="selectedPayout.payoutMethod === 'Bank Transfer'">
-            {{ getBankDetails().accountName }}<br>
-            Account No: {{ getBankDetails().accountNo }}<br>
-            IBAN: {{ getBankDetails().iban }}<br>
-            Sort Code: {{ getBankDetails().sortCode }}<br>
-            Bank Name: {{ getBankDetails().bankName }}<br>
-            Bank Address: {{ getBankDetails().bankAddress }}
+          <strong>{{ selectedPayout.payment_method.method }}</strong><br>
+          <span *ngIf="selectedPayout.payment_method.method === 'Bank Transfer'">
+            {{ getBankDetails(selectedPayout.payment_method).accountName }}<br>
+            Account No: {{ getBankDetails(selectedPayout.payment_method).accountNo }}<br>
+            IBAN: {{ getBankDetails(selectedPayout.payment_method).iban }}<br>
+            Bank Name: {{ getBankDetails(selectedPayout.payment_method).bankName }}
           </span>
-          <span *ngIf="selectedPayout.payoutMethod === 'PayPal'">
+          <span *ngIf="selectedPayout.payment_method.method === 'PayPal'">
             PayPal Account<br>
-            Email: {{ selectedPayout.cleaner.toLowerCase().replace(' ', '.') }}@example.com<br>
-            Transaction ID: PP{{ selectedPayout.id.slice(3) }}
+            Email: {{ getBankDetails(selectedPayout.payment_method).email }}
           </span>
         </div>
       </div>
@@ -211,7 +214,7 @@
       </div>
 
       <!-- Action Buttons based on status -->
-      <div class="dialog-actions" *ngIf="selectedPayout.status === 'Pending'">
+      <div class="dialog-actions" *ngIf="selectedPayout.status === 'pending'">
         <p-button 
           icon="pi pi-check" 
           label="Approve Payout" 
@@ -226,7 +229,7 @@
         ></p-button>
       </div>
 
-      <div class="dialog-actions" *ngIf="selectedPayout.status === 'Approved'">
+      <div class="dialog-actions" *ngIf="selectedPayout.status === 'approved'">
         <p-button 
           icon="pi pi-dollar" 
           label="Mark as Paid" 
@@ -241,7 +244,7 @@
         ></p-button>
       </div>
 
-      <div class="dialog-actions" *ngIf="selectedPayout.status === 'Paid'">
+      <div class="dialog-actions" *ngIf="selectedPayout.status === 'paid'">
         <p-tag 
           icon="pi pi-check-circle" 
           value="Payment Completed" 
@@ -250,7 +253,7 @@
         ></p-tag>
       </div>
 
-      <div class="dialog-actions" *ngIf="selectedPayout.status === 'Rejected'">
+      <div class="dialog-actions" *ngIf="selectedPayout.status === 'rejected'">
         <p-tag 
           icon="pi pi-times-circle" 
           value="Payout Rejected" 

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Payouts } from './payouts';
+import { PayoutService } from './payout-service';
 
-describe('Payouts', () => {
-  let service: Payouts;
+describe('PayoutService', () => {
+  let service: PayoutService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Payouts);
+    service = TestBed.inject(PayoutService);
   });
 
   it('should be created', () => {

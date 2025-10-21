@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { CardModule, Card } from 'primeng/card';
@@ -7,19 +7,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TagModule, Tag } from 'primeng/tag';
 import { DialogModule, Dialog } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
-
-interface Payout {
-  id: string;
-  cleaner: string;
-  payoutMethod: string;
-  amount: number;
-  status: string;
-  currency: string;
-  balanceAmount: number;
-  requestDate: string;
-  approvedDate?: string;
-  paidDate?: string;
-}
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { PayoutService, Payout, PayoutStats, Cleaner, PaymentMethod } from '../../../services/payouts/payout-service';
 
 @Component({
   selector: 'app-payouts',
@@ -33,108 +23,110 @@ interface Payout {
     TagModule,
     DialogModule,
     FormsModule,
-      Card,
-      Tag,
-      Dialog
-],
+    Card,
+    Tag,
+    Dialog,
+    ToastModule
+  ],
   templateUrl: './payouts.html',
-  styleUrls: ['./payouts.css']
+  styleUrls: ['./payouts.css'],
+  providers: [MessageService]
 })
-export class Payouts {
-  payouts: Payout[] = [
-    { 
-      id: 'CPP2508150010', 
-      cleaner: 'Joseph Tribblani', 
-      payoutMethod: 'Bank Transfer', 
-      amount: 299.99, 
-      status: 'Pending', 
-      currency: '$',
-      balanceAmount: 800.00,
-      requestDate: '2024-01-15'
-    },
-    { 
-      id: 'CPP2508150011', 
-      cleaner: 'Joseph Tribblani', 
-      payoutMethod: 'PayPal', 
-      amount: 299.99, 
-      status: 'Pending', 
-      currency: '$',
-      balanceAmount: 800.00,
-      requestDate: '2024-01-16'
-    },
-    { 
-      id: 'CPP2508150012', 
-      cleaner: 'Joseph Tribblani', 
-      payoutMethod: 'Bank Transfer', 
-      amount: 299.99, 
-      status: 'Approved', 
-      currency: '$',
-      balanceAmount: 800.00,
-      requestDate: '2024-01-14',
-      approvedDate: '2024-01-15'
-    },
-    { 
-      id: 'CPP2508150013', 
-      cleaner: 'Joseph Tribblani', 
-      payoutMethod: 'Bank Transfer', 
-      amount: 299.99, 
-      status: 'Paid', 
-      currency: '$',
-      balanceAmount: 800.00,
-      requestDate: '2024-01-10',
-      approvedDate: '2024-01-11',
-      paidDate: '2024-01-12'
-    },
-    { 
-      id: 'CPP2508150014', 
-      cleaner: 'Hogar Nati', 
-      payoutMethod: 'Bank Transfer', 
-      amount: 200.00, 
-      status: 'Pending', 
-      currency: '£',
-      balanceAmount: 800.00,
-      requestDate: '2024-01-17'
-    }
-  ];
-
-  stats = {
-    totalDisputes: 79,
-    pending: 1,
-    resolved: 78,
-    highPriority: 1
+export class Payouts implements OnInit {
+  payouts: Payout[] = [];
+  stats: PayoutStats = {
+    total_payouts: 0,
+    pending_payouts: 0,
+    approved_payouts: 0,
+    paid_payouts: 0,
+    rejected_payouts: 0,
+    total_amount: 0,
+    paid_amount: 0,
+    pending_amount: 0,
+    booking_payouts: 0,
+    general_payouts: 0,
+    recent_payouts: 0,
+    average_payout: 0,
+    completion_rate: 0
   };
 
   searchText: string = '';
   payoutDialog: boolean = false;
   selectedPayout: Payout | null = null;
+  loading: boolean = false;
+
+  constructor(
+    private payoutService: PayoutService,
+    private messageService: MessageService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadPayouts();
+    this.loadPayoutStats();
+  }
+
+  loadPayouts(): void {
+    this.loading = true;
+    this.payoutService.getPayouts().subscribe({
+      next: (response) => {
+        this.payouts = response.data;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading payouts:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load payouts'
+        });
+        this.loading = false;
+      }
+    });
+  }
+
+  loadPayoutStats(): void {
+    this.payoutService.getPayoutStats().subscribe({
+      next: (response) => {
+        this.stats = response.data;
+      },
+      error: (error) => {
+        console.error('Error loading payout stats:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load payout statistics'
+        });
+      }
+    });
+  }
 
   get filteredPayouts(): Payout[] {
     if (!this.searchText) return this.payouts;
     
     return this.payouts.filter(payout => 
-      payout.id.toLowerCase().includes(this.searchText.toLowerCase()) ||
-      payout.cleaner.toLowerCase().includes(this.searchText.toLowerCase())
+      payout.payout_id.toLowerCase().includes(this.searchText.toLowerCase()) ||
+      payout.cleaner.name.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 
- getStatusSeverity(
-  status: string
-): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | null | undefined {
-  switch (status) {
-    case 'Paid':
-      return 'success';
-    case 'Approved':
-      return 'info';
-    case 'Pending':
-      return 'warn';
-    case 'Rejected':
-      return 'danger';
-    case 'High Priority':
-      return 'danger';
-    default:
-      return 'secondary';
+  getStatusSeverity(
+    status: string
+  ): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | 'contrast' | null | undefined {
+    switch (status.toLowerCase()) {
+      case 'paid':
+        return 'success';
+      case 'approved':
+        return 'info';
+      case 'pending':
+        return 'warn';
+      case 'rejected':
+        return 'danger';
+      case 'high priority':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
   }
-}
 
   showPayoutDetails(payout: Payout): void {
     this.selectedPayout = { ...payout };
@@ -143,45 +135,101 @@ export class Payouts {
 
   approvePayout(): void {
     if (this.selectedPayout) {
-      const payoutIndex = this.payouts.findIndex(p => p.id === this.selectedPayout!.id);
-      if (payoutIndex !== -1) {
-        this.payouts[payoutIndex].status = 'Approved';
-        this.payouts[payoutIndex].approvedDate = new Date().toISOString().split('T')[0];
-      }
-      this.payoutDialog = false;
-    }
-  }
-
-  rejectPayout(): void {
-    if (this.selectedPayout) {
-      const payoutIndex = this.payouts.findIndex(p => p.id === this.selectedPayout!.id);
-      if (payoutIndex !== -1) {
-        this.payouts[payoutIndex].status = 'Rejected';
-      }
-      this.payoutDialog = false;
+      this.payoutService.approvePayout(this.selectedPayout.id).subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Payout approved successfully'
+          });
+          this.updateLocalPayoutStatus(this.selectedPayout!.id, 'approved');
+          this.loadPayoutStats(); // Refresh stats
+          this.payoutDialog = false;
+        },
+        error: (error) => {
+          console.error('Error approving payout:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to approve payout'
+          });
+        }
+      });
     }
   }
 
   markAsPaid(): void {
     if (this.selectedPayout) {
-      const payoutIndex = this.payouts.findIndex(p => p.id === this.selectedPayout!.id);
-      if (payoutIndex !== -1) {
-        this.payouts[payoutIndex].status = 'Paid';
-        this.payouts[payoutIndex].paidDate = new Date().toISOString().split('T')[0];
-      }
-      this.payoutDialog = false;
+      this.payoutService.markPayoutAsPaid(this.selectedPayout.id).subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Payout marked as paid successfully'
+          });
+          this.updateLocalPayoutStatus(this.selectedPayout!.id, 'paid');
+          this.loadPayoutStats(); // Refresh stats
+          this.payoutDialog = false;
+        },
+        error: (error) => {
+          console.error('Error marking payout as paid:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to mark payout as paid'
+          });
+        }
+      });
     }
   }
 
-  getBankDetails() {
-    return {
-      accountName: 'Friends Global Ltd.',
-      accountNo: '123123413',
-      iban: 'GB44CLRB04097200005667',
-      sortCode: '001234124',
-      bankName: 'Black Bank',
-      bankAddress: '133 Houndsditch, LONDON, EC3A 7BX'
-    };
+  rejectPayout(): void {
+    if (this.selectedPayout) {
+      this.payoutService.rejectPayout(this.selectedPayout.id).subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Payout rejected successfully'
+          });
+          this.updateLocalPayoutStatus(this.selectedPayout!.id, 'rejected');
+          this.loadPayoutStats(); // Refresh stats
+          this.payoutDialog = false;
+        },
+        error: (error) => {
+          console.error('Error rejecting payout:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to reject payout'
+          });
+        }
+      });
+    }
+  }
+
+  private updateLocalPayoutStatus(payoutId: number, status: string): void {
+    const payoutIndex = this.payouts.findIndex(p => p.id === payoutId);
+    if (payoutIndex !== -1) {
+      this.payouts[payoutIndex].status = status;
+      this.payouts[payoutIndex].updated_at = new Date().toISOString();
+    }
+  }
+
+  getBankDetails(paymentMethod: PaymentMethod) {
+    if (paymentMethod.method === 'Bank Transfer') {
+      return {
+        accountName: paymentMethod.beneficiary_name || 'N/A',
+        accountNo: paymentMethod.account_number || 'N/A',
+        iban: paymentMethod.iban || 'N/A',
+        bankName: paymentMethod.bank_name || 'N/A'
+      };
+    } else if (paymentMethod.method === 'PayPal') {
+      return {
+        email: paymentMethod.paypal_email || 'N/A'
+      };
+    }
+    return {};
   }
 
   formatDate(dateString: string): string {
@@ -196,17 +244,28 @@ export class Payouts {
 
   getPayoutHistory(payout: Payout): any[] {
     const history = [
-      { action: 'Requested', date: payout.requestDate, status: 'Pending' }
+      { action: 'Requested', date: payout.created_at, status: 'Pending' }
     ];
 
-    if (payout.approvedDate) {
-      history.push({ action: 'Approved', date: payout.approvedDate, status: 'Approved' });
+    if (payout.status === 'approved' || payout.status === 'paid') {
+      history.push({ action: 'Approved', date: payout.updated_at, status: 'Approved' });
     }
 
-    if (payout.paidDate) {
-      history.push({ action: 'Paid', date: payout.paidDate, status: 'Paid' });
+    if (payout.status === 'paid') {
+      history.push({ action: 'Paid', date: payout.updated_at, status: 'Paid' });
     }
 
     return history;
+  }
+
+  // Helper method to get currency symbol (you might want to get this from API)
+  getCurrencySymbol(): string {
+    return '$'; // Default to $, you can modify based on your needs
+  }
+
+  // Helper method to get balance amount (you might need to adjust this based on your API)
+  getBalanceAmount(payout: Payout): number {
+    // This is a placeholder - adjust based on your actual data structure
+    return payout.amount * 2; // Example calculation
   }
 }
