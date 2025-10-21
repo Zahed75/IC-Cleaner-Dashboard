@@ -15,7 +15,8 @@
             [tableStyle]="{ 'min-width': '50rem' }"
             [rowsPerPageOptions]="[5, 10, 20]"
             styleClass="p-datatable-striped"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [loading]="loading">
             
             <ng-template pTemplate="header">
                 <tr>
@@ -32,7 +33,9 @@
             <ng-template pTemplate="body" let-client>
                 <tr>
                     <td>
-                        <span class="client-id">{{ client.id }}</span>
+                        <span class="client-id clickable" (click)="viewClientDetails(client)" title="Click to view details">
+                            {{ client.id }}
+                        </span>
                     </td>
                     <td>
                         <span class="client-name">{{ client.firstName }} {{ client.lastName }}</span>
@@ -54,6 +57,19 @@
                                 [severity]="client.status === 'Active' ? 'secondary' : 'primary'" text
                                 (onClick)="toggleClientStatus(client)" 
                                 [title]="client.status === 'Active' ? 'Deactivate' : 'Activate'" />
+                            <p-button icon="pi pi-trash" severity="danger" text 
+                                (onClick)="deleteClient(client)" title="Delete Client" />
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="loadingbody">
+                <tr>
+                    <td colspan="7" class="text-center">
+                        <div class="flex align-items-center justify-content-center gap-2">
+                            <i class="pi pi-spin pi-spinner"></i>
+                            <span>Loading clients...</span>
                         </div>
                     </td>
                 </tr>
@@ -68,104 +84,325 @@
     </p-card>
 </div>
 
+<!-- Client Details Dialog -->
+<p-dialog header="Client Details" [(visible)]="showClientDetailsDialog" [modal]="true" 
+    [style]="{ width: '600px', 'max-width': '90vw' }" [draggable]="false" [resizable]="false">
+    
+    <div class="client-details" *ngIf="selectedClient">
+        <div class="detail-section">
+            <h3 class="section-title">Personal Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="detail-item">
+                    <label class="detail-label">Client ID</label>
+                    <p class="detail-value">{{ selectedClient.id }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Status</label>
+                    <p-tag [value]="selectedClient.status" [severity]="getSeverity(selectedClient.status)" />
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">First Name</label>
+                    <p class="detail-value">{{ selectedClient.firstName }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Last Name</label>
+                    <p class="detail-value">{{ selectedClient.lastName }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Email</label>
+                    <p class="detail-value">{{ selectedClient.email }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Phone</label>
+                    <p class="detail-value">{{ selectedClient.phone }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="section-title">Location Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="detail-item">
+                    <label class="detail-label">City</label>
+                    <p class="detail-value">{{ selectedClient.postTown || 'N/A' }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">State</label>
+                    <p class="detail-value">{{ selectedClient.state || 'N/A' }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Country</label>
+                    <p class="detail-value">{{ selectedClient.country || 'N/A' }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Post Code</label>
+                    <p class="detail-value">{{ selectedClient.postCode || 'N/A' }}</p>
+                </div>
+                <div class="detail-item md:col-span-2">
+                    <label class="detail-label">Building Number</label>
+                    <p class="detail-value">{{ selectedClient.buildingNumber || 'N/A' }}</p>
+                </div>
+                <div class="detail-item md:col-span-2">
+                    <label class="detail-label">Street</label>
+                    <p class="detail-value">{{ selectedClient.streetName || 'N/A' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="section-title">Service Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="detail-item">
+                    <label class="detail-label">Lifetime Bill</label>
+                    <p class="detail-value">{{ selectedClient.lifetimeBill | currency:'GBP' }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Total Services</label>
+                    <p class="detail-value">{{ selectedClient.totalServices || 0 }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Pending Services</label>
+                    <p class="detail-value">{{ selectedClient.pendingServices || 0 }}</p>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Rating</label>
+                    <p class="detail-value">{{ selectedClient.rating || 'N/A' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-times" label="Close" severity="secondary" 
+            (onClick)="showClientDetailsDialog = false" />
+        <p-button icon="pi pi-pencil" label="Edit Client" severity="primary" 
+            (onClick)="editSelectedClient()" />
+    </ng-template>
+</p-dialog>
+
 <!-- Client Form Dialog -->
-<p-dialog [header]="isEditMode ? 'Client Profile' : 'Add New Client'" [(visible)]="showClientForm" [modal]="true" 
-    [style]="{ width: '700px', 'max-width': '90vw' }" [draggable]="false" [resizable]="false">
+<p-dialog [header]="isEditMode ? 'Edit Client Profile' : 'Add New Client'" [(visible)]="showClientForm" [modal]="true" 
+    [style]="{ width: '700px', 'max-width': '90vw' }" [draggable]="false" [resizable]="false"
+    (onHide)="onDialogHide()">
 
     <div class="client-form" [formGroup]="clientForm">
         <!-- Upload Section -->
         <div class="form-section">
-            <label class="section-label">Upload</label>
-            <p-fileUpload mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" 
-                customUpload="true" (onSelect)="onUpload($event)" class="w-full" />
-            <small class="upload-hint">No files chosen</small>
+            <label class="section-label">Profile Picture</label>
+            <p-fileUpload 
+                mode="basic" 
+                chooseLabel="Choose Profile Picture" 
+                chooseIcon="pi pi-upload" 
+                accept="image/*"
+                customUpload="true" 
+                (onSelect)="onUpload($event)" 
+                (onClear)="onClearFile()"
+                class="w-full" />
+            <small class="upload-hint">
+                {{ selectedFileName || 'No file chosen' }}
+            </small>
+            @if (clientForm.get('profilePicture')?.touched && clientForm.get('profilePicture')?.errors?.['required'] && !isEditMode) {
+                <small class="p-error">Profile picture is required</small>
+            }
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="field">
-                <label class="block text-sm font-medium mb-2">First Name</label>
-                <input pInputText formControlName="firstName" placeholder="Enter first name" class="w-full" />
+                <label class="block text-sm font-medium mb-2">First Name <span class="text-red-500">*</span></label>
+                <input pInputText formControlName="firstName" placeholder="Enter first name" class="w-full" 
+                    [class]="{'ng-invalid ng-dirty': clientForm.get('firstName')?.invalid && clientForm.get('firstName')?.touched}" />
+                @if (clientForm.get('firstName')?.touched && clientForm.get('firstName')?.errors?.['required']) {
+                    <small class="p-error">First name is required</small>
+                }
             </div>
 
             <div class="field">
-                <label class="block text-sm font-medium mb-2">Last Name</label>
-                <input pInputText formControlName="lastName" placeholder="Enter last name" class="w-full" />
+                <label class="block text-sm font-medium mb-2">Last Name <span class="text-red-500">*</span></label>
+                <input pInputText formControlName="lastName" placeholder="Enter last name" class="w-full" 
+                    [class]="{'ng-invalid ng-dirty': clientForm.get('lastName')?.invalid && clientForm.get('lastName')?.touched}" />
+                @if (clientForm.get('lastName')?.touched && clientForm.get('lastName')?.errors?.['required']) {
+                    <small class="p-error">Last name is required</small>
+                }
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="field">
-                <label class="block text-sm font-medium mb-2">Email</label>
-                <input pInputText formControlName="email" placeholder="Enter email address" class="w-full" />
+                <label class="block text-sm font-medium mb-2">Email <span class="text-red-500">*</span></label>
+                <input pInputText formControlName="email" placeholder="Enter email address" class="w-full" 
+                    [class]="{'ng-invalid ng-dirty': clientForm.get('email')?.invalid && clientForm.get('email')?.touched}" />
+                @if (clientForm.get('email')?.touched && clientForm.get('email')?.errors?.['required']) {
+                    <small class="p-error">Email is required</small>
+                }
+                @if (clientForm.get('email')?.touched && clientForm.get('email')?.errors?.['email']) {
+                    <small class="p-error">Please enter a valid email address</small>
+                }
             </div>
 
             <div class="field">
-                <label class="block text-sm font-medium mb-2">Phone Number</label>
-                <input pInputText formControlName="phone" placeholder="Enter phone number" class="w-full" />
+                <label class="block text-sm font-medium mb-2">Phone Number <span class="text-red-500">*</span></label>
+                <input pInputText formControlName="phoneNumber" placeholder="Enter phone number" class="w-full" 
+                    [class]="{'ng-invalid ng-dirty': clientForm.get('phoneNumber')?.invalid && clientForm.get('phoneNumber')?.touched}" />
+                @if (clientForm.get('phoneNumber')?.touched && clientForm.get('phoneNumber')?.errors?.['required']) {
+                    <small class="p-error">Phone number is required</small>
+                }
             </div>
         </div>
 
-        <div class="field">
-            <label class="block text-sm font-medium mb-2">Location</label>
-            <input pInputText formControlName="location" placeholder="Enter location" class="w-full" />
-        </div>
-
-        <!-- Address Section -->
+        <!-- Address Section - Updated to match API -->
         <div class="form-section">
-            <label class="section-label">Building Number and Street Name</label>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="field">
-                    <input pInputText formControlName="buildingNumber" placeholder="Building Number" class="w-full" />
-                </div>
-                <div class="field">
-                    <input pInputText formControlName="streetName" placeholder="Street Name" class="w-full" />
-                </div>
-            </div>
+            <label class="section-label">Address Information</label>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="field">
-                    <label class="block text-sm font-medium mb-2">Post Town</label>
-                    <input pInputText formControlName="postTown" placeholder="Post Town" class="w-full" />
+                    <label class="block text-sm font-medium mb-2">Building Number <span class="text-red-500">*</span></label>
+                    <input pInputText formControlName="buildingNumber" placeholder="Building Number" class="w-full" 
+                        [class]="{'ng-invalid ng-dirty': clientForm.get('buildingNumber')?.invalid && clientForm.get('buildingNumber')?.touched}" />
+                    @if (clientForm.get('buildingNumber')?.touched && clientForm.get('buildingNumber')?.errors?.['required']) {
+                        <small class="p-error">Building number is required</small>
+                    }
                 </div>
                 
                 <div class="field">
-                    <label class="block text-sm font-medium mb-2">Locality Name (optional)</label>
-                    <input pInputText formControlName="localityName" placeholder="Locality Name" class="w-full" />
+                    <label class="block text-sm font-medium mb-2">Street <span class="text-red-500">*</span></label>
+                    <input pInputText formControlName="street" placeholder="Street Name" class="w-full" 
+                        [class]="{'ng-invalid ng-dirty': clientForm.get('street')?.invalid && clientForm.get('street')?.touched}" />
+                    @if (clientForm.get('street')?.touched && clientForm.get('street')?.errors?.['required']) {
+                        <small class="p-error">Street is required</small>
+                    }
                 </div>
             </div>
             
-            <div class="field">
-                <label class="block text-sm font-medium mb-2">Postcode</label>
-                <input pInputText formControlName="postCode" placeholder="Postcode" class="w-full" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="field">
+                    <label class="block text-sm font-medium mb-2">City <span class="text-red-500">*</span></label>
+                    <input pInputText formControlName="city" placeholder="City" class="w-full" 
+                        [class]="{'ng-invalid ng-dirty': clientForm.get('city')?.invalid && clientForm.get('city')?.touched}" />
+                    @if (clientForm.get('city')?.touched && clientForm.get('city')?.errors?.['required']) {
+                        <small class="p-error">City is required</small>
+                    }
+                </div>
+                
+                <div class="field">
+                    <label class="block text-sm font-medium mb-2">State <span class="text-red-500">*</span></label>
+                    <input pInputText formControlName="state" placeholder="State" class="w-full" 
+                        [class]="{'ng-invalid ng-dirty': clientForm.get('state')?.invalid && clientForm.get('state')?.touched}" />
+                    @if (clientForm.get('state')?.touched && clientForm.get('state')?.errors?.['required']) {
+                        <small class="p-error">State is required</small>
+                    }
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="field">
+                    <label class="block text-sm font-medium mb-2">Post Code <span class="text-red-500">*</span></label>
+                    <input pInputText formControlName="postCode" placeholder="Post Code" class="w-full" 
+                        [class]="{'ng-invalid ng-dirty': clientForm.get('postCode')?.invalid && clientForm.get('postCode')?.touched}" />
+                    @if (clientForm.get('postCode')?.touched && clientForm.get('postCode')?.errors?.['required']) {
+                        <small class="p-error">Post code is required</small>
+                    }
+                </div>
+
+                <div class="field">
+                    <label class="block text-sm font-medium mb-2">Country <span class="text-red-500">*</span></label>
+                    <input pInputText formControlName="country" placeholder="Country" class="w-full" 
+                        [class]="{'ng-invalid ng-dirty': clientForm.get('country')?.invalid && clientForm.get('country')?.touched}" />
+                    @if (clientForm.get('country')?.touched && clientForm.get('country')?.errors?.['required']) {
+                        <small class="p-error">Country is required</small>
+                    }
+                </div>
             </div>
         </div>
 
         <!-- Password Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="field">
-                <label class="block text-sm font-medium mb-2">Password (if want to change)</label>
-                <input pInputText type="password" formControlName="password" placeholder="Enter new password" class="w-full" />
-            </div>
+        @if (!isEditMode) {
+            <div class="form-section">
+                <label class="section-label">Password</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="field">
+                        <label class="block text-sm font-medium mb-2">Password <span class="text-red-500">*</span></label>
+                        <p-password formControlName="password" [feedback]="false" placeholder="Enter password" 
+                            [toggleMask]="true" class="w-full" 
+                            [class]="{'ng-invalid ng-dirty': clientForm.get('password')?.invalid && clientForm.get('password')?.touched}" />
+                        @if (clientForm.get('password')?.touched && clientForm.get('password')?.errors?.['required']) {
+                            <small class="p-error">Password is required</small>
+                        }
+                        @if (clientForm.get('password')?.touched && clientForm.get('password')?.errors?.['minlength']) {
+                            <small class="p-error">Password must be at least 6 characters</small>
+                        }
+                    </div>
 
-            <div class="field">
-                <label class="block text-sm font-medium mb-2">Repeat Password</label>
-                <input pInputText type="password" formControlName="repeatPassword" placeholder="Repeat password" class="w-full" />
+                    <div class="field">
+                        <label class="block text-sm font-medium mb-2">Confirm Password <span class="text-red-500">*</span></label>
+                        <p-password formControlName="confirmPassword" [feedback]="false" placeholder="Confirm password" 
+                            [toggleMask]="true" class="w-full" 
+                            [class]="{'ng-invalid ng-dirty': clientForm.get('confirmPassword')?.invalid && clientForm.get('confirmPassword')?.touched}" />
+                        @if (clientForm.get('confirmPassword')?.touched && clientForm.get('confirmPassword')?.errors?.['required']) {
+                            <small class="p-error">Please confirm password</small>
+                        }
+                        @if (clientForm.hasError('passwordMismatch') && clientForm.get('confirmPassword')?.touched) {
+                            <small class="p-error">Passwords do not match</small>
+                        }
+                    </div>
+                </div>
             </div>
-        </div>
+        }
+
+        @if (isEditMode) {
+            <div class="form-section">
+                <label class="section-label">Change Password (Optional)</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="field">
+                        <label class="block text-sm font-medium mb-2">New Password</label>
+                        <p-password formControlName="password" [feedback]="false" placeholder="Enter new password" 
+                            [toggleMask]="true" class="w-full" />
+                        @if (clientForm.get('password')?.touched && clientForm.get('password')?.errors?.['minlength']) {
+                            <small class="p-error">Password must be at least 6 characters</small>
+                        }
+                    </div>
+
+                    <div class="field">
+                        <label class="block text-sm font-medium mb-2">Confirm New Password</label>
+                        <p-password formControlName="confirmPassword" [feedback]="false" placeholder="Confirm new password" 
+                            [toggleMask]="true" class="w-full" />
+                        @if (clientForm.hasError('passwordMismatch') && clientForm.get('confirmPassword')?.touched) {
+                            <small class="p-error">Passwords do not match</small>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
 
         <!-- Status Toggle -->
         <div class="field flex items-center gap-3">
-            <p-toggleSwitch formControlName="status" />
-            <label class="text-sm font-medium">Active</label>
+            <p-toggleSwitch formControlName="isActive" />
+            <label class="text-sm font-medium">Active Account</label>
         </div>
     </div>
 
     <ng-template pTemplate="footer">
         <p-button icon="pi pi-times" label="Cancel" severity="secondary" 
-            (onClick)="showClientForm = false" />
-        <p-button icon="pi pi-check" label="Save Changes" severity="primary" 
-            (onClick)="saveClient()" />
+            (onClick)="showClientForm = false" [disabled]="saving" />
+        <p-button icon="pi pi-check" label="{{ isEditMode ? 'Update Client' : 'Create Client' }}" 
+            severity="primary" (onClick)="saveClient()" [disabled]="clientForm.invalid || saving" 
+            [loading]="saving" />
+    </ng-template>
+</p-dialog>
+
+<!-- Delete Confirmation Dialog -->
+<p-dialog header="Confirm Delete" [(visible)]="showDeleteDialog" [modal]="true" 
+    [style]="{ width: '450px' }" [draggable]="false" [resizable]="false">
+    <div class="confirmation-content">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>Are you sure you want to delete client <b>{{ deletingClient?.firstName }} {{ deletingClient?.lastName }}</b>?</span>
+    </div>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-times" label="No" severity="secondary" 
+            (onClick)="showDeleteDialog = false" [disabled]="deleting" />
+        <p-button icon="pi pi-check" label="Yes" severity="danger" 
+            (onClick)="confirmDelete()" [loading]="deleting" />
     </ng-template>
 </p-dialog>
 
 <p-toast />
+<p-confirmDialog />
