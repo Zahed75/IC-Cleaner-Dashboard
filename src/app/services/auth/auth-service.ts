@@ -1,8 +1,9 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { environment } from '../../../enviornments/environment'; // Import environment
+import { environment } from '../../../enviornments/environment';
 
 export interface User {
   id: number;
@@ -38,7 +39,7 @@ export interface LoginRequest {
   providedIn: 'root'
 })
 export class AuthService {
-  private baseURL = environment.baseURL; // Use environment variable
+  private baseURL = environment.baseURL;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -46,7 +47,6 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
-    // Check if user data exists in localStorage on service initialization
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       this.currentUserSubject.next(JSON.parse(savedUser));
@@ -58,18 +58,35 @@ export class AuthService {
       .pipe(
         tap(response => {
           if (response.user && response.user.access_token) {
-            // Store user data and token in localStorage
             localStorage.setItem('currentUser', JSON.stringify(response.user));
             localStorage.setItem('access_token', response.user.access_token);
             localStorage.setItem('refresh_token', response.user.refresh_token);
             this.currentUserSubject.next(response.user);
+
+            // Redirect based on role after login
+            this.redirectBasedOnRole(response.user.role);
           }
         })
       );
   }
 
+private redirectBasedOnRole(role: string): void {
+  switch (role) {
+    case 'admin':
+      this.router.navigate(['/admin/dashboard']);
+      break;
+    case 'cleaner':
+      this.router.navigate(['/dashboard']); // Cleaner uses root path
+      break;
+    case 'customer':
+      this.router.navigate(['/customer/dashboard']);
+      break;
+    default:
+      this.router.navigate(['/dashboard']);
+  }
+}
+
   logout(): void {
-    // Remove user data from localStorage
     localStorage.removeItem('currentUser');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
@@ -94,7 +111,6 @@ export class AuthService {
     return user ? user.role : null;
   }
 
-  // Helper method to get full API URL
   getApiUrl(endpoint: string): string {
     return `${this.baseURL}/${endpoint}`;
   }

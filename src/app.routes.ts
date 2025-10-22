@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { AppLayout } from './app/layout/component/app.layout';
-import { Login } from '../src/app/components/admin/auth/login/login'; // Import Login component
+import { Login } from '../src/app/components/admin/auth/login/login';
 
+// Import all components
 import { Cleaners } from '@/components/admin/cleaners/cleaners';
 import { Clients } from '@/components/admin/clients/clients';
 import { Payouts } from '@/components/admin/payouts/payouts';
@@ -11,33 +12,80 @@ import { Settings } from '@/components/admin/settings/settings';
 import { Dashboard } from '@/components/admin/dashboard/dashboard';
 import { BookingsComponent } from '@/components/admin/bookings/bookings';
 import { ServicesComponent } from '@/components/admin/services/services';
-import { AuthGuard } from '../src/app/guard/auth-guard'; // We'll create this guard
+
+import { CleanerDashboardComponent } from '@/components/cleaner-app/dashboard/dashboard';
+import { CleanerBookingsComponent } from '@/components/cleaner-app/bookings/bookings';
+import { CleanerPayoutsComponent } from '@/components/cleaner-app/payouts/payouts';
+import { CleanerDisputesComponent } from '@/components/cleaner-app/disputes/disputes';
+import { CleanerReportsComponent } from '@/components/cleaner-app/reports/reports';
+import { CleanerSettingsComponent } from '@/components/cleaner-app/settings/settings';
+
+import { CustomerDashboardComponent } from '@/components/customer-app/dashboard/dashboard';
+import { CustomerBookingsComponent } from '@/components/customer-app/bookings/bookings';
+import { CustomerBillingComponent } from '@/components/customer-app/billings/billings';
+import { CustomerAccountSettingsComponent } from '@/components/customer-app/settings/settings';
+
+import { AuthGuard } from '../src/app/guard/auth-guard';
 
 export const appRoutes: Routes = [
     // Login route (default)
     { path: '', component: Login },
     { path: 'sign-in', component: Login },
     
-    // Protected routes (with layout)
+    // Admin routes
     {
-        path: '',
+        path: 'admin',
         component: AppLayout,
-        canActivate: [AuthGuard], // Protect all admin routes
+        canActivate: [AuthGuard],
+        data: { requiredRole: 'admin' },
         children: [
             { path: 'dashboard', component: Dashboard },
             { path: 'booking', component: BookingsComponent },
-            { path: 'services', component: ServicesComponent },
-            { path: 'cleaners', component: Cleaners },
-            { path: 'clients', component: Clients },
             { path: 'payouts', component: Payouts },
             { path: 'disputes', component: Disputes },
             { path: 'reports', component: Reports },
             { path: 'settings', component: Settings },
-            
-            // Redirect to dashboard when base admin route is accessed
+            { path: 'services', component: ServicesComponent },
+            { path: 'cleaners', component: Cleaners },
+            { path: 'clients', component: Clients },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
+    
+    // Cleaner routes
+    {
+        path: '',
+        component: AppLayout,
+        canActivate: [AuthGuard],
+        data: { requiredRole: 'cleaner' },
+        children: [
+            { path: 'dashboard', component: CleanerDashboardComponent },
+            { path: 'booking', component: CleanerBookingsComponent },
+            { path: 'payouts', component: CleanerPayoutsComponent },
+            { path: 'disputes', component: CleanerDisputesComponent },
+            { path: 'reports', component: CleanerReportsComponent },
+            { path: 'settings', component: CleanerSettingsComponent },
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+        ]
+    },
+    
+    // Customer routes
+    {
+        path: 'customer',
+        component: AppLayout,
+        canActivate: [AuthGuard],
+        data: { requiredRole: 'customer' },
+        children: [
+            { path: 'dashboard', component: CustomerDashboardComponent },
+            { path: 'booking', component: CustomerBookingsComponent },
+            { path: 'billing', component: CustomerBillingComponent },
+            { path: 'account-settings', component: CustomerAccountSettingsComponent },
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+        ]
+    },
+    
+    // Default redirect based on role (handled in AuthService after login)
+    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     
     // Redirect any unknown routes to login
     { path: '**', redirectTo: '' }
