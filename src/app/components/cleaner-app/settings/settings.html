@@ -1,1 +1,220 @@
-<p>settings works!</p>
+<div class="settings-container">
+  <!-- Header -->
+  <div class="header-section">
+    <h1>Cleaner Management</h1>
+    <p class="subtitle">Here's what's happening with your cleaning services today</p>
+  </div>
+
+  <div class="settings-content">
+    <!-- Left Column -->
+    <div class="left-column">
+      <!-- Profile Upload Section -->
+      <p-card class="upload-card">
+        <div class="upload-section">
+          <div class="upload-header">
+            <i class="pi pi-cloud-upload upload-icon"></i>
+            <h3>Upload Profile Picture</h3>
+          </div>
+          <div class="file-upload-wrapper">
+            <input 
+              type="file" 
+              id="fileInput"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+              class="file-input">
+            <label for="fileInput" class="file-upload-label">
+              <i class="pi pi-upload"></i>
+              Choose File
+            </label>
+          </div>
+          <small class="file-hint">
+            {{ selectedFile ? selectedFile.name : 'No files chosen' }}
+          </small>
+        </div>
+      </p-card>
+
+      <!-- Personal Information -->
+      <p-card class="info-card">
+        <div class="section-header">
+          <h3>Personal Information</h3>
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input 
+              id="firstName"
+              type="text" 
+              pInputText 
+              [(ngModel)]="profileData.firstName"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input 
+              id="lastName"
+              type="text" 
+              pInputText 
+              [(ngModel)]="profileData.lastName"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              id="email"
+              type="email" 
+              pInputText 
+              [(ngModel)]="profileData.email"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input 
+              id="phone"
+              type="tel" 
+              pInputText 
+              [(ngModel)]="profileData.phone"
+              class="form-input">
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Password Section -->
+      <p-card class="info-card">
+        <div class="section-header">
+          <h3>Change Password</h3>
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="password">New Password</label>
+            <input 
+              id="password"
+              type="password" 
+              pInputText 
+              [(ngModel)]="profileData.password"
+              placeholder="Enter new password"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="repeatPassword">Repeat Password</label>
+            <input 
+              id="repeatPassword"
+              type="password" 
+              pInputText 
+              [(ngModel)]="profileData.repeatPassword"
+              placeholder="Repeat new password"
+              class="form-input">
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Right Column -->
+    <div class="right-column">
+      <!-- Address Information -->
+      <p-card class="info-card">
+        <div class="section-header">
+          <h3>Address Information</h3>
+        </div>
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="buildingNumber">Building Number and Street Name</label>
+            <input 
+              id="buildingNumber"
+              type="text" 
+              pInputText 
+              [(ngModel)]="profileData.buildingNumber"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="locality">Locality Name (optional)</label>
+            <input 
+              id="locality"
+              type="text" 
+              pInputText 
+              [(ngModel)]="profileData.locality"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="postTown">Post Town</label>
+            <input 
+              id="postTown"
+              type="text" 
+              pInputText 
+              [(ngModel)]="profileData.postTown"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="postcode">Postcode</label>
+            <input 
+              id="postcode"
+              type="text" 
+              pInputText 
+              [(ngModel)]="profileData.postcode"
+              class="form-input">
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Payment Information -->
+      <p-card class="info-card">
+        <div class="section-header">
+          <h3>Payment Information</h3>
+        </div>
+        
+        <div class="payment-options">
+          <div class="radio-group">
+            <input 
+              type="radio" 
+              id="paypal"
+              name="paymentMethod" 
+              value="paypal" 
+              [(ngModel)]="profileData.paymentMethod"
+              class="radio-input">
+            <label for="paypal" class="radio-label">PayPal</label>
+          </div>
+
+          <div class="radio-group">
+            <input 
+              type="radio" 
+              id="bank"
+              name="paymentMethod" 
+              value="bank" 
+              [(ngModel)]="profileData.paymentMethod"
+              class="radio-input">
+            <label for="bank" class="radio-label">Bank Transfer</label>
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="profileData.paymentMethod === 'paypal'">
+          <label for="paypalEmail">PayPal Email Address</label>
+          <input 
+            id="paypalEmail"
+            type="email" 
+            pInputText 
+            [(ngModel)]="profileData.paypalEmail"
+            class="form-input">
+        </div>
+      </p-card>
+
+      <!-- Save Button -->
+      <div class="action-section">
+        <p-button 
+          label="Save Changes" 
+          icon="pi pi-check"
+          (click)="saveChanges()"
+          styleClass="save-button">
+        </p-button>
+      </div>
+    </div>
+  </div>
+</div>

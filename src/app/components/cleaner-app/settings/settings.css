@@ -1,0 +1,264 @@
+.settings-container {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+}
+
+/* Header Section */
+.header-section {
+  margin-bottom: 2rem;
+}
+
+.header-section h1 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-section .subtitle {
+  color: #7f8c8d;
+  margin: 0.5rem 0 0 0;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+/* Main Content Layout */
+.settings-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 1200px) {
+  .settings-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cards */
+.upload-card,
+.info-card {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  background: white;
+  margin-bottom: 1.5rem;
+}
+
+::ng-deep .upload-card .p-card-body,
+::ng-deep .info-card .p-card-body {
+  padding: 1.5rem;
+}
+
+/* Upload Section */
+.upload-section {
+  text-align: center;
+  padding: 1rem;
+}
+
+.upload-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.upload-icon {
+  font-size: 1.5rem;
+  color: #3498db;
+}
+
+.upload-header h3 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* File Upload Styles */
+.file-upload-wrapper {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.file-input {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+.file-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #3498db;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #3498db;
+}
+
+.file-upload-label:hover {
+  background: #2980b9;
+  border-color: #2980b9;
+  transform: translateY(-1px);
+}
+
+.file-hint {
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  display: block;
+}
+
+/* Section Headers */
+.section-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.section-header h3 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Form Styles */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+::ng-deep .form-input .p-inputtext {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .form-input .p-inputtext:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Payment Options */
+.payment-options {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.radio-input {
+  width: 18px;
+  height: 18px;
+  accent-color: #3498db;
+}
+
+.radio-label {
+  font-weight: 500;
+  color: #2c3e50;
+  cursor: pointer;
+}
+
+/* Save Button Section */
+.action-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.save-button {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+  transition: all 0.3s ease;
+}
+
+.save-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 1rem;
+  }
+  
+  .header-section h1 {
+    font-size: 2rem;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .payment-options {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .action-section {
+    justify-content: center;
+  }
+  
+  .save-button {
+    width: 100%;
+  }
+}
+
+/* Additional Styling for Better UX */
+::ng-deep .p-card {
+  transition: all 0.3s ease;
+}
+
+::ng-deep .p-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+/* Input Focus States */
+::ng-deep .p-inputtext:enabled:focus {
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  border-color: #3498db;
+}

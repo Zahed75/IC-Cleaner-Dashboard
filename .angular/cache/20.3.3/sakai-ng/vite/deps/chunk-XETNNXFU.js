@@ -1,6 +1,9 @@
 import {
   BaseIcon
-} from "./chunk-XZTLLFD7.js";
+} from "./chunk-BTPAE4OE.js";
+import {
+  s3 as s
+} from "./chunk-ED6DJ4IY.js";
 import {
   Component,
   setClassMetadata,
@@ -15,9 +18,6 @@ import {
   ɵɵgetInheritedFactory,
   ɵɵnamespaceSVG
 } from "./chunk-YO6GPXUM.js";
-import {
-  s3 as s
-} from "./chunk-MSBUF645.js";
 
 // node_modules/primeng/fesm2022/primeng-icons-angledown.mjs
 var _c0 = ["data-p-icon", "angle-down"];
@@ -2892,4 +2892,4 @@ export {
   WindowMaximizeIcon,
   WindowMinimizeIcon
 };
-//# sourceMappingURL=chunk-OWV4U5AU.js.map
+//# sourceMappingURL=chunk-XETNNXFU.js.map
