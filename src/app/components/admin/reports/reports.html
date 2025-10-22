@@ -1,4 +1,7 @@
 <div class="min-h-screen bg-gray-50 p-6">
+  <!-- Toast for messages -->
+  <p-toast></p-toast>
+
   <!-- Header Section -->
   <div class="mb-8">
     <div class="flex justify-between items-start mb-6">
@@ -14,13 +17,13 @@
       ></button>
     </div>
 
-    <!-- Filters Section - Updated with AutoComplete -->
+    <!-- Filters Section -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-gray-900">Report Filters</h3>
         <div class="flex items-center space-x-2 text-sm text-gray-500">
           <i class="pi pi-filter"></i>
-          <span>Active Filters: 3</span>
+          <span>{{ loading ? 'Loading...' : 'Apply filters to update report' }}</span>
         </div>
       </div>
       
@@ -37,6 +40,8 @@
               [options]="dateRangeOptions" 
               [(ngModel)]="selectedDateRange"
               (onChange)="onFilterChange()"
+              optionLabel="label"
+              optionValue="value"
               class="w-full"
               styleClass="date-range-selector"
             ></p-selectButton>
@@ -47,7 +52,7 @@
           </div>
         </div>
 
-        <!-- Service Type - Updated to AutoComplete -->
+        <!-- Service Type -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-3">Service Type</label>
           <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-100">
@@ -59,6 +64,8 @@
               [(ngModel)]="selectedServiceType" 
               [suggestions]="filteredServiceTypes"
               (completeMethod)="filterServiceTypes($event)"
+              (onSelect)="onFilterChange()"
+              (onClear)="onFilterChange()"
               optionLabel="name"
               placeholder="Search service type..."
               [dropdown]="true"
@@ -74,7 +81,7 @@
           </div>
         </div>
 
-        <!-- Location - Updated to AutoComplete -->
+        <!-- Location -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-3">Location</label>
           <div class="bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg p-4 border border-purple-100">
@@ -86,7 +93,9 @@
               [(ngModel)]="selectedLocation" 
               [suggestions]="filteredLocations"
               (completeMethod)="filterLocations($event)"
-              optionLabel="name"
+              (onSelect)="onFilterChange()"
+              (onClear)="onFilterChange()"
+              field="name"
               placeholder="Search location..."
               [dropdown]="true"
               styleClass="w-full modern-autocomplete"
@@ -106,7 +115,7 @@
       <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
         <div class="flex items-center space-x-2 text-sm text-gray-500">
           <i class="pi pi-chart-line"></i>
-          <span>Reports update in real-time</span>
+          <span>{{ loading ? 'Updating report...' : 'Reports update in real-time' }}</span>
         </div>
         <div class="flex space-x-3">
           <button 
@@ -115,6 +124,7 @@
             label="Reset Filters" 
             class="p-button-outlined p-button-secondary p-button-sm"
             (click)="resetFilters()"
+            [disabled]="loading"
           ></button>
           <button 
             pButton 
@@ -122,13 +132,13 @@
             label="Apply Filters" 
             class="p-button-primary p-button-sm"
             (click)="onFilterChange()"
+            [disabled]="loading"
           ></button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Rest of the content remains the same -->
   <!-- Key Metrics Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
     <!-- Total Bookings Card -->
@@ -144,13 +154,13 @@
         <div class="flex items-center justify-center text-sm" 
              [class]="stats.bookingChange >= 0 ? 'text-green-600' : 'text-red-600'">
           <i [class]="stats.bookingChange >= 0 ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="mr-1"></i>
-          <span>{{ abs(stats.bookingChange) }} from last month</span>
+          <span>{{ abs(stats.bookingChange) }}% from last period</span>
         </div>
         <div class="mt-4 p-4 bg-blue-50 rounded-lg">
-          <p class="text-lg font-semibold text-blue-900">Revenue £{{ stats.revenue.toLocaleString('en-GB', {minimumFractionDigits: 2}) }}</p>
+          <p class="text-lg font-semibold text-blue-900">Revenue {{ formatCurrency(stats.revenue) }}</p>
           <p class="text-sm" [class]="stats.revenueChange >= 0 ? 'text-green-600' : 'text-red-600'">
             <i [class]="stats.revenueChange >= 0 ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="mr-1"></i>
-            {{ abs(stats.revenueChange) }}% from last month
+            {{ abs(stats.revenueChange) }}% from last period
           </p>
         </div>
       </div>
@@ -163,18 +173,15 @@
           <i class="pi pi-star text-3xl text-amber-500 mr-3"></i>
           <div>
             <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Avg. Rating</p>
-            <h3 class="text-4xl font-bold text-gray-900">{{ stats.avgRating }}</h3>
+            <h3 class="text-4xl font-bold text-gray-900">{{ stats.avgRating || 'N/A' }}</h3>
           </div>
         </div>
         <div class="flex items-center justify-center text-amber-600 text-sm mb-4">
-          <i class="pi pi-star-fill mr-1"></i>
-          <i class="pi pi-star-fill mr-1"></i>
-          <i class="pi pi-star-fill mr-1"></i>
-          <i class="pi pi-star-fill mr-1"></i>
-          <i class="pi pi-star-half mr-1"></i>
+          <i class="pi pi-star-fill mr-1" *ngFor="let star of [1,2,3,4,5]"
+             [class.text-gray-300]="star > stats.avgRating"></i>
         </div>
         <div class="bg-amber-50 p-4 rounded-lg">
-          <p class="text-lg font-semibold text-amber-900">©{{ stats.positiveRating }}% Positive</p>
+          <p class="text-lg font-semibold text-amber-900">{{ stats.positiveRating }}% Positive</p>
           <p class="text-sm text-amber-700">Based on customer feedback</p>
         </div>
       </div>
@@ -193,11 +200,11 @@
         <div class="flex items-center justify-center text-sm mb-4" 
              [class]="stats.cleanerChange >= 0 ? 'text-green-600' : 'text-red-600'">
           <i [class]="stats.cleanerChange >= 0 ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="mr-1"></i>
-          <span>{{ abs(stats.cleanerChange) }} {{ stats.cleanerChange >= 0 ? 'more' : 'less' }} than last month</span>
+          <span>{{ abs(stats.cleanerChange) }} {{ stats.cleanerChange >= 0 ? 'more' : 'less' }} than last period</span>
         </div>
         <div class="bg-green-50 p-4 rounded-lg">
           <p class="text-lg font-semibold text-green-900">Performance</p>
-          <p class="text-sm text-green-700">98% on-time completion</p>
+          <p class="text-sm text-green-700">{{ additionalMetrics.completion_rate }}% completion rate</p>
         </div>
       </div>
     </p-card>
@@ -210,7 +217,7 @@
       <div class="flex justify-between items-center mb-6">
         <div>
           <h4 class="text-lg font-semibold text-gray-900">Revenue & Bookings Trend</h4>
-          <p class="text-gray-600">Last 7 months performance</p>
+          <p class="text-gray-600">Performance over time</p>
         </div>
         <p-selectButton 
           [options]="datasetOptions" 
@@ -249,7 +256,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
       <i class="pi pi-check-circle text-4xl text-green-500 mb-3"></i>
       <h4 class="text-lg font-semibold text-gray-900 mb-1">Completion Rate</h4>
-      <p class="text-3xl font-bold text-green-600">98.2%</p>
+      <p class="text-3xl font-bold text-green-600">{{ formatPercentage(additionalMetrics.completion_rate) }}</p>
       <p class="text-sm text-gray-500">Services completed on time</p>
     </div>
 
@@ -257,7 +264,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
       <i class="pi pi-heart text-4xl text-red-500 mb-3"></i>
       <h4 class="text-lg font-semibold text-gray-900 mb-1">Satisfaction</h4>
-      <p class="text-3xl font-bold text-red-600">94%</p>
+      <p class="text-3xl font-bold text-red-600">{{ formatPercentage(additionalMetrics.satisfaction_rate) }}</p>
       <p class="text-sm text-gray-500">Happy customers</p>
     </div>
 
@@ -265,7 +272,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
       <i class="pi pi-repeat text-4xl text-blue-500 mb-3"></i>
       <h4 class="text-lg font-semibold text-gray-900 mb-1">Repeat Rate</h4>
-      <p class="text-3xl font-bold text-blue-600">76%</p>
+      <p class="text-3xl font-bold text-blue-600">{{ formatPercentage(additionalMetrics.repeat_rate) }}</p>
       <p class="text-sm text-gray-500">Customer retention</p>
     </div>
 
@@ -273,7 +280,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
       <i class="pi pi-clock text-4xl text-purple-500 mb-3"></i>
       <h4 class="text-lg font-semibold text-gray-900 mb-1">Response Time</h4>
-      <p class="text-3xl font-bold text-purple-600">2.3h</p>
+      <p class="text-3xl font-bold text-purple-600">{{ additionalMetrics.avg_response_time }}h</p>
       <p class="text-sm text-gray-500">Average response</p>
     </div>
   </div>
@@ -286,6 +293,7 @@
       label="Export Report" 
       class="p-button-primary p-button-lg"
       (click)="exportReport()"
+      [disabled]="loading"
     ></button>
   </div>
 </div>

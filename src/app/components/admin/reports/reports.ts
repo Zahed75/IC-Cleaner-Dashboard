@@ -6,6 +6,9 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { AutoCompleteModule, AutoComplete } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { ReportService, OverviewReport, FilterOptions, Service, DateRangeOption } from '../../../services/reports/report-service';
 
 interface ChartData {
   labels: string[];
@@ -23,61 +26,48 @@ interface ChartData {
     SelectButtonModule,
     AutoCompleteModule,
     ButtonModule,
-      AutoComplete,
-      UIChart,
-      Card
-],
+    AutoComplete,
+    UIChart,
+    Card,
+    ToastModule
+  ],
   templateUrl: './reports.html',
-  styleUrls: ['./reports.css']
+  styleUrls: ['./reports.css'],
+  providers: [MessageService]
 })
 export class Reports implements OnInit {
-  dateRangeOptions = [
-    { label: 'Last 7 days', value: '7days' },
-    { label: 'Last 30 days', value: '30days' },
-    { label: 'Last 90 days', value: '90days' },
-    { label: 'Last 6 months', value: '6months' },
-    { label: 'Last year', value: '1year' },
-    { label: 'Custom Range', value: 'custom' }
-  ];
-
-  serviceTypeOptions = [
-    { name: 'All Services', value: 'all' },
-    { name: 'Regular Cleaning', value: 'regular' },
-    { name: 'Deep Cleaning', value: 'deep' },
-    { name: 'Move Out Cleaning', value: 'moveout' },
-    { name: 'Commercial Cleaning', value: 'commercial' }
-  ];
-
-  locationOptions = [
-    { name: 'All Locations', value: 'all' },
-    { name: 'London', value: 'london' },
-    { name: 'Manchester', value: 'manchester' },
-    { name: 'Birmingham', value: 'birmingham' },
-    { name: 'Liverpool', value: 'liverpool' }
-  ];
-
+  dateRangeOptions: DateRangeOption[] = [];
+  serviceTypeOptions: Service[] = [];
+  locationOptions: any[] = [];
   datasetOptions = [
     { label: 'By Service Type', value: 'service' },
     { label: 'By Location', value: 'location' }
   ];
 
-  selectedDateRange = '30days';
-  selectedServiceType: any = { name: 'All Services', value: 'all' };
-  selectedLocation: any = { name: 'All Locations', value: 'all' };
+  selectedDateRange = 'month';
+  selectedServiceType: Service | null = null;
+  selectedLocation: string | null = null;
   selectedDataset = 'service';
 
-  filteredServiceTypes: any[] = [];
+  filteredServiceTypes: Service[] = [];
   filteredLocations: any[] = [];
 
   stats = {
-    totalBookings: 786,
-    bookingChange: 12,
-    revenue: 12489.02,
-    revenueChange: 8,
-    avgRating: 4.7,
-    positiveRating: 92,
-    activeCleaners: 21,
-    cleanerChange: -2
+    totalBookings: 0,
+    bookingChange: 0,
+    revenue: 0,
+    revenueChange: 0,
+    avgRating: 0,
+    positiveRating: 0,
+    activeCleaners: 0,
+    cleanerChange: 0
+  };
+
+  additionalMetrics = {
+    completion_rate: 0,
+    satisfaction_rate: 0,
+    repeat_rate: 0,
+    avg_response_time: 0
   };
 
   revenueChart: ChartData = {
@@ -90,55 +80,133 @@ export class Reports implements OnInit {
     datasets: []
   };
 
+  loading = false;
+
+  constructor(
+    private reportService: ReportService,
+    private messageService: MessageService
+  ) {}
+
   ngOnInit() {
-    this.initializeCharts();
-    // Initialize filtered lists
-    this.filteredServiceTypes = this.serviceTypeOptions;
-    this.filteredLocations = this.locationOptions;
+    this.loadFilterOptions();
+    this.loadReportData();
   }
 
-  initializeCharts() {
-    // Revenue Overview Chart
+  loadFilterOptions(): void {
+    this.reportService.getFilterOptions().subscribe({
+      next: (response) => {
+        const filterOptions = response.data;
+        
+        // Set date range options
+        this.dateRangeOptions = filterOptions.date_range_options;
+        
+        // Set service type options with "All Services" option
+        this.serviceTypeOptions = [
+          { id: 0, name: 'All Services' },
+          ...filterOptions.services
+        ];
+        
+        // Set location options with "All Locations" option
+        this.locationOptions = [
+          { name: 'All Locations' },
+          ...filterOptions.locations.map(loc => ({ name: loc }))
+        ];
+
+        // Initialize filtered lists
+        this.filteredServiceTypes = this.serviceTypeOptions;
+        this.filteredLocations = this.locationOptions;
+
+        // Set default selections
+        this.selectedServiceType = this.serviceTypeOptions[0];
+        this.selectedLocation = this.locationOptions[0].name;
+      },
+      error: (error) => {
+        console.error('Error loading filter options:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load filter options'
+        });
+      }
+    });
+  }
+
+  loadReportData(): void {
+    this.loading = true;
+    
+    const params: any = {
+      date_range: this.selectedDateRange
+    };
+
+    if (this.selectedServiceType && this.selectedServiceType.id !== 0) {
+      params.service_type = this.selectedServiceType.id;
+    }
+
+    if (this.selectedLocation && this.selectedLocation !== 'All Locations') {
+      params.location = this.selectedLocation;
+    }
+
+    this.reportService.getOverviewReport(params).subscribe({
+      next: (response) => {
+        const reportData = response.data;
+        this.updateStats(reportData.key_metrics);
+        this.updateAdditionalMetrics(reportData.additional_metrics);
+        this.updateCharts(reportData.charts);
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading report data:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load report data'
+        });
+        this.loading = false;
+      }
+    });
+  }
+
+  updateStats(keyMetrics: any): void {
+    this.stats = {
+      totalBookings: keyMetrics.total_bookings,
+      bookingChange: keyMetrics.booking_change,
+      revenue: keyMetrics.revenue,
+      revenueChange: keyMetrics.revenue_change,
+      avgRating: keyMetrics.avg_rating,
+      positiveRating: keyMetrics.positive_rating,
+      activeCleaners: keyMetrics.active_cleaners,
+      cleanerChange: keyMetrics.cleaner_change
+    };
+  }
+
+  updateAdditionalMetrics(metrics: any): void {
+    this.additionalMetrics = {
+      completion_rate: metrics.completion_rate,
+      satisfaction_rate: metrics.satisfaction_rate,
+      repeat_rate: metrics.repeat_rate,
+      avg_response_time: metrics.avg_response_time
+    };
+  }
+
+  updateCharts(charts: any): void {
+    // Revenue Trend Chart
     this.revenueChart = {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-      datasets: [
-        {
-          label: 'Revenue',
-          data: [12000, 19000, 15000, 18000, 22000, 19000, 25000],
-          borderColor: '#3B82F6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4
-        },
-        {
-          label: 'Bookings',
-          data: [650, 720, 680, 750, 820, 780, 860],
-          borderColor: '#10B981',
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4
-        }
-      ]
+      labels: charts.revenue_trend.labels,
+      datasets: charts.revenue_trend.datasets.map((dataset: any) => ({
+        ...dataset,
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4
+      }))
     };
 
     // Service Distribution Chart
     this.serviceDistributionChart = {
-      labels: ['Regular Cleaning', 'Deep Cleaning', 'Move Out', 'Commercial', 'Special'],
-      datasets: [
-        {
-          data: [45, 25, 15, 10, 5],
-          backgroundColor: [
-            '#3B82F6',
-            '#10B981',
-            '#F59E0B',
-            '#EF4444',
-            '#8B5CF6'
-          ],
-          borderWidth: 0
-        }
-      ]
+      labels: charts.service_distribution.labels,
+      datasets: charts.service_distribution.datasets.map((dataset: any) => ({
+        ...dataset,
+        borderWidth: 0
+      }))
     };
   }
 
@@ -154,6 +222,62 @@ export class Reports implements OnInit {
     this.filteredLocations = this.locationOptions.filter(option => 
       option.name.toLowerCase().includes(query)
     );
+  }
+
+  onFilterChange() {
+    this.loadReportData();
+  }
+
+  resetFilters() {
+    this.selectedDateRange = 'month';
+    this.selectedServiceType = this.serviceTypeOptions[0];
+    this.selectedLocation = this.locationOptions[0].name;
+    this.onFilterChange();
+  }
+
+  exportReport() {
+    const params: any = {
+      date_range: this.selectedDateRange
+    };
+
+    if (this.selectedServiceType && this.selectedServiceType.id !== 0) {
+      params.service_type = this.selectedServiceType.id;
+    }
+
+    if (this.selectedLocation && this.selectedLocation !== 'All Locations') {
+      params.location = this.selectedLocation;
+    }
+
+    this.reportService.exportReport(params).subscribe({
+      next: (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Report exported successfully'
+        });
+        
+        // Create and download the JSON file
+        this.downloadJsonFile(response.data, `report_${new Date().toISOString().split('T')[0]}.json`);
+      },
+      error: (error) => {
+        console.error('Error exporting report:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to export report'
+        });
+      }
+    });
+  }
+
+  private downloadJsonFile(data: any, filename: string) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 
   getRevenueChartOptions() {
@@ -186,8 +310,11 @@ export class Reports implements OnInit {
           },
           ticks: {
             color: '#6B7280',
-            callback: function(value: any) {
-              return '£' + value.toLocaleString();
+            callback: (value: any) => {
+              if (typeof value === 'number') {
+                return '£' + value.toLocaleString();
+              }
+              return value;
             }
           }
         }
@@ -208,45 +335,38 @@ export class Reports implements OnInit {
               size: 12
             }
           }
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const label = context.label || '';
+              const value = context.parsed;
+              const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+              const percentage = ((value / total) * 100).toFixed(1);
+              return `${label}: ${value} (${percentage}%)`;
+            }
+          }
         }
       }
     };
   }
 
-  onFilterChange() {
-    // Simulate data change based on filters
-    console.log('Filters changed:', {
-      dateRange: this.selectedDateRange,
-      serviceType: this.selectedServiceType,
-      location: this.selectedLocation
-    });
-  }
-
-  resetFilters() {
-    this.selectedDateRange = '30days';
-    this.selectedServiceType = { name: 'All Services', value: 'all' };
-    this.selectedLocation = { name: 'All Locations', value: 'all' };
-    this.onFilterChange();
-  }
-
-  exportReport() {
-    // Export functionality would go here
-    console.log('Exporting report...');
-  }
-
   getSelectedDateRangeLabel(): string {
-    const labels: { [key: string]: string } = {
-      '7days': 'Last 7 Days',
-      '30days': 'Last 30 Days', 
-      '90days': 'Last 90 Days',
-      '6months': 'Last 6 Months',
-      '1year': 'Last Year',
-      'custom': 'Custom Date Range'
-    };
-    return labels[this.selectedDateRange] || 'Last 30 Days';
+    const option = this.dateRangeOptions.find(opt => opt.value === this.selectedDateRange);
+    return option ? option.label : 'Last 30 Days';
   }
 
   abs(value: number): number {
     return Math.abs(value);
+  }
+
+  // Helper method to format currency
+  formatCurrency(value: number): string {
+    return '£' + value.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Helper method to format percentage
+  formatPercentage(value: number): string {
+    return value.toFixed(1) + '%';
   }
 }
