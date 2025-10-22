@@ -1,1 +1,270 @@
-<p>disputes works!</p>
+<div class="disputes-container">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1>I C - Cleaners</h1>
+      <h2>Dispute Management</h2>
+      <p class="subtitle">Monitor and resolve customer disputes efficiently</p>
+    </div>
+  </div>
+
+  <!-- Stats Cards - 4 Sections -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <!-- Total Disputes Card -->
+      <p-card class="stat-card disputes-card">
+        <div class="stat-content">
+          <div class="stat-header">
+            <i class="pi pi-exclamation-triangle stat-icon"></i>
+            <h3>Total Disputes</h3>
+          </div>
+          <div class="stat-numbers">
+            <span class="total">79</span>
+            <div class="breakdown">
+              <div class="breakdown-item">
+                <span class="status-dot pending-dot"></span>
+                <span class="breakdown-text">Pending: 23</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="status-dot resolved-dot"></span>
+                <span class="breakdown-text">Resolved: 56</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- High Priority Card -->
+      <p-card class="stat-card priority-card">
+        <div class="stat-content">
+          <div class="stat-header">
+            <i class="pi pi-flag stat-icon"></i>
+            <h3>High Priority</h3>
+          </div>
+          <div class="priority-numbers">
+            <div class="priority-item">
+              <span class="priority-count">8</span>
+              <span class="priority-label">Urgent</span>
+            </div>
+            <div class="priority-item">
+              <span class="priority-count">15</span>
+              <span class="priority-label">Medium</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Average Resolution Card -->
+      <p-card class="stat-card resolution-card">
+        <div class="stat-content">
+          <div class="stat-header">
+            <i class="pi pi-clock stat-icon"></i>
+            <h3>Avg Resolution</h3>
+          </div>
+          <div class="stat-numbers">
+            <span class="total time">2.3 days</span>
+            <div class="trend positive">
+              <i class="pi pi-arrow-down"></i>
+              <span>0.5 days faster</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Customer Satisfaction Card -->
+      <p-card class="stat-card satisfaction-card">
+        <div class="stat-content">
+          <div class="stat-header">
+            <i class="pi pi-thumbs-up stat-icon"></i>
+            <h3>Satisfaction Rate</h3>
+          </div>
+          <div class="stat-numbers">
+            <span class="total percent">94%</span>
+            <div class="satisfaction-bar">
+              <div class="satisfaction-fill"></div>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Disputes Table -->
+  <p-card header="Disputes Overview" class="disputes-overview-card">
+    <p-table 
+      [value]="disputes" 
+      [paginator]="true" 
+      [rows]="5"
+      styleClass="p-datatable-striped modern-table"
+      [tableStyle]="{'min-width': '85rem'}">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>DISPUTE ID</th>
+          <th>CLEANER</th>
+          <th>CUSTOMER</th>
+          <th>SERVICE DATE</th>
+          <th>AMOUNT</th>
+          <th>PRIORITY</th>
+          <th>STATUS</th>
+          <th>CREATED</th>
+          <th>ACTION</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-dispute>
+        <tr>
+          <td>
+            <a class="dispute-id-link" (click)="showDisputeDetails(dispute)">
+              {{ dispute.id }}
+            </a>
+          </td>
+          <td>
+            <div class="cleaner-info">
+              <i class="pi pi-user"></i>
+              {{ dispute.cleaner }}
+            </div>
+          </td>
+          <td>
+            <div class="customer-info">
+              <i class="pi pi-user"></i>
+              {{ dispute.customer }}
+            </div>
+          </td>
+          <td class="date-cell">{{ dispute.serviceDate }}</td>
+          <td class="amount-cell">${{ dispute.amount }}</td>
+          <td>
+            <p-tag 
+              [value]="dispute.priority" 
+              [severity]="getPrioritySeverity(dispute.priority)"
+              class="priority-tag">
+            </p-tag>
+          </td>
+          <td>
+            <p-tag 
+              [value]="dispute.status" 
+              [severity]="getStatusSeverity(dispute.status)"
+              class="status-tag">
+            </p-tag>
+          </td>
+          <td class="date-cell">{{ dispute.createdAt }}</td>
+          <td>
+            <p-button 
+              label="View" 
+              icon="pi pi-eye"
+              styleClass="p-button-outlined p-button-sm action-btn"
+              (click)="showDisputeDetails(dispute)">
+            </p-button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- Dispute Details Dialog -->
+  <p-dialog 
+    header="Dispute Details" 
+    [(visible)]="displayDetailsDialog" 
+    [modal]="true" 
+    [style]="{width: '60vw'}"
+    [draggable]="false" 
+    [resizable]="false"
+    class="dispute-details-dialog">
+    
+    <div class="dispute-details-content" *ngIf="selectedDispute">
+      <!-- Basic Information -->
+      <div class="detail-section">
+        <h4>Basic Information</h4>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Dispute ID</label>
+            <div class="info-value">{{ selectedDispute.id }}</div>
+          </div>
+          <div class="info-item">
+            <label>Cleaner</label>
+            <div class="info-value">{{ selectedDispute.cleaner }}</div>
+          </div>
+          <div class="info-item">
+            <label>Customer</label>
+            <div class="info-value">{{ selectedDispute.customer }}</div>
+          </div>
+          <div class="info-item">
+            <label>Service Date</label>
+            <div class="info-value">{{ selectedDispute.serviceDate }}</div>
+          </div>
+          <div class="info-item">
+            <label>Amount</label>
+            <div class="info-value amount">${{ selectedDispute.amount }}</div>
+          </div>
+          <div class="info-item">
+            <label>Status</label>
+            <p-tag 
+              [value]="selectedDispute.status" 
+              [severity]="getStatusSeverity(selectedDispute.status)"
+              class="status-tag-large">
+            </p-tag>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dispute Description -->
+      <div class="detail-section">
+        <h4>Dispute Description</h4>
+        <div class="description-box">
+          {{ selectedDispute.disputeDetails.description }}
+        </div>
+      </div>
+
+      <!-- Evidence -->
+      <div class="detail-section">
+        <h4>Evidence & Documents</h4>
+        <div class="evidence-list">
+          <div class="evidence-item" *ngFor="let evidence of selectedDispute.disputeDetails.evidence">
+            <i class="pi pi-file"></i>
+            <span>{{ evidence }}</span>
+            <p-button icon="pi pi-download" styleClass="p-button-text p-button-sm"></p-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resolution Details -->
+      <div class="detail-section">
+        <h4>Resolution Details</h4>
+        <div class="resolution-box">
+          {{ selectedDispute.disputeDetails.resolution }}
+        </div>
+        <div class="resolution-meta">
+          <div class="meta-item">
+            <label>Assigned To:</label>
+            <span>{{ selectedDispute.disputeDetails.assignedTo }}</span>
+          </div>
+          <div class="meta-item">
+            <label>Last Updated:</label>
+            <span>{{ selectedDispute.disputeDetails.lastUpdated }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <p-button 
+          label="Close" 
+          icon="pi pi-times" 
+          (click)="displayDetailsDialog = false"
+          styleClass="p-button-text">
+        </p-button>
+        <div class="action-buttons">
+          <p-button 
+            label="Assign to Me" 
+            icon="pi pi-user-plus"
+            styleClass="p-button-outlined">
+          </p-button>
+          <p-button 
+            label="Resolve" 
+            icon="pi pi-check"
+            styleClass="p-button-success">
+          </p-button>
+        </div>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>
