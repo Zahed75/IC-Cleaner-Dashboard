@@ -1,1 +1,213 @@
-<p>payouts works!</p>
+<div class="payouts-container">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="header-content">
+      <!-- <h1>I C - Cleaners</h1> -->
+      <h2>Payout Management</h2>
+      <p class="subtitle">Here's what's happening with your cleaning services today</p>
+    </div>
+  </div>
+
+  <!-- Stats Cards - 4 Sections -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <!-- Total Disputes Card -->
+      <p-card class="stat-card disputes-card">
+        <div class="stat-content">
+          <div class="stat-header">
+            <i class="pi pi-exclamation-triangle stat-icon"></i>
+            <h3>Total Disputes</h3>
+          </div>
+          <div class="stat-numbers">
+            <span class="total">79</span>
+            <div class="breakdown">
+              <div class="breakdown-item">
+                <span class="status-dot pending-dot"></span>
+                <span class="breakdown-text">Pending: 1</span>
+              </div>
+              <div class="breakdown-item">
+                <span class="status-dot resolved-dot"></span>
+                <span class="breakdown-text">Resolved: 78</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- High Priority Card -->
+      <p-card class="stat-card priority-card">
+        <div class="stat-content">
+          <div class="stat-header">
+            <i class="pi pi-flag stat-icon"></i>
+            <h3>High Priority</h3>
+          </div>
+          <div class="priority-numbers">
+            <div class="priority-item">
+              <span class="priority-count">1</span>
+              <span class="priority-label">Requests</span>
+            </div>
+            <div class="priority-item">
+              <span class="priority-count">0</span>
+              <span class="priority-label">Issues</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Total Payouts Card -->
+      <p-card class="stat-card payouts-card">
+        <div class="stat-content">
+          <div class="stat-header">
+            <i class="pi pi-wallet stat-icon"></i>
+            <h3>Total Payouts</h3>
+          </div>
+          <div class="stat-numbers">
+            <span class="total amount">$12,458</span>
+            <div class="trend positive">
+              <i class="pi pi-arrow-up"></i>
+              <span>12% from last month</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Cleaners Online Card -->
+      <p-card class="stat-card online-card">
+        <div class="stat-content">
+          <div class="stat-header">
+            <i class="pi pi-users stat-icon"></i>
+            <h3>Cleaners Online</h3>
+          </div>
+          <div class="stat-numbers">
+            <span class="total">24</span>
+            <div class="online-status">
+              <span class="status-badge active">Active Now</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Payouts Table -->
+  <p-card header="Payouts Overview" class="payouts-overview-card">
+    <p-table 
+      [value]="payouts" 
+      [paginator]="true" 
+      [rows]="5"
+      styleClass="p-datatable-striped modern-table"
+      [tableStyle]="{'min-width': '75rem'}">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>PAYOUT ID</th>
+          <th>CLEANER</th>
+          <th>PAYOUT METHOD</th>
+          <th>AMOUNT</th>
+          <th>STATUS</th>
+          <th>ACTION</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-payout>
+        <tr>
+          <td>
+            <a class="payout-id-link" (click)="showPayoutDetails(payout)">
+              {{ payout.id }}
+            </a>
+          </td>
+          <td>
+            <div class="cleaner-info">
+              <i class="pi pi-user"></i>
+              {{ payout.cleaner }}
+            </div>
+          </td>
+          <td>
+            <div class="method-info">
+              <i class="pi pi-credit-card"></i>
+              {{ payout.payoutMethod }}
+            </div>
+          </td>
+          <td class="amount-cell">${{ payout.amount }}</td>
+          <td>
+            <p-tag 
+              [value]="payout.status" 
+              [severity]="getStatusSeverity(payout.status)"
+              class="status-tag">
+            </p-tag>
+          </td>
+          <td>
+            <p-button 
+              label="Details" 
+              icon="pi pi-eye"
+              styleClass="p-button-outlined p-button-sm action-btn"
+              (click)="showPayoutDetails(payout)">
+            </p-button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+
+  <!-- Payout Details Dialog -->
+  <p-dialog 
+    header="Payout Information" 
+    [(visible)]="displayDetailsDialog" 
+    [modal]="true" 
+    [style]="{width: '50vw'}"
+    [draggable]="false" 
+    [resizable]="false"
+    class="payout-details-dialog">
+    
+    <div class="payout-details-content" *ngIf="selectedPayout">
+      <!-- Cleaner Name -->
+      <div class="detail-section">
+        <label>Cleaner Name</label>
+        <div class="detail-value">{{ selectedPayout.cleanerName }}</div>
+      </div>
+
+      <!-- Balance Amount -->
+      <div class="detail-section">
+        <label>Balance Amount</label>
+        <div class="detail-value amount">£ {{ selectedPayout.balanceAmount.toFixed(2) }}</div>
+      </div>
+
+      <!-- Payout Method -->
+      <div class="detail-section">
+        <label>Payout Method</label>
+        <div class="bank-details">
+          <div class="bank-method">{{ selectedPayout.bankDetails.method }}</div>
+          <div>{{ selectedPayout.bankDetails.company }}</div>
+          <div>Account No: {{ selectedPayout.bankDetails.accountNo }}</div>
+          <div>IBAN: {{ selectedPayout.bankDetails.iban }}</div>
+          <div>Sort Code: {{ selectedPayout.bankDetails.sortCode }}</div>
+          <div>Bank Name: {{ selectedPayout.bankDetails.bankName }}</div>
+          <div>Bank Address: {{ selectedPayout.bankDetails.bankAddress }}</div>
+        </div>
+      </div>
+
+      <!-- Payout Amount -->
+      <div class="detail-section">
+        <label>Payout Amount</label>
+        <div class="detail-value amount">£{{ selectedPayout.payoutAmount.toFixed(2) }}</div>
+      </div>
+
+      <!-- Payout Status -->
+      <div class="detail-section">
+        <label>Payout Status</label>
+        <p-tag 
+          [value]="selectedPayout.payoutStatus" 
+          severity="warn"
+          class="status-tag-large">
+        </p-tag>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button 
+        label="Close" 
+        icon="pi pi-times" 
+        (click)="displayDetailsDialog = false"
+        styleClass="p-button-text">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+</div>
