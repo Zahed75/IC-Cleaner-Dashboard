@@ -7,17 +7,23 @@
   <div class="header">
     <div class="flex justify-between items-center">
       <div>
-        <h1>Welcome back, Admin!</h1>
+        <h1>Welcome back, {{ getUserDisplayName() }}!</h1>
         <p>Here's what's happening with your cleaning services today</p>
       </div>
-      <button 
-        pButton 
-        icon="pi pi-refresh" 
-        label="Refresh" 
-        class="p-button-outlined p-button-secondary"
-        (click)="refreshDashboard()"
-        [disabled]="loading"
-      ></button>
+      <div class="flex items-center gap-2">
+        <div class="text-right mr-4">
+          <div class="text-sm text-gray-500">Logged in as</div>
+          <div class="font-semibold">{{ getUserDisplayName() }}</div>
+        </div>
+        <button 
+          pButton 
+          icon="pi pi-refresh" 
+          label="Refresh" 
+          class="p-button-outlined p-button-secondary"
+          (click)="refreshDashboard()"
+          [disabled]="loading"
+        ></button>
+      </div>
     </div>
   </div>
 
