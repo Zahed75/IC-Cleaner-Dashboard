@@ -53,38 +53,78 @@ export class AuthService {
     }
   }
 
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseURL}/auths/api/login/`, credentials)
-      .pipe(
-        tap(response => {
-          if (response.user && response.user.access_token) {
-            localStorage.setItem('currentUser', JSON.stringify(response.user));
-            localStorage.setItem('access_token', response.user.access_token);
-            localStorage.setItem('refresh_token', response.user.refresh_token);
-            this.currentUserSubject.next(response.user);
+login(credentials: LoginRequest): Observable<LoginResponse> {
+  return this.http.post<LoginResponse>(`${this.baseURL}/auths/api/login/`, credentials)
+    .pipe(
+      tap(response => {
+        console.log('Login Response:', response); // Debug log
+        if (response.user && response.user.access_token) {
+          localStorage.setItem('currentUser', JSON.stringify(response.user));
+          localStorage.setItem('access_token', response.user.access_token);
+          localStorage.setItem('refresh_token', response.user.refresh_token);
+          this.currentUserSubject.next(response.user);
 
-            // Redirect based on role after login
-            this.redirectBasedOnRole(response.user.role);
-          }
-        })
-      );
-  }
+          console.log('User Role:', response.user.role); // Debug log
+          console.log('Redirecting to:', this.getRedirectPath(response.user.role)); // Debug log
+          
+          // Redirect based on role after login
+          this.redirectBasedOnRole(response.user.role);
+        }
+      })
+    );
+}
 
 private redirectBasedOnRole(role: string): void {
+  console.log('Redirecting user with role:', role);
+  
+  const redirectPath = this.getRedirectPath(role);
+  console.log('Navigation path:', redirectPath);
+  
+  // Add more detailed debugging
+  console.log('Current router config:', this.router.config);
+  
+  this.router.navigate([redirectPath]).then(navigationResult => {
+    console.log('Navigation result:', navigationResult);
+    if (!navigationResult) {
+      console.error('Navigation failed to:', redirectPath);
+      console.error('Available routes:', this.router.config);
+      // Try alternative navigation approach
+      this.alternativeNavigation(role);
+    }
+  }).catch(error => {
+    console.error('Navigation error:', error);
+    this.alternativeNavigation(role);
+  });
+}
+
+private alternativeNavigation(role: string): void {
+  console.log('Trying alternative navigation for role:', role);
+  
+  // Try different navigation approaches
   switch (role) {
     case 'admin':
-      this.router.navigate(['/admin/dashboard']);
+      window.location.href = '/admin/dashboard';
       break;
     case 'cleaner':
-      this.router.navigate(['/dashboard']); // Cleaner uses root path
+      window.location.href = '/cleaner/dashboard';
       break;
     case 'customer':
-      this.router.navigate(['/customer/dashboard']);
+      window.location.href = '/customer/dashboard';
       break;
     default:
-      this.router.navigate(['/dashboard']);
+      window.location.href = '/sign-in';
   }
 }
+
+private getRedirectPath(role: string): string {
+  switch (role) {
+    case 'admin': return '/admin/dashboard';
+    case 'cleaner': return '/cleaner/dashboard';
+    case 'customer': return '/customer/dashboard';
+    default: return '/sign-in';
+  }
+}
+
 
   logout(): void {
     localStorage.removeItem('currentUser');

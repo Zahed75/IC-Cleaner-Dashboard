@@ -52,9 +52,9 @@ export const appRoutes: Routes = [
         ]
     },
     
-    // Cleaner routes
+    // Cleaner routes - FIXED: Use explicit path
     {
-        path: '',
+        path: 'cleaner',
         component: AppLayout,
         canActivate: [AuthGuard],
         data: { requiredRole: 'cleaner' },
@@ -84,8 +84,8 @@ export const appRoutes: Routes = [
         ]
     },
     
-    // Default redirect based on role (handled in AuthService after login)
-    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    // REMOVED: The conflicting default redirect
+    // { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     
     // Redirect any unknown routes to login
     { path: '**', redirectTo: '' }

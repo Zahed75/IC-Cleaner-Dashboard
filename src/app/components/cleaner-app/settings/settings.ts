@@ -6,7 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
-  selector: 'app-settings',
+  selector: 'cleaner-app-settings',
   standalone: true,
   imports: [
     CommonModule,
