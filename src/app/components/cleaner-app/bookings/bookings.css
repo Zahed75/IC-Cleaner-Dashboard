@@ -1,0 +1,96 @@
+:host {
+  display: block;
+}
+
+/* PrimeNG Table Customization */
+.p-datatable .p-datatable-thead > tr > th {
+  background: #f8fafc;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-color: #e5e7eb;
+  padding: 1rem 0.75rem;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem 0.75rem;
+  border-color: #e5e7eb;
+  font-size: 0.875rem;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  transition: background-color 0.2s;
+}
+
+.p-datatable .p-paginator {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  padding: 1rem;
+}
+
+/* Dialog Customization */
+.p-dialog .p-dialog-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.25rem;
+}
+
+.p-dialog .p-dialog-content {
+  padding: 1.25rem;
+}
+
+.p-dialog .p-dialog-footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 1.25rem;
+}
+
+/* Button Styles */
+.p-button {
+  font-weight: 500;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.p-button-sm {
+  padding: 0.5rem 1rem;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .p-datatable .p-datatable-thead > tr > th,
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .p-dialog {
+    width: 95% !important;
+    margin: 0.5rem;
+  }
+}
+
+/* Custom scrollbar for table */
+.p-datatable-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.p-datatable-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.p-datatable-wrapper::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.p-datatable-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

@@ -1,1 +1,244 @@
-<p>bookings works!</p>
+<div class="min-h-screen bg-gray-50 p-4 md:p-6 font-sans">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Bookings</h1>
+    <p class="text-gray-600 mt-2">Manage your cleaning service bookings</p>
+  </div>
+
+  <!-- Bookings Table -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+    <p-table 
+      [value]="bookings" 
+      [paginator]="true" 
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20]"
+      [loading]="loading"
+      styleClass="p-datatable-striped p-datatable-gridlines"
+      [tableStyle]="{'min-width': '75rem'}">
+      
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id" style="width: 12%">
+            <div class="flex items-center">
+              <span>Booking ID</span>
+              <p-sortIcon field="id"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="clientName" style="width: 18%">
+            <div class="flex items-center">
+              <span>Client</span>
+              <p-sortIcon field="clientName"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="serviceType" style="width: 15%">
+            <div class="flex items-center">
+              <span>Service</span>
+              <p-sortIcon field="serviceType"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="dateTime" style="width: 18%">
+            <div class="flex items-center">
+              <span>Date & Time</span>
+              <p-sortIcon field="dateTime"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="amount" style="width: 12%">
+            <div class="flex items-center">
+              <span>Amount</span>
+              <p-sortIcon field="amount"></p-sortIcon>
+            </div>
+          </th>
+          <th pSortableColumn="status" style="width: 13%">
+            <div class="flex items-center">
+              <span>Status</span>
+              <p-sortIcon field="status"></p-sortIcon>
+            </div>
+          </th>
+          <th style="width: 12%">Action</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-booking>
+        <tr class="cursor-pointer hover:bg-gray-50" (click)="showBookingDetails(booking)">
+          <td class="font-semibold text-blue-600">
+            #{{ booking.id }}
+          </td>
+          <td>
+            <div class="flex items-center">
+              <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                <span class="text-blue-600 text-sm font-semibold">{{ getInitials(booking.clientName) }}</span>
+              </div>
+              <span>{{ booking.clientName }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+              {{ booking.serviceType }}
+            </span>
+          </td>
+          <td>
+            <div>
+              <div class="font-medium text-gray-900">{{ booking.date | date:'mediumDate' }}</div>
+              <div class="text-gray-500 text-sm">{{ booking.time }}</div>
+            </div>
+          </td>
+          <td class="font-semibold text-gray-900">
+            £{{ booking.amount }}
+          </td>
+          <td>
+            <span [class]="getStatusClass(booking.status)" class="px-2 py-1 rounded-full text-xs font-medium">
+              {{ booking.status }}
+            </span>
+          </td>
+          <td>
+            <div class="flex space-x-2">
+              <button 
+                *ngIf="booking.status === 'Pending'"
+                (click)="acceptBooking(booking); $event.stopPropagation()"
+                class="p-button p-button-success p-button-sm text-xs">
+                Accept
+              </button>
+              <button 
+                *ngIf="booking.status === 'Pending'"
+                (click)="rejectBooking(booking); $event.stopPropagation()"
+                class="p-button p-button-danger p-button-sm text-xs">
+                Reject
+              </button>
+              <button 
+                *ngIf="booking.status !== 'Pending'"
+                (click)="showBookingDetails(booking); $event.stopPropagation()"
+                class="p-button p-button-outlined p-button-secondary p-button-sm text-xs">
+                View
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="text-center py-8 text-gray-500">
+            <i class="pi pi-inbox text-4xl text-gray-300 mb-2 block"></i>
+            <p>No bookings found</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Booking Details Dialog -->
+<p-dialog 
+  header="Cleaning Service Details" 
+  [(visible)]="showDetailsDialog" 
+  [modal]="true" 
+  [style]="{width: '500px'}"
+  [draggable]="false" 
+  [resizable]="false"
+  (onHide)="onDialogHide()">
+  
+  <div class="space-y-6" *ngIf="selectedBooking">
+    <!-- Service Type -->
+    <div class="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+      <div>
+        <p class="text-gray-500 text-sm font-medium mb-1">Service Type</p>
+        <p class="text-gray-900 font-semibold">{{ selectedBooking.serviceType }}</p>
+      </div>
+      <i class="pi pi-briefcase text-gray-400 text-lg"></i>
+    </div>
+
+    <!-- Date & Time -->
+    <div class="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+      <div>
+        <p class="text-gray-500 text-sm font-medium mb-1">Date & Time</p>
+        <p class="text-gray-900 font-semibold">{{ selectedBooking.date | date:'fullDate' }}</p>
+        <p class="text-gray-600 text-sm mt-1">{{ selectedBooking.time }}</p>
+      </div>
+      <i class="pi pi-calendar text-gray-400 text-lg"></i>
+    </div>
+
+    <!-- Address -->
+    <div class="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+      <div>
+        <p class="text-gray-500 text-sm font-medium mb-1">Address</p>
+        <p class="text-gray-900 font-semibold">1 Chapel Hill, Heswall, Bournemouth</p>
+        <p class="text-gray-600 text-sm mt-1">BH1 1AA</p>
+      </div>
+      <i class="pi pi-map-marker text-gray-400 text-lg"></i>
+    </div>
+
+    <!-- Service Pay -->
+    <div class="flex items-start justify-between p-4 bg-blue-50 rounded-lg border border-blue-200">
+      <div>
+        <p class="text-gray-500 text-sm font-medium mb-1">Service Pay</p>
+        <p class="text-2xl font-bold text-gray-900">£{{ selectedBooking.amount }}</p>
+      </div>
+      <i class="pi pi-money-bill text-blue-500 text-lg"></i>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex space-x-3 pt-4" *ngIf="selectedBooking.status === 'Pending'">
+      <button 
+        (click)="acceptBooking(selectedBooking)"
+        class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center">
+        <i class="pi pi-check mr-2"></i>
+        Accept Booking
+      </button>
+      <button 
+        (click)="rejectBooking(selectedBooking)"
+        class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center">
+        <i class="pi pi-times mr-2"></i>
+        Reject
+      </button>
+    </div>
+
+    <!-- Status Info for non-pending bookings -->
+    <div *ngIf="selectedBooking.status !== 'Pending'" 
+         [class]="getStatusInfoClass(selectedBooking.status)"
+         class="p-4 rounded-lg">
+      <div class="flex items-center">
+        <i [class]="getStatusIcon(selectedBooking.status)" class="mr-3 text-lg"></i>
+        <div>
+          <p class="font-semibold">{{ getStatusMessage(selectedBooking.status) }}</p>
+          <p class="text-sm mt-1">{{ getStatusDescription(selectedBooking.status) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Confirmation Dialog -->
+<p-dialog 
+  header="Confirm Action" 
+  [(visible)]="showConfirmDialog" 
+  [modal]="true" 
+  [style]="{width: '400px'}"
+  [draggable]="false" 
+  [resizable]="false">
+  
+  <div class="space-y-4">
+    <div class="flex items-start">
+      <i class="pi pi-exclamation-triangle text-yellow-500 text-xl mt-1 mr-3"></i>
+      <div>
+        <p class="text-gray-800 font-medium">{{ confirmMessage }}</p>
+        <p class="text-gray-600 text-sm mt-2">This action cannot be undone.</p>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <div class="flex gap-2 w-full">
+      <button 
+        (click)="showConfirmDialog = false"
+        class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded-lg font-medium transition-colors duration-200">
+        Cancel
+      </button>
+      <button 
+        (click)="confirmAction()"
+        [class]="confirmButtonClass"
+        class="flex-1 py-2 px-4 rounded-lg font-medium transition-colors duration-200">
+        {{ confirmActionText }}
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
