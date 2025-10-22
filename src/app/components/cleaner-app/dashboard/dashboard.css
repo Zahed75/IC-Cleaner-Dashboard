@@ -1,0 +1,106 @@
+:host {
+  display: block;
+}
+
+/* PrimeNG Dark Blue Theme Overrides */
+.p-button.p-button-primary {
+  background: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.p-button.p-button-primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.p-button.p-button-success {
+  background: #059669;
+  border: 1px solid #059669;
+}
+
+.p-button.p-button-success:hover {
+  background: #047857;
+  border-color: #047857;
+}
+
+.p-progressbar .p-progressbar-value {
+  background: #2563eb;
+}
+
+.p-card {
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.p-card .p-card-body {
+  padding: 1.25rem;
+}
+
+.p-card .p-card-content {
+  padding: 0;
+}
+
+.p-button {
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.p-dialog .p-dialog-header {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem 1.5rem;
+}
+
+.p-dialog .p-dialog-content {
+  padding: 1.25rem 1.5rem;
+}
+
+.p-dialog .p-dialog-footer {
+  border-top: 1px solid #e2e8f0;
+  padding: 1rem 1.5rem;
+}
+
+/* Custom input styling */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Compact spacing */
+.p-component {
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .p-card .p-card-body {
+    padding: 1rem;
+  }
+  
+  .p-dialog {
+    width: 95% !important;
+    margin: 0.5rem;
+  }
+}
+
+/* Dark blue color scheme enhancements */
+.text-blue-600 {
+  color: #2563eb;
+}
+
+.bg-blue-50 {
+  background-color: #eff6ff;
+}
+
+.border-blue-200 {
+  border-color: #bfdbfe;
+}

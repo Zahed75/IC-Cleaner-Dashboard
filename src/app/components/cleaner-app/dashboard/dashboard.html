@@ -1,1 +1,287 @@
-<p>dashboard works!</p>
+<div class="min-h-screen bg-slate-50 p-4 md:p-6 font-sans">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl md:text-2xl font-bold text-slate-800">Welcome back, {{ dashboardData.userName }}!</h1>
+    <p class="text-slate-600 mt-1 text-sm">Here's what's happening with your cleaning services today</p>
+  </div>
+
+  <!-- Alert Cards -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-6">
+    <!-- Verification Alert -->
+    <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-l-amber-500">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 w-8 h-8 bg-amber-50 rounded-lg flex items-center justify-center mr-3">
+          <i class="pi pi-exclamation-triangle text-amber-500 text-sm"></i>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-semibold text-slate-800 text-base">Account Verification Required!</h3>
+          <p class="text-slate-600 mt-1 text-sm">Upload identity documents in profile settings</p>
+          <div class="mt-3">
+            <p-button label="Verify Now" styleClass="p-button-outlined p-button-secondary text-xs" (onClick)="onVerifyNow()"></p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payout Alert -->
+    <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-l-blue-600">
+      <div class="flex items-start">
+        <div class="flex-shrink-0 w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center mr-3">
+          <i class="pi pi-info-circle text-blue-600 text-sm"></i>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-semibold text-slate-800 text-base">Payout Information Required!</h3>
+          <p class="text-slate-600 mt-1 text-sm">Complete payout information to get paid</p>
+          <div class="mt-3">
+            <p-button label="Update Now" styleClass="p-button-outlined p-button-secondary text-xs" (onClick)="onUpdatePayout()"></p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards - Compact Design -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+    <!-- Today's Bookings -->
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-100 hover:shadow-md transition-all duration-200">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+          <i class="pi pi-calendar text-blue-600 text-lg"></i>
+        </div>
+        <span class="text-xs font-medium px-2 py-1 rounded-full bg-blue-50 text-blue-600">Today</span>
+      </div>
+      <h3 class="text-slate-500 text-xs font-medium mb-1 uppercase tracking-wide">Today's Bookings</h3>
+      <div class="flex items-end justify-between">
+        <p class="text-2xl font-bold text-slate-800">{{ dashboardData.todayBookings }}</p>
+        <span class="text-xs text-green-500 font-semibold bg-green-50 px-2 py-1 rounded-full">+12%</span>
+      </div>
+    </div>
+
+    <!-- Completed Today -->
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-100 hover:shadow-md transition-all duration-200">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+          <i class="pi pi-check-circle text-green-600 text-lg"></i>
+        </div>
+        <span class="text-xs font-medium px-2 py-1 rounded-full bg-green-50 text-green-600">Done</span>
+      </div>
+      <h3 class="text-slate-500 text-xs font-medium mb-1 uppercase tracking-wide">Completed Today</h3>
+      <div class="flex items-end justify-between">
+        <p class="text-2xl font-bold text-slate-800">{{ dashboardData.completedToday }}</p>
+        <span class="text-xs text-green-500 font-semibold bg-green-50 px-2 py-1 rounded-full">+8%</span>
+      </div>
+    </div>
+
+    <!-- Today's Revenue -->
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-100 hover:shadow-md transition-all duration-200">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+          <i class="pi pi-money-bill text-purple-600 text-lg"></i>
+        </div>
+        <span class="text-xs font-medium px-2 py-1 rounded-full bg-purple-50 text-purple-600">Earned</span>
+      </div>
+      <h3 class="text-slate-500 text-xs font-medium mb-1 uppercase tracking-wide">Today's Revenue</h3>
+      <div class="flex items-end justify-between">
+        <p class="text-2xl font-bold text-slate-800">£{{ dashboardData.todayRevenue }}</p>
+        <span class="text-xs text-green-500 font-semibold bg-green-50 px-2 py-1 rounded-full">+15%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+    <!-- Left Column - Earnings & Performance -->
+    <div class="xl:col-span-2 space-y-4">
+      <!-- Earnings Card -->
+      <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-semibold text-slate-800 text-lg">Earnings & Payouts</h3>
+          <i class="pi pi-chart-line text-slate-400 text-lg"></i>
+        </div>
+        
+        <div class="space-y-4">
+          <!-- Available Balance -->
+          <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
+            <div class="flex items-center">
+              <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                <i class="pi pi-wallet text-blue-600 text-sm"></i>
+              </div>
+              <div>
+                <p class="text-slate-500 text-xs font-medium">Available Balance</p>
+                <p class="text-lg font-bold text-slate-800">£{{ dashboardData.availableBalance }}</p>
+              </div>
+            </div>
+            <span class="text-xs text-blue-600 font-semibold bg-blue-50 px-2 py-1 rounded-full">Available</span>
+          </div>
+          
+          <!-- Next Payout -->
+          <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div class="flex items-center">
+              <div class="w-8 h-8 bg-blue-200 rounded-lg flex items-center justify-center mr-3">
+                <i class="pi pi-credit-card text-blue-700 text-sm"></i>
+              </div>
+              <div>
+                <p class="text-slate-600 text-xs font-medium">Next Payout</p>
+                <p class="text-lg font-bold text-slate-800">£{{ dashboardData.nextPayout }}</p>
+                <p class="text-slate-500 text-xs mt-1">Estimated: {{ dashboardData.payoutDate }}</p>
+              </div>
+            </div>
+            <span class="text-xs text-blue-700 font-semibold bg-blue-100 px-2 py-1 rounded-full">Processing</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Card -->
+      <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-semibold text-slate-800 text-lg">Weekly Performance</h3>
+          <i class="pi pi-chart-bar text-slate-400 text-lg"></i>
+        </div>
+        <div class="h-48 flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg border border-slate-200">
+          <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
+            <i class="pi pi-chart-line text-blue-600 text-xl"></i>
+          </div>
+          <p class="text-slate-600 font-medium text-sm">Performance Analytics</p>
+          <p class="text-slate-400 text-xs mt-1">Weekly revenue and booking trends</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column - Actions & Rating -->
+    <div class="space-y-4">
+      <!-- Request Payout Card -->
+      <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-l-blue-600">
+        <div class="flex items-center mb-4">
+          <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center mr-3">
+            <i class="pi pi-send text-blue-600 text-sm"></i>
+          </div>
+          <h3 class="font-semibold text-slate-800 text-lg">Request Payout</h3>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label for="payoutAmount" class="block text-slate-700 text-sm font-medium mb-2">
+              Amount to Withdraw
+            </label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-sm">£</span>
+              <input
+                id="payoutAmount"
+                type="number"
+                [(ngModel)]="payoutRequest.amount"
+                [max]="dashboardData.availableBalance"
+                [min]="10"
+                class="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                placeholder="0.00">
+            </div>
+            <p class="text-slate-500 text-xs mt-2 flex justify-between">
+              <span>Available: <strong class="text-slate-700">£{{ dashboardData.availableBalance }}</strong></span>
+              <span>Min: £10</span>
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-slate-700 text-sm font-medium mb-2">
+              Payment Method
+            </label>
+            <select
+              [(ngModel)]="payoutRequest.paymentMethod"
+              class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="" disabled selected>Select payment method</option>
+              <option *ngFor="let method of paymentMethods" [ngValue]="method.value">{{ method.label }}</option>
+            </select>
+          </div>
+
+          <div class="pt-1">
+            <p-button 
+              label="Request Payout" 
+              styleClass="p-button-primary w-full py-2 text-sm"
+              [disabled]="!canRequestPayout()"
+              (onClick)="onRequestPayout()">
+            </p-button>
+          </div>
+
+          <!-- Payout Status -->
+          <div *ngIf="payoutRequest.status" 
+               [class]="getPayoutStatusClass() + ' rounded-lg p-3'">
+            <div class="flex items-center">
+              <i [class]="getPayoutStatusIcon() + ' text-base mr-2'"></i>
+              <span class="text-sm font-medium">{{ payoutRequest.statusMessage }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating Card -->
+      <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
+        <div class="text-center">
+          <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="pi pi-star-fill text-blue-600 text-lg"></i>
+          </div>
+          <div class="flex items-center justify-center mb-2">
+            <span class="text-2xl font-bold text-slate-800 mr-1">{{ dashboardData.rating }}</span>
+            <span class="text-blue-600 text-sm">/5</span>
+          </div>
+          <p class="text-slate-600 font-medium text-sm mb-3">Customer Rating</p>
+          <p-progressBar 
+            [value]="dashboardData.ratingPercentage" 
+            [showValue]="false"
+            styleClass="h-1.5 mb-2 [&>.p-progressbar-value]:bg-blue-600">
+          </p-progressBar>
+          <p class="text-slate-500 text-xs">Based on {{ dashboardData.totalReviews }} reviews</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dialog for Payout Confirmation -->
+<p-dialog 
+  header="Confirm Payout Request" 
+  [(visible)]="showPayoutDialog" 
+  [modal]="true" 
+  [style]="{width: '400px', 'border-radius': '12px'}"
+  [draggable]="false" 
+  [resizable]="false">
+  
+  <div class="space-y-4">
+    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-slate-700 font-medium text-sm">Amount:</span>
+        <span class="font-bold text-lg text-slate-800">£{{ payoutRequest.amount }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-slate-700 font-medium text-sm">Payment Method:</span>
+        <span class="font-medium text-slate-800 text-sm">{{ getPaymentMethodLabel() }}</span>
+      </div>
+    </div>
+    
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+      <div class="flex items-start">
+        <i class="pi pi-info-circle text-blue-600 mt-0.5 mr-2 text-sm"></i>
+        <div>
+          <p class="text-blue-800 text-sm font-medium">Processing Time</p>
+          <p class="text-blue-700 text-xs mt-1">
+            Payouts are processed within 2-3 business days. Confirmation email will be sent.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <div class="flex gap-2 w-full">
+      <p-button 
+        label="Cancel" 
+        styleClass="p-button-outlined p-button-secondary flex-1 text-sm" 
+        (onClick)="showPayoutDialog = false">
+      </p-button>
+      <p-button 
+        label="Confirm" 
+        styleClass="p-button-primary flex-1 text-sm" 
+        (onClick)="confirmPayout()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
