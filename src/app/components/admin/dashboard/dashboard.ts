@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
@@ -8,31 +8,42 @@ import { Router } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { DashboardService, DashboardOverview, QuickStats, RecentBooking, RecentPayout } from '../../../services/dashboard/dashboard-service';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, ButtonModule, TableModule, TagModule, CardModule, TooltipModule, ConfirmDialogModule, Card],
+  imports: [
+    CommonModule, 
+    ButtonModule, 
+    TableModule, 
+    TagModule, 
+    CardModule, 
+    TooltipModule, 
+    ConfirmDialogModule, 
+    Card,
+    ToastModule
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   providers: [ConfirmationService, MessageService]
 })
-export class Dashboard {
-  constructor(
-    private router: Router,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {}
-
+export class Dashboard implements OnInit {
   // Today's metrics data
   metrics = [
-    { title: "Today's Bookings", value: "13", action: "View All", icon: "pi-calendar" },
-    { title: "Today's Revenue", value: "£2,489.02", action: "View Report", icon: "pi-chart-bar" },
-    { title: "Active Cleaners", value: "8", subValue: "43", action: "View All Cleaners", icon: "pi-users" },
-    { title: "Pending Disputes", value: "3", action: "View Disputes", icon: "pi-exclamation-triangle" }
+    { title: "Today's Bookings", value: "0", action: "View All", icon: "pi-calendar", route: "/booking" },
+    { title: "Today's Revenue", value: "£0.00", action: "View Report", icon: "pi-chart-bar", route: "/reports" },
+    { title: "Active Cleaners", value: "0", subValue: "0", action: "View All Cleaners", icon: "pi-users", route: "/cleaners" },
+    { title: "Pending Disputes", value: "0", action: "View Disputes", icon: "pi-exclamation-triangle", route: "/disputes" }
   ];
 
   // Status tag severity mapping
   statusSeverity: any = {
+    'pending': 'warning',
+    'completed': 'success',
+    'approved': 'info',
+    'paid': 'success',
+    'rejected': 'danger',
     'Payment Pending': 'warning',
     'Pending': 'secondary',
     'Scheduled': 'info',
@@ -41,66 +52,68 @@ export class Dashboard {
     'Processing': 'info'
   };
 
-  // Recent bookings data
-  recentBookings = [
-    { 
-      bookingId: "C#2508150010", 
-      cleaner: "Joseph Tribblani", 
-      service: "End-of-Tenancy", 
-      dateTime: "15 Aug 2025, 10:00 AM", 
-      amount: "£299.99", 
-      status: "Payment Pending" 
-    },
-    { 
-      bookingId: "C#2508150011", 
-      cleaner: "Sarah Johnson", 
-      service: "Airbnb / Holiday Let", 
-      dateTime: "15 Aug 2025, 10:00 AM", 
-      amount: "£299.99", 
-      status: "Pending" 
-    },
-    { 
-      bookingId: "C#2508150012", 
-      cleaner: "Michael Brown", 
-      service: "Office / HMO", 
-      dateTime: "15 Aug 2025, 10:00 AM", 
-      amount: "£299.99", 
-      status: "Pending" 
-    },
-    { 
-      bookingId: "C#2508150013", 
-      cleaner: "Emily Wilson", 
-      service: "Office / HMO", 
-      dateTime: "15 Aug 2025, 10:00 AM", 
-      amount: "£299.99", 
-      status: "Scheduled" 
-    }
-  ];
+  recentBookings: RecentBooking[] = [];
+  payouts: RecentPayout[] = [];
+  loading = false;
 
-  // Payouts data
-  payouts = [
-    { 
-      payoutId: "C+12345", 
-      cleaner: "John Smith", 
-      method: "Bank Transfer", 
-      amount: "£150.00", 
-      status: "Completed" 
-    },
-    { 
-      payoutId: "C+12346", 
-      cleaner: "Emma Johnson", 
-      method: "PayPal", 
-      amount: "£200.00", 
-      status: "Pending" 
-    },
-    { 
-      payoutId: "C+12347", 
-      cleaner: "Michael Brown", 
-      method: "Bank Transfer", 
-      amount: "£180.50", 
-      status: "Processing" 
-    }
-  ];
+  constructor(
+    private router: Router,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService,
+    private dashboardService: DashboardService
+  ) {}
+
+  ngOnInit() {
+    this.loadDashboardData();
+  }
+
+  loadDashboardData(): void {
+    this.loading = true;
+    
+    // Load overview data
+    this.dashboardService.getDashboardOverview().subscribe({
+      next: (response) => {
+        const dashboardData = response.data;
+        this.updateMetrics(dashboardData.todays_metrics);
+        this.recentBookings = dashboardData.recent_bookings;
+        this.payouts = dashboardData.recent_payouts;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading dashboard data:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load dashboard data'
+        });
+        this.loading = false;
+      }
+    });
+
+    // Load quick stats for additional data
+    this.dashboardService.getQuickStats().subscribe({
+      next: (response) => {
+        const quickStats = response.data;
+        this.updateMetricsWithQuickStats(quickStats);
+      },
+      error: (error) => {
+        console.error('Error loading quick stats:', error);
+      }
+    });
+  }
+
+  updateMetrics(todaysMetrics: any): void {
+    this.metrics[0].value = todaysMetrics.todays_bookings.toString();
+    this.metrics[1].value = todaysMetrics.todays_revenue_formatted;
+    this.metrics[2].value = todaysMetrics.active_cleaners.toString();
+    this.metrics[2].subValue = todaysMetrics.active_cleaners.toString();
+    this.metrics[3].value = todaysMetrics.pending_disputes.toString();
+  }
+
+  updateMetricsWithQuickStats(quickStats: any): void {
+    // Update active cleaners with total count from quick stats
+    this.metrics[2].subValue = quickStats.total_active_cleaners.toString();
+  }
 
   // Click handler for booking IDs
   onBookingClick(bookingId: string) {
@@ -123,49 +136,120 @@ export class Dashboard {
     // this.router.navigate(['/payouts', payoutId]);
   }
 
+  // Metric action handler
+  onMetricAction(metric: any) {
+    if (metric.route) {
+      this.router.navigate([metric.route]);
+    }
+  }
+
   // Booking actions
-  onViewBooking(booking: any) {
+  onViewBooking(booking: RecentBooking) {
     console.log('View booking:', booking);
-    this.messageService.add({severity: 'info', summary: 'View Booking', detail: `Viewing booking ${booking.bookingId}`});
+    this.messageService.add({
+      severity: 'info', 
+      summary: 'View Booking', 
+      detail: `Viewing booking #${booking.id}`
+    });
   }
 
-  onEditBooking(booking: any) {
+  onEditBooking(booking: RecentBooking) {
     console.log('Edit booking:', booking);
-    this.messageService.add({severity: 'info', summary: 'Edit Booking', detail: `Editing booking ${booking.bookingId}`});
+    this.messageService.add({
+      severity: 'info', 
+      summary: 'Edit Booking', 
+      detail: `Editing booking #${booking.id}`
+    });
   }
 
-  onDeleteBooking(booking: any) {
+  onDeleteBooking(booking: RecentBooking) {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this booking?',
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         console.log('Delete booking:', booking);
-        this.messageService.add({severity: 'success', summary: 'Booking Deleted', detail: `Booking ${booking.bookingId} has been deleted`});
+        this.messageService.add({
+          severity: 'success', 
+          summary: 'Booking Deleted', 
+          detail: `Booking #${booking.id} has been deleted`
+        });
       }
     });
   }
 
   // Payout actions
-  onViewPayout(payout: any) {
+  onViewPayout(payout: RecentPayout) {
     console.log('View payout:', payout);
-    this.messageService.add({severity: 'info', summary: 'View Payout', detail: `Viewing payout ${payout.payoutId}`});
+    this.messageService.add({
+      severity: 'info', 
+      summary: 'View Payout', 
+      detail: `Viewing payout ${payout.payout_id}`
+    });
   }
 
-  onEditPayout(payout: any) {
+  onEditPayout(payout: RecentPayout) {
     console.log('Edit payout:', payout);
-    this.messageService.add({severity: 'info', summary: 'Edit Payout', detail: `Editing payout ${payout.payoutId}`});
+    this.messageService.add({
+      severity: 'info', 
+      summary: 'Edit Payout', 
+      detail: `Editing payout ${payout.payout_id}`
+    });
   }
 
-  onDeletePayout(payout: any) {
+  onDeletePayout(payout: RecentPayout) {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this payout?',
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         console.log('Delete payout:', payout);
-        this.messageService.add({severity: 'success', summary: 'Payout Deleted', detail: `Payout ${payout.payoutId} has been deleted`});
+        this.messageService.add({
+          severity: 'success', 
+          summary: 'Payout Deleted', 
+          detail: `Payout ${payout.payout_id} has been deleted`
+        });
       }
+    });
+  }
+
+  // Helper methods for template
+  formatBookingId(booking: RecentBooking): string {
+    return `B#${booking.id.toString().padStart(8, '0')}`;
+  }
+
+  formatDateTime(booking: RecentBooking): string {
+    const date = new Date(booking.booking_date);
+    const formattedDate = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+    return `${formattedDate}, ${booking.time_slot}`;
+  }
+
+  formatAmount(amount: number): string {
+    return `£${amount.toFixed(2)}`;
+  }
+
+  getBookingStatusDisplay(booking: RecentBooking): string {
+    return booking.status_display || booking.status.charAt(0).toUpperCase() + booking.status.slice(1);
+  }
+
+  getPayoutStatusDisplay(payout: RecentPayout): string {
+    return payout.status_display || payout.status.charAt(0).toUpperCase() + payout.status.slice(1);
+  }
+
+  getCleanerDisplayName(cleanerName: string): string {
+    return cleanerName === 'Not Assigned' ? 'Not Assigned' : cleanerName;
+  }
+
+  refreshDashboard(): void {
+    this.loadDashboardData();
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Refreshing',
+      detail: 'Dashboard data is being refreshed'
     });
   }
 }
