@@ -1,7 +1,7 @@
 <div class="settings-container">
   <!-- Header -->
   <div class="header-section">
-    <h1>Cleaner Management</h1>
+    <h1>Cleaner Profile</h1>
     <p class="subtitle">Here's what's happening with your cleaning services today</p>
   </div>
 
@@ -195,6 +195,7 @@
           </div>
         </div>
 
+        <!-- PayPal Form -->
         <div class="form-group" *ngIf="profileData.paymentMethod === 'paypal'">
           <label for="paypalEmail">PayPal Email Address</label>
           <input 
@@ -203,6 +204,77 @@
             pInputText 
             [(ngModel)]="profileData.paypalEmail"
             class="form-input">
+        </div>
+
+        <!-- Bank Transfer Form -->
+        <div class="bank-form" *ngIf="profileData.paymentMethod === 'bank'">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="beneficiary">Beneficiary</label>
+              <input 
+                id="beneficiary"
+                type="text" 
+                pInputText 
+                [(ngModel)]="profileData.beneficiary"
+                placeholder="Enter beneficiary name"
+                class="form-input">
+            </div>
+
+            <div class="form-group full-width">
+              <label for="bankAddress">Bank Address</label>
+              <input 
+                id="bankAddress"
+                type="text" 
+                pInputText 
+                [(ngModel)]="profileData.bankAddress"
+                placeholder="Enter bank address"
+                class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label for="sortCode">Sort Code</label>
+              <input 
+                id="sortCode"
+                type="text" 
+                pInputText 
+                [(ngModel)]="profileData.sortCode"
+                placeholder="e.g., 013972"
+                class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label for="bankName">Bank Name</label>
+              <input 
+                id="bankName"
+                type="text" 
+                pInputText 
+                [(ngModel)]="profileData.bankName"
+                placeholder="Enter bank name"
+                class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label for="accountNumber">Account Number</label>
+              <input 
+                id="accountNumber"
+                type="text" 
+                pInputText 
+                [(ngModel)]="profileData.accountNumber"
+                placeholder="Enter account number"
+                class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label for="iban">IBAN</label>
+              <input 
+                id="iban"
+                type="text" 
+                pInputText 
+                [(ngModel)]="profileData.iban"
+                placeholder="Enter IBAN"
+                class="form-input">
+            </div>
+          </div>
         </div>
       </p-card>
 

@@ -31,7 +31,14 @@ export class CleanerSettingsComponent {
     password: '',
     repeatPassword: '',
     paymentMethod: 'paypal',
-    paypalEmail: 'hello@paypal.com'
+    paypalEmail: 'hello@paypal.com',
+    // Bank transfer fields
+    beneficiary: 'Friends Global Ltd.',
+    bankAddress: '133 Houndsditch, LONDON, EC3A 7BX',
+    sortCode: '013972',
+    bankName: 'Clear Bank',
+    accountNumber: '00165374',
+    iban: 'GB44CLRB04097200005667'
   };
 
   selectedFile: File | null = null;
