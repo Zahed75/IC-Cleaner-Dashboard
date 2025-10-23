@@ -1,1 +1,149 @@
-<p>dashboard works!</p>
+<div class="customer-dashboard">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="welcome-content">
+      <h1>Welcome back, {{userName}}!</h1>
+      <p class="subtitle">Here's what's happening with your cleaning services today</p>
+    </div>
+    <button class="book-cleaning-btn" (click)="bookCleaning()">
+      <i class="pi pi-plus"></i>
+      Book a Cleaning
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-info">
+            <span class="stat-label">Upcoming Cleanings</span>
+            <span class="stat-number">{{upcomingCleanings}}</span>
+          </div>
+          <i class="stat-icon pi pi-calendar"></i>
+        </div>
+        <button class="view-all-btn" (click)="viewAllCleanings()">View All</button>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-info">
+            <span class="stat-label">Pending Payments</span>
+            <span class="stat-number">{{pendingPayments}}</span>
+          </div>
+          <i class="stat-icon pi pi-credit-card"></i>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-info">
+            <span class="stat-label">Total Cleanings</span>
+            <span class="stat-number">{{totalCleanings}}</span>
+          </div>
+          <i class="stat-icon pi pi-chart-line"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upcoming Cleanings Table -->
+  <div class="table-section">
+    <p-card class="table-card">
+      <div class="card-header">
+        <h2>Upcoming Cleanings</h2>
+      </div>
+      <p-table 
+        [value]="upcomingBookings" 
+        [rows]="5"
+        [paginator]="true"
+        styleClass="p-datatable-sm"
+        [tableStyle]="{'min-width': '60rem'}">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Booking ID</th>
+            <th>Cleaner</th>
+            <th>Service Type</th>
+            <th>Date & Time</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-booking>
+          <tr>
+            <td>
+              <a class="booking-id-link" (click)="showBookingDetails(booking)">
+                {{booking.id}}
+              </a>
+            </td>
+            <td>{{booking.cleaner}}</td>
+            <td>{{booking.serviceType}}</td>
+            <td>{{booking.dateTime}}</td>
+            <td class="amount">{{booking.amount}}</td>
+            <td>
+              <p-tag 
+                [value]="booking.status" 
+                [severity]="getStatusSeverity(booking.status)">
+              </p-tag>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center">No upcoming cleanings found</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+  <!-- Booking Details Dialog -->
+  <p-dialog 
+    header="Cleaning Service Details" 
+    [(visible)]="showBookingDialog" 
+    [modal]="true" 
+    [style]="{ width: '500px' }"
+    [draggable]="false" 
+    [resizable]="false">
+    <div class="booking-details" *ngIf="selectedBooking">
+      <div class="detail-group">
+        <label>Customer Name</label>
+        <div class="detail-value">{{selectedBooking.customerName}}</div>
+      </div>
+
+      <div class="detail-group">
+        <label>Service Type</label>
+        <div class="detail-value">{{selectedBooking.serviceType}}</div>
+      </div>
+
+      <div class="detail-group">
+        <label>Date & Time</label>
+        <div class="detail-value">
+          <div>{{selectedBooking.date}}</div>
+          <div class="time">{{selectedBooking.time}}</div>
+        </div>
+      </div>
+
+      <div class="detail-group">
+        <label>Address</label>
+        <div class="detail-value address">{{selectedBooking.address}}</div>
+      </div>
+
+      <div class="detail-group payment">
+        <label>Service Pay</label>
+        <div class="detail-value amount">{{selectedBooking.amount}}</div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn-edit" (click)="editBooking(selectedBooking)">
+          <i class="pi pi-pencil"></i>
+          Edit Booking
+        </button>
+        <button class="btn-cancel" (click)="cancelBooking(selectedBooking)">
+          <i class="pi pi-times"></i>
+          Cancel
+        </button>
+      </div>
+    </div>
+  </p-dialog>
+</div>
