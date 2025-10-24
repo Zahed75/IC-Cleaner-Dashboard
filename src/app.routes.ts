@@ -1,3 +1,6 @@
+
+
+
 import { Routes } from '@angular/router';
 import { AppLayout } from './app/layout/component/app.layout';
 import { Login } from '../src/app/components/admin/auth/login/login';
@@ -28,7 +31,7 @@ import { CustomerAccountSettingsComponent } from '@/components/customer-app/sett
 import { AuthGuard } from '../src/app/guard/auth-guard';
 
 export const appRoutes: Routes = [
-    // Login route (default)
+    // Login route (only for specific paths)
     { path: '', component: Login },
     { path: 'sign-in', component: Login },
     
@@ -40,7 +43,7 @@ export const appRoutes: Routes = [
         data: { requiredRole: 'admin' },
         children: [
             { path: 'dashboard', component: Dashboard },
-            { path: 'booking', component: BookingsComponent },
+            { path: 'bookings', component: BookingsComponent }, // Changed from 'booking' to 'bookings'
             { path: 'payouts', component: Payouts },
             { path: 'disputes', component: Disputes },
             { path: 'reports', component: Reports },
@@ -52,7 +55,7 @@ export const appRoutes: Routes = [
         ]
     },
     
-    // Cleaner routes - FIXED: Use explicit path
+    // Cleaner routes
     {
         path: 'cleaner',
         component: AppLayout,
@@ -60,7 +63,7 @@ export const appRoutes: Routes = [
         data: { requiredRole: 'cleaner' },
         children: [
             { path: 'dashboard', component: CleanerDashboardComponent },
-            { path: 'booking', component: CleanerBookingsComponent },
+            { path: 'bookings', component: CleanerBookingsComponent }, // Changed from 'booking' to 'bookings'
             { path: 'payouts', component: CleanerPayoutsComponent },
             { path: 'disputes', component: CleanerDisputesComponent },
             { path: 'reports', component: CleanerReportsComponent },
@@ -69,7 +72,7 @@ export const appRoutes: Routes = [
         ]
     },
     
-    // Customer routes
+    // Customer routes - FIXED: Changed 'booking' to 'bookings'
     {
         path: 'customer',
         component: AppLayout,
@@ -77,15 +80,12 @@ export const appRoutes: Routes = [
         data: { requiredRole: 'customer' },
         children: [
             { path: 'dashboard', component: CustomerDashboardComponent },
-            { path: 'booking', component: CustomerBookingsComponent },
+            { path: 'bookings', component: CustomerBookingsComponent }, // CHANGED: 'booking' → 'bookings'
             { path: 'billing', component: CustomerBillingComponent },
             { path: 'account-settings', component: CustomerAccountSettingsComponent },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
-    
-    // REMOVED: The conflicting default redirect
-    // { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     
     // Redirect any unknown routes to login
     { path: '**', redirectTo: '' }

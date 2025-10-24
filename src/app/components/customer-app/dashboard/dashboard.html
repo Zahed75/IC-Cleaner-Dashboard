@@ -1,14 +1,33 @@
 <div class="customer-dashboard">
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="refreshDashboard()">Retry</button>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+      <p>Loading dashboard data...</p>
+    </div>
+  </div>
+
   <!-- Welcome Section -->
   <div class="welcome-section">
     <div class="welcome-content">
       <h1>Welcome back, {{userName}}!</h1>
       <p class="subtitle">Here's what's happening with your cleaning services today</p>
     </div>
-    <button class="book-cleaning-btn" (click)="bookCleaning()">
-      <i class="pi pi-plus"></i>
-      Book a Cleaning
-    </button>
+    <div class="welcome-actions">
+      <button class="refresh-btn" (click)="refreshDashboard()" title="Refresh Dashboard">
+        <i class="pi pi-refresh"></i>
+      </button>
+      <button class="book-cleaning-btn" (click)="bookCleaning()">
+        <i class="pi pi-plus"></i>
+        Book a Cleaning
+      </button>
+    </div>
   </div>
 
   <!-- Stats Cards -->
@@ -22,7 +41,7 @@
           </div>
           <i class="stat-icon pi pi-calendar"></i>
         </div>
-        <button class="view-all-btn" (click)="viewAllCleanings()">View All</button>
+        <!-- <button class="view-all-btn" (click)="viewAllCleanings()">View All</button> -->
       </div>
 
       <div class="stat-card">
@@ -44,6 +63,16 @@
           <i class="stat-icon pi pi-chart-line"></i>
         </div>
       </div>
+
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-info">
+            <span class="stat-label">Today's Cleanings</span>
+            <span class="stat-number">{{todaysCleanings}}</span>
+          </div>
+          <i class="stat-icon pi pi-clock"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -52,11 +81,14 @@
     <p-card class="table-card">
       <div class="card-header">
         <h2>Upcoming Cleanings</h2>
+        <span class="booking-count">{{upcomingBookings.length}} booking(s)</span>
       </div>
       <p-table 
         [value]="upcomingBookings" 
         [rows]="5"
-        [paginator]="true"
+        [paginator]="upcomingBookings.length > 5"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         styleClass="p-datatable-sm"
         [tableStyle]="{'min-width': '60rem'}">
         <ng-template pTemplate="header">
@@ -107,6 +139,11 @@
     [resizable]="false">
     <div class="booking-details" *ngIf="selectedBooking">
       <div class="detail-group">
+        <label>Booking ID</label>
+        <div class="detail-value">{{selectedBooking.id}}</div>
+      </div>
+
+      <div class="detail-group">
         <label>Customer Name</label>
         <div class="detail-value">{{selectedBooking.customerName}}</div>
       </div>
@@ -114,6 +151,11 @@
       <div class="detail-group">
         <label>Service Type</label>
         <div class="detail-value">{{selectedBooking.serviceType}}</div>
+      </div>
+
+      <div class="detail-group">
+        <label>Cleaner</label>
+        <div class="detail-value">{{selectedBooking.cleaner}}</div>
       </div>
 
       <div class="detail-group">
@@ -129,21 +171,28 @@
         <div class="detail-value address">{{selectedBooking.address}}</div>
       </div>
 
+      <div class="detail-group">
+        <label>Special Requirements</label>
+        <div class="detail-value">
+          {{selectedBooking.originalData?.special_requirements || 'None'}}
+        </div>
+      </div>
+
       <div class="detail-group payment">
-        <label>Service Pay</label>
+        <label>Total Amount</label>
         <div class="detail-value amount">{{selectedBooking.amount}}</div>
       </div>
 
-      <div class="action-buttons">
+      <!-- <div class="action-buttons">
         <button class="btn-edit" (click)="editBooking(selectedBooking)">
           <i class="pi pi-pencil"></i>
           Edit Booking
         </button>
         <button class="btn-cancel" (click)="cancelBooking(selectedBooking)">
           <i class="pi pi-times"></i>
-          Cancel
+          Cancel Booking
         </button>
-      </div>
+      </div> -->
     </div>
   </p-dialog>
 </div>
