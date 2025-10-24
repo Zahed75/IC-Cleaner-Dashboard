@@ -5,54 +5,58 @@
     <p>Manage your cards and payment methods</p>
   </div>
 
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
   <!-- Saved Cards Section -->
+  <div class="cards-section">
+    <div class="section-header">
+      <h2>Saved Cards</h2>
+      <button class="btn-primary" (click)="showAddCardForm = true">Add Card</button>
+    </div>
 
-<div class="cards-section">
-  <div class="section-header">
-    <h2>Saved Cards</h2>
-    <button class="btn-primary" (click)="showAddCardForm = true">Add Card</button>
-  </div>
-
-  <div class="card-list">
-    <!-- Card 1 -->
-    <div class="card-item">
-      <div class="card-header">
-        <span class="card-type">VISA</span>
-        <div class="card-actions">
-          <button class="btn-edit" (click)="editCard(1)">Edit</button>
-          <button class="btn-remove" (click)="removeCard(1)">Remove</button>
+    <div class="card-list" *ngIf="!isLoading; else loadingTemplate">
+      <!-- Dynamic Cards -->
+      <div class="card-item" *ngFor="let card of savedCards" [class.default-card]="card.is_default">
+        <div class="card-header">
+          <span class="card-type">{{ card.cardType }}</span>
+          <div class="card-actions">
+            <button *ngIf="!card.is_default" class="btn-set-default" (click)="setDefaultCard(card.id!)">
+              Set Default
+            </button>
+            <button class="btn-edit" (click)="editCard(card.id!)">Edit</button>
+            <button class="btn-remove" (click)="removeCard(card.id!)">Remove</button>
+          </div>
+        </div>
+        <div class="card-details">
+          <p class="card-number">{{ card.cardType }} ending in {{ card.lastFour }}</p>
+          <p class="card-expiry">Expires {{ card.expiryDate }}</p>
+          <p class="default-badge" *ngIf="card.is_default">Default</p>
         </div>
       </div>
-      <div class="card-details">
-        <p class="card-number">Visa ending in 4242</p>
-        <p class="card-expiry">Expires 05/2028</p>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="savedCards.length === 0 && !isLoading">
+        <p>No saved cards found. Add your first payment method.</p>
       </div>
     </div>
 
-    <!-- Card 2 -->
-    <div class="card-item">
-      <div class="card-header">
-        <span class="card-type">VISA</span>
-        <div class="card-actions">
-          <button class="btn-edit" (click)="editCard(2)">Edit</button>
-          <button class="btn-remove" (click)="removeCard(2)">Remove</button>
-        </div>
+    <ng-template #loadingTemplate>
+      <div class="loading-state">
+        <p>Loading payment methods...</p>
       </div>
-      <div class="card-details">
-        <p class="card-number">Visa ending in 1234</p>
-        <p class="card-expiry">Expires 05/2030</p>
-      </div>
-    </div>
+    </ng-template>
   </div>
-</div>
 
-
+  <!-- Rest of the HTML remains the same as previous version -->
   <!-- Add Card Form -->
   <div class="add-card-overlay" *ngIf="showAddCardForm">
     <div class="add-card-form">
       <div class="form-header">
-        <h2>Add New Card</h2>
-        <button class="btn-close" (click)="showAddCardForm = false">&times;</button>
+        <h2>{{ isEditing ? 'Edit Card' : 'Add New Card' }}</h2>
+        <button class="btn-close" (click)="showAddCardForm = false; resetCardForm()">&times;</button>
       </div>
       
       <form (ngSubmit)="saveCard()" #cardForm="ngForm">
@@ -140,8 +144,10 @@
             By clicking Save Card, you agree to the <a href="#">Link Terms</a> and <a href="#">Privacy Policy</a>.
           </p>
           <div class="form-actions">
-            <button type="button" class="btn-secondary" (click)="showAddCardForm = false">Cancel</button>
-            <button type="submit" class="btn-primary" [disabled]="!cardForm.valid">Save Card</button>
+            <button type="button" class="btn-secondary" (click)="showAddCardForm = false; resetCardForm()">Cancel</button>
+            <button type="submit" class="btn-primary" [disabled]="!cardForm.valid">
+              {{ isEditing ? 'Update Card' : 'Save Card' }}
+            </button>
           </div>
         </div>
       </form>
@@ -178,7 +184,7 @@
             <td>{{ bill.dateTime }}</td>
             <td>{{ bill.amount }}</td>
             <td>
-              <span [class]="'status-' + bill.status.toLowerCase()">
+              <span [class]="'status-' + bill.status.toLowerCase().replace(' ', '-')">
                 {{ bill.status }}
               </span>
             </td>
@@ -220,13 +226,17 @@
         </div>
         <div class="detail-row">
           <span class="detail-label">Status:</span>
-          <span [class]="'status-' + selectedBill.status.toLowerCase()">
+          <span [class]="'status-' + selectedBill.status.toLowerCase().replace(' ', '-')">
             {{ selectedBill.status }}
           </span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Payment Method:</span>
-          <span class="detail-value">Visa ending in 4242</span>
+          <span class="detail-value">
+            <span *ngFor="let card of savedCards">
+              <span *ngIf="card.is_default">{{ card.cardType }} ending in {{ card.lastFour }}</span>
+            </span>
+          </span>
         </div>
       </div>
 
