@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 // PrimeNG Modules
 import { ButtonModule } from 'primeng/button';
@@ -14,27 +15,8 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
 
-interface Booking {
-  id: string;
-  cleaner: string;
-  service: string;
-  dateTime: string;
-  amount: string;
-  status: string;
-}
-
-interface Location {
-  id: number;
-  name: string;
-  address: string;
-}
-
-interface Cleaner {
-  id: number;
-  name: string;
-  completedJobs: number;
-  rating: number;
-}
+// Services
+import { BookingService, Cleaner, Service, Booking, BookingRequest, ApiResponse } from '../../../services/customer-service/bookings/booking-service';
 
 interface Card {
   id: number;
@@ -54,6 +36,7 @@ interface MenuItem {
   imports: [
     CommonModule,
     FormsModule,
+    HttpClientModule,
     ButtonModule,
     DialogModule,
     TableModule,
@@ -68,42 +51,15 @@ interface MenuItem {
   templateUrl: './bookings.html',
   styleUrl: './bookings.css'
 })
-export class CustomerBookingsComponent {
-  // Bookings Data
-  bookings: Booking[] = [
-    {
-      id: 'IC#2508150010',
-      cleaner: 'Chandler Bing',
-      service: 'Office / HMO',
-      dateTime: '15 Aug 2025, 10:00 AM',
-      amount: '£299.99',
-      status: 'Pending'
-    },
-    {
-      id: 'IC#2508150011',
-      cleaner: 'Chandler Bing',
-      service: 'Office / HMO',
-      dateTime: '15 Aug 2025, 10:00 AM',
-      amount: '£299.99',
-      status: 'Scheduled'
-    },
-    {
-      id: 'IC#2508150012',
-      cleaner: 'Ross Geller',
-      service: 'End-of-Tenancy',
-      dateTime: '10 Jul 2025, 03:00 PM',
-      amount: '£399.99',
-      status: 'Completed'
-    },
-    {
-      id: 'IC#2508150013',
-      cleaner: 'Joey Tribblani',
-      service: 'Regular Cleaning',
-      dateTime: '31 May 2025, 10:00 AM',
-      amount: '£199.99',
-      status: 'Cancelled'
-    }
-  ];
+export class CustomerBookingsComponent implements OnInit {
+  // Bookings Data - Now using API data
+  bookings: any[] = [];
+  availableCleaners: any[] = [];
+  services: Service[] = [];
+  
+  // Loading states
+  isLoading = false;
+  isCreatingBooking = false;
 
   // Dialog States
   showBookingDialog: boolean = false;
@@ -118,67 +74,32 @@ export class CustomerBookingsComponent {
   currentStepIndex: number = 0;
 
   // Selected Items
-  selectedBooking: Booking | null = null;
-  selectedLocation: Location | null = null;
+  selectedBooking: any = null;
   selectedServiceType: string = '';
-  selectedDate: Date | null = null;
+  selectedDate: string = '';
   selectedTime: string = '';
-  selectedCleaner: Cleaner | null = null;
+  selectedCleaner: any = null;
   selectedCard: Card | null = null;
 
   // Form Data
   locationInput: string = '';
   specialRequests: string = '';
-  minDate: Date = new Date();
+  minDate: string = new Date().toISOString().split('T')[0];
 
-  // Dropdown Options - Convert to objects for PrimeNG dropdown
-  serviceTypes: any[] = [
-    { label: 'Standard Cleaning', value: 'Standard Cleaning' },
-    { label: 'Deep Cleaning', value: 'Deep Cleaning' },
-    { label: 'Office / HMO', value: 'Office / HMO' },
-    { label: 'End-of-Tenancy', value: 'End-of-Tenancy' },
-    { label: 'Regular Cleaning', value: 'Regular Cleaning' },
-    { label: 'Move In/Out Cleaning', value: 'Move In/Out Cleaning' }
-  ];
+  // Dropdown Options
+  serviceTypes: any[] = [];
 
   availableTimes: any[] = [
-    { label: '08:00 AM', value: '08:00 AM' },
-    { label: '09:00 AM', value: '09:00 AM' },
-    { label: '10:00 AM', value: '10:00 AM' },
-    { label: '11:00 AM', value: '11:00 AM' },
-    { label: '12:00 PM', value: '12:00 PM' },
-    { label: '01:00 PM', value: '01:00 PM' },
-    { label: '02:00 PM', value: '02:00 PM' },
-    { label: '03:00 PM', value: '03:00 PM' },
-    { label: '04:00 PM', value: '04:00 PM' },
-    { label: '05:00 PM', value: '05:00 PM' }
-  ];
-
-  availableCleaners: Cleaner[] = [
-    {
-      id: 1,
-      name: 'Monica Geller',
-      completedJobs: 20,
-      rating: 4.9
-    },
-    {
-      id: 2,
-      name: 'Rhode Buffay',
-      completedJobs: 10,
-      rating: 4.5
-    },
-    {
-      id: 3,
-      name: 'Ross Geller',
-      completedJobs: 5,
-      rating: 4.7
-    },
-    {
-      id: 4,
-      name: 'Joey Tribbiani',
-      completedJobs: 10,
-      rating: 4.3
-    }
+    { label: '08:00 AM', value: '08:00:00' },
+    { label: '09:00 AM', value: '09:00:00' },
+    { label: '10:00 AM', value: '10:00:00' },
+    { label: '11:00 AM', value: '11:00:00' },
+    { label: '12:00 PM', value: '12:00:00' },
+    { label: '01:00 PM', value: '13:00:00' },
+    { label: '02:00 PM', value: '14:00:00' },
+    { label: '03:00 PM', value: '15:00:00' },
+    { label: '04:00 PM', value: '16:00:00' },
+    { label: '05:00 PM', value: '17:00:00' }
   ];
 
   savedCards: Card[] = [
@@ -196,8 +117,102 @@ export class CustomerBookingsComponent {
     }
   ];
 
+  constructor(private bookingService: BookingService) {}
+
+  ngOnInit(): void {
+    this.loadBookings();
+    this.loadCleaners();
+    this.loadServices();
+  }
+
+  // API Methods
+  private loadBookings(): void {
+    this.isLoading = true;
+    this.bookingService.getAllBookings().subscribe({
+      next: (response: ApiResponse<Booking[]>) => {
+        this.bookings = response.data.map((booking: Booking) => ({
+          id: `IC#${booking.id}`,
+          cleaner: this.getCleanerName(booking),
+          service: booking.service_detail.name,
+          dateTime: this.getDisplayDateTime(booking),
+          amount: this.getAmount(booking),
+          status: booking.status,
+          originalData: booking
+        }));
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.error('Error loading bookings:', error);
+        alert('Failed to load bookings');
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private loadCleaners(): void {
+    this.bookingService.getAllCleaners().subscribe({
+      next: (response: ApiResponse<Cleaner[]>) => {
+        this.availableCleaners = response.data
+          .filter((cleaner: Cleaner) => cleaner.profile.status === 'approved' && cleaner.is_active)
+          .map((cleaner: Cleaner) => ({
+            id: cleaner.id,
+            name: `${cleaner.first_name} ${cleaner.last_name}`,
+            completedJobs: cleaner.profile.total_services_done,
+            rating: parseFloat(cleaner.profile.rating),
+            originalData: cleaner
+          }));
+      },
+      error: (error: any) => {
+        console.error('Error loading cleaners:', error);
+        alert('Failed to load cleaners');
+      }
+    });
+  }
+
+  private loadServices(): void {
+    this.bookingService.getAllServices().subscribe({
+      next: (response: ApiResponse<Service[]>) => {
+        this.services = response.data.filter((service: Service) => service.is_active);
+        // Update serviceTypes dropdown with real data
+        this.serviceTypes = this.services.map(service => ({
+          label: `${service.name} - £${service.price_per_hour}/hour`,
+          value: service.id.toString()
+        }));
+      },
+      error: (error: any) => {
+        console.error('Error loading services:', error);
+        alert('Failed to load services');
+      }
+    });
+  }
+
+  // Helper methods to format data for display
+  private getCleanerName(booking: Booking): string {
+    if (booking.cleaner_detail) {
+      return `${booking.cleaner_detail.first_name} ${booking.cleaner_detail.last_name}`;
+    }
+    return 'Not Assigned';
+  }
+
+  private getDisplayDateTime(booking: Booking): string {
+    const date = new Date(booking.booking_date);
+    const formattedDate = date.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+    
+    const time = booking.time_slot.slice(0, 5);
+    return `${formattedDate}, ${time}`;
+  }
+
+  private getAmount(booking: Booking): string {
+    const price = parseFloat(booking.service_detail.price_per_hour);
+    return `£${price.toFixed(2)}`;
+  }
+
   // Booking Details Methods
-  showBookingDetails(booking: Booking): void {
+  showBookingDetails(booking: any): void {
     this.selectedBooking = booking;
     this.showBookingDialog = true;
   }
@@ -217,16 +232,36 @@ export class CustomerBookingsComponent {
     }
   }
 
-  editBooking(booking: Booking): void {
+  editBooking(booking: any): void {
     console.log('Edit booking:', booking);
     this.showBookingDialog = false;
-    // Implement edit booking logic
+    this.showBookingForm();
   }
 
-  cancelBooking(booking: Booking): void {
-    console.log('Cancel booking:', booking);
-    this.showBookingDialog = false;
-    // Implement cancel booking logic
+  cancelBooking(booking: any): void {
+    if (confirm('Are you sure you want to cancel this booking?')) {
+      const originalBooking = booking.originalData;
+      const updateData: BookingRequest = {
+        location: originalBooking.location,
+        booking_date: originalBooking.booking_date,
+        time_slot: originalBooking.time_slot,
+        service: originalBooking.service,
+        assign_cleaner: originalBooking.assign_cleaner,
+        special_requirements: originalBooking.special_requirements
+      };
+      
+      this.bookingService.updateBooking(originalBooking.id, updateData).subscribe({
+        next: (response: ApiResponse<Booking>) => {
+          alert('Booking cancelled successfully');
+          this.loadBookings();
+          this.showBookingDialog = false;
+        },
+        error: (error: any) => {
+          console.error('Error cancelling booking:', error);
+          alert('Failed to cancel booking');
+        }
+      });
+    }
   }
 
   // Multi-step Form Methods
@@ -255,11 +290,11 @@ export class CustomerBookingsComponent {
 
   canProceedToNextStep(): boolean {
     switch (this.currentStepIndex) {
-      case 0: // Service Details
+      case 0:
         return this.validateServiceDetails();
-      case 1: // Choose Cleaner
+      case 1:
         return !!this.selectedCleaner;
-      case 2: // Payment
+      case 2:
         return !!this.selectedCard;
       default:
         return false;
@@ -275,20 +310,10 @@ export class CustomerBookingsComponent {
 
   // Form Methods
   onLocationInput(): void {
-    // You can add address validation or autocomplete logic here
     console.log('Location input:', this.locationInput);
   }
 
-  selectLocation(location: Location): void {
-    this.selectedLocation = location;
-  }
-
-  addNewLocation(): void {
-    console.log('Add new location');
-    // Implement add new location logic
-  }
-
-  selectCleaner(cleaner: Cleaner): void {
+  selectCleaner(cleaner: any): void {
     this.selectedCleaner = cleaner;
   }
 
@@ -298,28 +323,37 @@ export class CustomerBookingsComponent {
 
   addNewCard(): void {
     console.log('Add new card');
-    // Implement add new card logic
   }
 
   processPayment(): void {
-    if (this.selectedCard) {
-      console.log('Processing payment with card:', this.selectedCard);
-      console.log('Booking details:', {
-        location: this.locationInput,
-        service: this.selectedServiceType,
-        date: this.selectedDate,
-        time: this.selectedTime,
-        cleaner: this.selectedCleaner,
-        specialRequests: this.specialRequests
-      });
+    if (this.selectedCard && this.validateServiceDetails() && this.selectedCleaner) {
+      this.isCreatingBooking = true;
       
-      // Simulate payment processing
-      setTimeout(() => {
-        this.showBookingFormDialog = false;
-        this.resetForm();
-        // Show success message or navigate to confirmation page
-        alert('Booking confirmed successfully!');
-      }, 2000);
+      const bookingData: BookingRequest = {
+        location: this.locationInput,
+        booking_date: this.selectedDate,
+        time_slot: this.selectedTime,
+        service: parseInt(this.selectedServiceType),
+        assign_cleaner: this.selectedCleaner.id,
+        special_requirements: this.specialRequests
+      };
+
+      console.log('Creating booking with data:', bookingData);
+
+      this.bookingService.createBooking(bookingData).subscribe({
+        next: (response: ApiResponse<Booking>) => {
+          alert('Booking created successfully!');
+          this.showBookingFormDialog = false;
+          this.resetForm();
+          this.loadBookings();
+          this.isCreatingBooking = false;
+        },
+        error: (error: any) => {
+          console.error('Error creating booking:', error);
+          alert('Failed to create booking');
+          this.isCreatingBooking = false;
+        }
+      });
     }
   }
 
@@ -327,7 +361,7 @@ export class CustomerBookingsComponent {
     this.currentStepIndex = 0;
     this.locationInput = '';
     this.selectedServiceType = '';
-    this.selectedDate = null;
+    this.selectedDate = '';
     this.selectedTime = '';
     this.selectedCleaner = null;
     this.selectedCard = null;
