@@ -1,6 +1,3 @@
-
-
-
 import { Routes } from '@angular/router';
 import { AppLayout } from './app/layout/component/app.layout';
 import { Login } from '../src/app/components/admin/auth/login/login';
@@ -34,7 +31,7 @@ export const appRoutes: Routes = [
     // Login route (only for specific paths)
     { path: '', component: Login },
     { path: 'sign-in', component: Login },
-    
+
     // Admin routes
     {
         path: 'admin',
@@ -54,7 +51,7 @@ export const appRoutes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
-    
+
     // Cleaner routes
     {
         path: 'cleaner',
@@ -71,7 +68,7 @@ export const appRoutes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
-    
+
     // Customer routes - FIXED: Changed 'booking' to 'bookings'
     {
         path: 'customer',
@@ -86,7 +83,7 @@ export const appRoutes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
-    
+
     // Redirect any unknown routes to login
     { path: '**', redirectTo: '' }
 ];
