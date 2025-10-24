@@ -1,1 +1,309 @@
-<p>bookings works!</p>
+<div class="bookings-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1>Booking Management</h1>
+      <p class="subtitle">Here's what's happening with your cleaning services today</p>
+    </div>
+    <p-button 
+      icon="pi pi-plus" 
+      label="Book a Cleaning" 
+      (onClick)="showBookingForm()"
+      styleClass="p-button-primary">
+    </p-button>
+  </div>
+
+  <!-- Bookings Table -->
+  <div class="table-section">
+    <p-card header="Bookings">
+      <p-table 
+        [value]="bookings" 
+        [paginator]="true" 
+        [rows]="5"
+        styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>BOOKING ID</th>
+            <th>CLEANER</th>
+            <th>SERVICE</th>
+            <th>DATE & TIME</th>
+            <th>AMOUNT</th>
+            <th>STATUS</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-booking>
+          <tr>
+            <td>
+              <a class="booking-id-link" (click)="showBookingDetails(booking)">
+                {{booking.id}}
+              </a>
+            </td>
+            <td>{{booking.cleaner}}</td>
+            <td>{{booking.service}}</td>
+            <td>{{booking.dateTime}}</td>
+            <td class="amount">{{booking.amount}}</td>
+            <td>
+              <p-tag 
+                [value]="booking.status" 
+                [severity]="getStatusSeverity(booking.status)">
+              </p-tag>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+
+  <!-- Booking Details Dialog -->
+  <p-dialog 
+    header="Booking Details" 
+    [(visible)]="showBookingDialog" 
+    [modal]="true"
+    [style]="{width: '500px'}"
+    [draggable]="false" 
+    [resizable]="false">
+    <div class="modal-body" *ngIf="selectedBooking">
+      <div class="p-fluid">
+        <div class="p-field">
+          <label>Booking ID</label>
+          <div class="detail-value">{{selectedBooking.id}}</div>
+        </div>
+
+        <div class="p-field">
+          <label>Cleaner</label>
+          <div class="detail-value">{{selectedBooking.cleaner}}</div>
+        </div>
+
+        <div class="p-field">
+          <label>Service Type</label>
+          <div class="detail-value">{{selectedBooking.service}}</div>
+        </div>
+
+        <div class="p-field">
+          <label>Date & Time</label>
+          <div class="detail-value">{{selectedBooking.dateTime}}</div>
+        </div>
+
+        <div class="p-field">
+          <label>Amount</label>
+          <div class="detail-value amount">{{selectedBooking.amount}}</div>
+        </div>
+
+        <div class="p-field">
+          <label>Status</label>
+          <div class="detail-value">
+            <p-tag 
+              [value]="selectedBooking.status" 
+              [severity]="getStatusSeverity(selectedBooking.status)">
+            </p-tag>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template pTemplate="footer">
+      <p-button 
+        icon="pi pi-pencil" 
+        label="Edit Booking" 
+        (onClick)="editBooking(selectedBooking!)"
+        styleClass="p-button-text">
+      </p-button>
+      <p-button 
+        icon="pi pi-times" 
+        label="Cancel Booking" 
+        (onClick)="cancelBooking(selectedBooking!)"
+        styleClass="p-button-danger">
+      </p-button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Book Cleaning Form Dialog (Multi-step) -->
+  <p-dialog 
+    header="Book a Cleaning Service" 
+    [(visible)]="showBookingFormDialog" 
+    [modal]="true"
+    [style]="{width: '600px', 'max-width': '95vw'}"
+    [draggable]="false" 
+    [resizable]="false"
+    (onHide)="closeBookingForm()">
+    
+    <p-steps [model]="steps" [activeIndex]="currentStepIndex"></p-steps>
+
+    <div class="step-content">
+      <!-- Step 1: Service Details -->
+      <div *ngIf="currentStepIndex === 0" class="p-fluid">
+        <!-- Location Input -->
+        <div class="p-field">
+          <label for="location">Location *</label>
+          <div class="location-input-container">
+            <input 
+              type="text" 
+              id="location"
+              class="form-input"
+              [(ngModel)]="locationInput"
+              placeholder="Enter your address"
+              (input)="onLocationInput()">
+            <i class="pi pi-map-marker location-icon"></i>
+          </div>
+          <small class="input-help">Enter the complete address where cleaning service is needed</small>
+        </div>
+
+        <!-- Service Type -->
+        <div class="p-field">
+          <label for="serviceType">Service Type *</label>
+          <select class="form-select" [(ngModel)]="selectedServiceType">
+            <option value="">Select Service Type</option>
+            <option *ngFor="let service of serviceTypes" [value]="service.value">
+              {{service.label}}
+            </option>
+          </select>
+        </div>
+
+        <!-- Date and Time Row -->
+        <div class="form-row">
+          <div class="p-field form-col">
+            <label for="date">Date *</label>
+            <input 
+              type="date" 
+              id="date"
+              class="form-input" 
+              [(ngModel)]="selectedDate" 
+              [min]="minDate.toISOString().split('T')[0]">
+          </div>
+
+          <div class="p-field form-col">
+            <label for="time">Time *</label>
+            <select class="form-select" [(ngModel)]="selectedTime" id="time">
+              <option value="">Select time</option>
+              <option *ngFor="let time of availableTimes" [value]="time.value">
+                {{time.label}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Special Requests -->
+        <div class="p-field">
+          <label for="specialRequests">Special Requests</label>
+          <div class="textarea-container">
+            <textarea 
+              id="specialRequests"
+              class="form-textarea"
+              [(ngModel)]="specialRequests"
+              placeholder="Any special instructions or requests (e.g., specific areas to focus on, pets in the house, allergies, etc.)"
+              rows="4"
+              maxlength="500">
+            </textarea>
+            <div class="character-count">
+              {{specialRequests?.length || 0}}/500 characters
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Select Cleaner -->
+      <div *ngIf="currentStepIndex === 1" class="cleaner-selection">
+        <h4>Select a Cleaner</h4>
+        <div class="cleaner-list">
+          <p-card 
+            *ngFor="let cleaner of availableCleaners" 
+            [style]="{'margin-bottom': '1rem', 'cursor': 'pointer'}"
+            [styleClass]="selectedCleaner?.id === cleaner.id ? 'selected-cleaner' : ''"
+            (click)="selectCleaner(cleaner)">
+            <div class="cleaner-option">
+              <div class="cleaner-avatar">
+                {{cleaner.name.charAt(0)}}
+              </div>
+              <div class="cleaner-info">
+                <div class="cleaner-name">{{cleaner.name}}</div>
+                <div class="cleaner-stats">
+                  <span class="stat">
+                    <i class="pi pi-clock"></i>
+                    {{cleaner.completedJobs}}+ Cleaning Completed
+                  </span>
+                  <span class="stat">
+                    <i class="pi pi-star"></i>
+                    {{cleaner.rating}}/5
+                  </span>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </div>
+
+      <!-- Step 3: Payment -->
+      <div *ngIf="currentStepIndex === 2" class="payment-section">
+        <h4>Select Payment Method</h4>
+        <div class="payment-options">
+          <p-card 
+            *ngFor="let card of savedCards" 
+            [style]="{'margin-bottom': '1rem', 'cursor': 'pointer'}"
+            [styleClass]="selectedCard?.id === card.id ? 'selected-card' : ''"
+            (click)="selectCard(card)">
+            <div class="card-option">
+              <i class="pi pi-credit-card" [style]="{color: '#007bff'}"></i>
+              <div class="card-info">
+                <div class="card-type">VISA ending in {{card.lastFour}}</div>
+                <div class="card-expiry">Expires {{card.expiry}}</div>
+              </div>
+            </div>
+          </p-card>
+          
+          <p-button 
+            icon="pi pi-plus" 
+            label="Add New Card" 
+            styleClass="p-button-outlined p-button-sm"
+            (onClick)="addNewCard()">
+          </p-button>
+        </div>
+
+        <div class="payment-summary">
+          <h5>Payment Summary</h5>
+          <div class="summary-item">
+            <span>Service Cost:</span>
+            <span>£150.00</span>
+          </div>
+          <div class="summary-item">
+            <span>Tax:</span>
+            <span>£15.00</span>
+          </div>
+          <div class="summary-total">
+            <span>Total Payable:</span>
+            <span class="total-amount">£165.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <div class="dialog-footer">
+        <p-button 
+          *ngIf="currentStepIndex > 0"
+          label="Back" 
+          icon="pi pi-arrow-left"
+          (onClick)="previousStep()"
+          styleClass="p-button-text">
+        </p-button>
+        
+        <p-button 
+          *ngIf="currentStepIndex < 2"
+          [label]="currentStepIndex === 0 ? 'Choose Cleaner' : 'Continue to Pay'"
+          icon="pi pi-arrow-right" 
+          iconPos="right"
+          (onClick)="nextStep()"
+          [disabled]="!canProceedToNextStep()"
+          styleClass="p-button-primary">
+        </p-button>
+
+        <p-button 
+          *ngIf="currentStepIndex === 2"
+          label="Pay Now" 
+          icon="pi pi-lock" 
+          (onClick)="processPayment()"
+          [disabled]="!selectedCard"
+          styleClass="p-button-success">
+        </p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>
