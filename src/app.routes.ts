@@ -77,7 +77,7 @@ export const appRoutes: Routes = [
         data: { requiredRole: 'customer' },
         children: [
             { path: 'dashboard', component: CustomerDashboardComponent },
-            { path: 'bookings', component: CustomerBookingsComponent }, // CHANGED: 'booking' → 'bookings'
+            { path: 'booking', component: CustomerBookingsComponent },
             { path: 'billing', component: CustomerBillingComponent },
             { path: 'account-settings', component: CustomerAccountSettingsComponent },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
