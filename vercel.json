@@ -1,14 +1,9 @@
 {
-    "version": 2,
-    "buildCommand": "npm run vercel-build",
-    "outputDirectory": "dist/sakai-ng/browser",
-    "installCommand": "npm install",
-    "devCommand": "ng serve --port $PORT",
-    "framework": "angular",
-    "routes": [
+    "rewrites": [
         {
-            "src": "/(.*)",
-            "dest": "/index.html"
+            "source": "/:path*",
+            "destination": "/index.html"
         }
-    ]
+    ],
+    "trailingSlash": false
 }
