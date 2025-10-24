@@ -47,9 +47,8 @@
                             ],
                             "optimization": true,
                             "sourceMap": false,
-                            "extractLicenses": true,
-                            "vendorChunk": false,
-                            "buildOptimizer": true
+                            "extractLicenses": true
+                           
                         },
                         "development": {
                             "optimization": false,
@@ -67,9 +66,8 @@
                             ],
                             "optimization": true,
                             "sourceMap": false,
-                            "extractLicenses": true,
-                            "vendorChunk": false,
-                            "buildOptimizer": true
+                            "extractLicenses": true
+                          
                         }
                     },
                     "defaultConfiguration": "production"
