@@ -126,7 +126,7 @@
 
   <!-- Book Cleaning Form Dialog (Multi-step) -->
   <p-dialog 
-    header="Book a Cleaning Service" 
+    [header]="isEditing ? 'Edit Booking' : 'Book a Cleaning Service'" 
     [(visible)]="showBookingFormDialog" 
     [modal]="true"
     [style]="{width: '600px'}"
@@ -291,9 +291,10 @@
           styleClass="p-button-text">
         </p-button>
         
+        <!-- Continue buttons for steps 0 and 1 -->
         <p-button 
           *ngIf="currentStepIndex < 2"
-          [label]="currentStepIndex === 0 ? 'Choose Cleaner' : 'Continue to Pay'"
+          [label]="currentStepIndex === 0 ? 'Choose Cleaner' : 'Continue to Payment'"
           icon="pi pi-arrow-right" 
           iconPos="right"
           (onClick)="nextStep()"
@@ -301,14 +302,15 @@
           styleClass="p-button-primary">
         </p-button>
 
+        <!-- Final Step Button - Changes based on edit/create mode -->
         <p-button 
           *ngIf="currentStepIndex === 2"
-          label="Pay Now" 
-          icon="pi pi-lock" 
+          [label]="isEditing ? 'Save Changes' : 'Pay Now'"
+          [icon]="isEditing ? 'pi pi-check' : 'pi pi-lock'"
           (onClick)="processPayment()"
           [disabled]="!selectedCard || isCreatingBooking"
           [loading]="isCreatingBooking"
-          styleClass="p-button-success">
+          [styleClass]="isEditing ? 'p-button-warning' : 'p-button-success'">
         </p-button>
       </div>
     </ng-template>

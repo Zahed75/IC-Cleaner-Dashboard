@@ -60,6 +60,8 @@ export class CustomerBookingsComponent implements OnInit {
   // Loading states
   isLoading = false;
   isCreatingBooking = false;
+  isEditing = false;
+  editingBookingId: number | null = null;
 
   // Dialog States
   showBookingDialog: boolean = false;
@@ -235,7 +237,28 @@ export class CustomerBookingsComponent implements OnInit {
   editBooking(booking: any): void {
     console.log('Edit booking:', booking);
     this.showBookingDialog = false;
-    this.showBookingForm();
+    
+    const originalBooking = booking.originalData;
+    this.isEditing = true;
+    this.editingBookingId = originalBooking.id;
+    
+    // Pre-fill form with existing booking data
+    this.locationInput = originalBooking.location;
+    this.selectedServiceType = originalBooking.service.toString();
+    this.selectedDate = originalBooking.booking_date;
+    this.selectedTime = originalBooking.time_slot;
+    this.specialRequests = originalBooking.special_requirements;
+    
+    // Pre-select cleaner if available
+    if (originalBooking.assign_cleaner && this.availableCleaners.length > 0) {
+      const cleaner = this.availableCleaners.find(c => c.id === originalBooking.assign_cleaner);
+      if (cleaner) {
+        this.selectedCleaner = cleaner;
+      }
+    }
+    
+    this.showBookingFormDialog = true;
+    this.currentStepIndex = 0;
   }
 
   cancelBooking(booking: any): void {
@@ -340,20 +363,41 @@ export class CustomerBookingsComponent implements OnInit {
 
       console.log('Creating booking with data:', bookingData);
 
-      this.bookingService.createBooking(bookingData).subscribe({
-        next: (response: ApiResponse<Booking>) => {
-          alert('Booking created successfully!');
-          this.showBookingFormDialog = false;
-          this.resetForm();
-          this.loadBookings();
-          this.isCreatingBooking = false;
-        },
-        error: (error: any) => {
-          console.error('Error creating booking:', error);
-          alert('Failed to create booking');
-          this.isCreatingBooking = false;
-        }
-      });
+      if (this.isEditing && this.editingBookingId) {
+        // Update existing booking
+        this.bookingService.updateBooking(this.editingBookingId, bookingData).subscribe({
+          next: (response: ApiResponse<Booking>) => {
+            alert('Booking updated successfully!');
+            this.showBookingFormDialog = false;
+            this.resetForm();
+            this.loadBookings();
+            this.isCreatingBooking = false;
+            this.isEditing = false;
+            this.editingBookingId = null;
+          },
+          error: (error: any) => {
+            console.error('Error updating booking:', error);
+            alert('Failed to update booking');
+            this.isCreatingBooking = false;
+          }
+        });
+      } else {
+        // Create new booking
+        this.bookingService.createBooking(bookingData).subscribe({
+          next: (response: ApiResponse<Booking>) => {
+            alert('Booking created successfully!');
+            this.showBookingFormDialog = false;
+            this.resetForm();
+            this.loadBookings();
+            this.isCreatingBooking = false;
+          },
+          error: (error: any) => {
+            console.error('Error creating booking:', error);
+            alert('Failed to create booking');
+            this.isCreatingBooking = false;
+          }
+        });
+      }
     }
   }
 
@@ -366,5 +410,7 @@ export class CustomerBookingsComponent implements OnInit {
     this.selectedCleaner = null;
     this.selectedCard = null;
     this.specialRequests = '';
+    this.isEditing = false;
+    this.editingBookingId = null;
   }
 }
