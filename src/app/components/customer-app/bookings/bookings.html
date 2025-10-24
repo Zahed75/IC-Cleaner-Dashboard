@@ -186,16 +186,16 @@
           <label for="specialRequests">Special Requests</label>
           <div class="textarea-container">
             <textarea 
-              id="specialRequests"
-              class="form-textarea"
-              [(ngModel)]="specialRequests"
-              placeholder="Any special instructions or requests (e.g., specific areas to focus on, pets in the house, allergies, etc.)"
-              rows="4"
-              maxlength="500">
-            </textarea>
-            <div class="character-count">
-              {{specialRequests?.length || 0}}/500 characters
-            </div>
+                id="specialRequests"
+                class="form-textarea"
+                [(ngModel)]="specialRequests"
+                placeholder="Any special instructions or requests (e.g., specific areas to focus on, pets in the house, allergies, etc.)"
+                rows="4"
+                maxlength="500">
+              </textarea>
+              <div class="character-count">
+                {{specialRequests.length || 0}}/500 characters
+              </div>
           </div>
         </div>
       </div>
