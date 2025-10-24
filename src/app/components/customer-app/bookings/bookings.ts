@@ -1,3 +1,6 @@
+
+
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +17,8 @@ import { ListboxModule } from 'primeng/listbox';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputTextModule } from 'primeng/inputtext';
 import { DatePickerModule } from 'primeng/datepicker';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 // Services
 import { BookingService, Cleaner, Service, Booking, BookingRequest, ApiResponse } from '../../../services/customer-service/bookings/booking-service';
@@ -46,10 +51,12 @@ interface MenuItem {
     ListboxModule,
     AutoCompleteModule,
     InputTextModule,
-    DatePickerModule
+    DatePickerModule,
+    ToastModule
   ],
   templateUrl: './bookings.html',
-  styleUrl: './bookings.css'
+  styleUrl: './bookings.css',
+  providers: [MessageService]
 })
 export class CustomerBookingsComponent implements OnInit {
   // Bookings Data - Now using API data
@@ -119,7 +126,10 @@ export class CustomerBookingsComponent implements OnInit {
     }
   ];
 
-  constructor(private bookingService: BookingService) {}
+  constructor(
+    private bookingService: BookingService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.loadBookings();
@@ -145,7 +155,7 @@ export class CustomerBookingsComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Error loading bookings:', error);
-        alert('Failed to load bookings');
+        this.showError('Failed to load bookings');
         this.isLoading = false;
       }
     });
@@ -166,7 +176,7 @@ export class CustomerBookingsComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Error loading cleaners:', error);
-        alert('Failed to load cleaners');
+        this.showError('Failed to load cleaners');
       }
     });
   }
@@ -183,7 +193,7 @@ export class CustomerBookingsComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Error loading services:', error);
-        alert('Failed to load services');
+        this.showError('Failed to load services');
       }
     });
   }
@@ -211,6 +221,34 @@ export class CustomerBookingsComponent implements OnInit {
   private getAmount(booking: Booking): string {
     const price = parseFloat(booking.service_detail.price_per_hour);
     return `£${price.toFixed(2)}`;
+  }
+
+  // Toast Message Methods
+  private showSuccess(message: string): void {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: message,
+      life: 3000
+    });
+  }
+
+  private showError(message: string): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: message,
+      life: 5000
+    });
+  }
+
+  private showInfo(message: string): void {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Info',
+      detail: message,
+      life: 3000
+    });
   }
 
   // Booking Details Methods
@@ -275,13 +313,13 @@ export class CustomerBookingsComponent implements OnInit {
       
       this.bookingService.updateBooking(originalBooking.id, updateData).subscribe({
         next: (response: ApiResponse<Booking>) => {
-          alert('Booking cancelled successfully');
+          this.showSuccess('Booking cancelled successfully');
           this.loadBookings();
           this.showBookingDialog = false;
         },
         error: (error: any) => {
           console.error('Error cancelling booking:', error);
-          alert('Failed to cancel booking');
+          this.showError('Failed to cancel booking');
         }
       });
     }
@@ -346,6 +384,7 @@ export class CustomerBookingsComponent implements OnInit {
 
   addNewCard(): void {
     console.log('Add new card');
+    this.showInfo('Add new card functionality will be implemented soon');
   }
 
   processPayment(): void {
@@ -367,7 +406,7 @@ export class CustomerBookingsComponent implements OnInit {
         // Update existing booking
         this.bookingService.updateBooking(this.editingBookingId, bookingData).subscribe({
           next: (response: ApiResponse<Booking>) => {
-            alert('Booking updated successfully!');
+            this.showSuccess('Booking updated successfully!');
             this.showBookingFormDialog = false;
             this.resetForm();
             this.loadBookings();
@@ -377,7 +416,7 @@ export class CustomerBookingsComponent implements OnInit {
           },
           error: (error: any) => {
             console.error('Error updating booking:', error);
-            alert('Failed to update booking');
+            this.showError('Failed to update booking');
             this.isCreatingBooking = false;
           }
         });
@@ -385,7 +424,7 @@ export class CustomerBookingsComponent implements OnInit {
         // Create new booking
         this.bookingService.createBooking(bookingData).subscribe({
           next: (response: ApiResponse<Booking>) => {
-            alert('Booking created successfully!');
+            this.showSuccess('Booking created successfully!');
             this.showBookingFormDialog = false;
             this.resetForm();
             this.loadBookings();
@@ -393,7 +432,7 @@ export class CustomerBookingsComponent implements OnInit {
           },
           error: (error: any) => {
             console.error('Error creating booking:', error);
-            alert('Failed to create booking');
+            this.showError('Failed to create booking');
             this.isCreatingBooking = false;
           }
         });
