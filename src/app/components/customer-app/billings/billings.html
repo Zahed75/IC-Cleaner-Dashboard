@@ -50,7 +50,6 @@
     </ng-template>
   </div>
 
-  <!-- Rest of the HTML remains the same as previous version -->
   <!-- Add Card Form -->
   <div class="add-card-overlay" *ngIf="showAddCardForm">
     <div class="add-card-form">
@@ -170,7 +169,7 @@
             <th>DATE & TIME</th>
             <th>AMOUNT</th>
             <th>STATUS</th>
-            <th>ACTION</th>
+            <!-- Removed ACTION header -->
           </tr>
         </thead>
         <tbody>
@@ -188,11 +187,7 @@
                 {{ bill.status }}
               </span>
             </td>
-            <td>
-              <button class="btn-download" (click)="downloadInvoice(bill)">
-                Download Invoice
-              </button>
-            </td>
+            <!-- Removed Download Invoice button -->
           </tr>
         </tbody>
       </table>
@@ -242,9 +237,7 @@
 
       <div class="modal-footer">
         <button class="btn-secondary" (click)="selectedBill = null">Close</button>
-        <button class="btn-primary" (click)="downloadInvoice(selectedBill!)">
-          Download Invoice
-        </button>
+        <!-- Removed Download Invoice button from modal -->
       </div>
     </div>
   </div>

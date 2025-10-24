@@ -343,10 +343,10 @@ export class CustomerBillingComponent implements OnInit {
     this.selectedBill = bill;
   }
 
-  downloadInvoice(bill: BillingRecord): void {
-    console.log('Downloading invoice for:', bill.bookingId);
-    alert(`Downloading invoice for ${bill.bookingId}`);
-  }
+  // downloadInvoice(bill: BillingRecord): void {
+  //   console.log('Downloading invoice for:', bill.bookingId);
+  //   alert(`Downloading invoice for ${bill.bookingId}`);
+  // }
 
   private detectCardType(cardNumber: string): string {
     const cleanNumber = cardNumber.replace(/\s/g, '');
