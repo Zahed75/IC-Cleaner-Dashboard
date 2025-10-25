@@ -60,7 +60,7 @@ export const appRoutes: Routes = [
         data: { requiredRole: 'cleaner' },
         children: [
             { path: 'dashboard', component: CleanerDashboardComponent },
-            { path: 'bookings', component: CleanerBookingsComponent }, // Changed from 'booking' to 'bookings'
+            { path: 'booking', component: CleanerBookingsComponent }, // Changed from 'booking' to 'bookings'
             { path: 'payouts', component: CleanerPayoutsComponent },
             { path: 'disputes', component: CleanerDisputesComponent },
             { path: 'reports', component: CleanerReportsComponent },

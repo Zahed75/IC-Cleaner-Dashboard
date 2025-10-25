@@ -1,9 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+
+// Services
+import { BookingService, CleanerBooking, BookingStatusUpdate, ApiResponse } from '../../../services/cleaner-service/bookings/booking-service';
 
 interface Booking {
   id: string;
@@ -15,6 +21,7 @@ interface Booking {
   status: 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled' | 'Rejected';
   address: string;
   postcode: string;
+  originalData?: CleanerBooking; // Store original API data
 }
 
 @Component({
@@ -23,12 +30,15 @@ interface Booking {
   imports: [
     CommonModule,
     FormsModule,
+    HttpClientModule,
     TableModule,
     DialogModule,
-    ButtonModule
+    ButtonModule,
+    ToastModule
   ],
   templateUrl: './bookings.html',
-  styleUrls: ['./bookings.css']
+  styleUrls: ['./bookings.css'],
+  providers: [MessageService]
 })
 export class CleanerBookingsComponent implements OnInit {
   bookings: Booking[] = [];
@@ -43,62 +53,69 @@ export class CleanerBookingsComponent implements OnInit {
   confirmButtonClass: string = '';
   pendingAction: ((booking: Booking) => void) | null = null;
 
+  constructor(
+    private bookingService: BookingService,
+    private messageService: MessageService
+  ) {}
+
   ngOnInit() {
     this.loadBookings();
   }
 
   loadBookings() {
     this.loading = true;
-    // Simulate API call
-    setTimeout(() => {
-      this.bookings = [
-        {
-          id: 'BK001',
-          clientName: 'Sarah Johnson',
-          serviceType: 'Regular Cleaning',
-          date: new Date('2025-10-25'),
-          time: '10:00 AM',
-          amount: 165.00,
-          status: 'Pending',
-          address: '1 Chapel Hill, Heswall, Bournemouth',
-          postcode: 'BH1 1AA'
-        },
-        {
-          id: 'BK002',
-          clientName: 'Michael Brown',
-          serviceType: 'Deep Cleaning',
-          date: new Date('2025-10-26'),
-          time: '2:00 PM',
-          amount: 220.00,
-          status: 'Confirmed',
-          address: '23 Park Avenue, London',
-          postcode: 'W1 1AB'
-        },
-        {
-          id: 'BK003',
-          clientName: 'Emma Wilson',
-          serviceType: 'Regular Cleaning',
-          date: new Date('2025-10-27'),
-          time: '9:00 AM',
-          amount: 145.00,
-          status: 'Completed',
-          address: '45 River Side, Manchester',
-          postcode: 'M1 2CD'
-        },
-        {
-          id: 'BK004',
-          clientName: 'David Smith',
-          serviceType: 'Move-in Cleaning',
-          date: new Date('2025-10-28'),
-          time: '11:00 AM',
-          amount: 280.00,
-          status: 'Pending',
-          address: '78 High Street, Birmingham',
-          postcode: 'B1 3EF'
+    this.bookingService.getCleanerBookings().subscribe({
+      next: (response: ApiResponse<CleanerBooking[]>) => {
+        if (response.code === 200 && response.data) {
+          this.bookings = response.data.map(booking => this.mapApiBookingToUI(booking));
+        } else {
+          this.showError('Failed to load bookings: ' + response.message);
         }
-      ];
-      this.loading = false;
-    }, 1000);
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading bookings:', error);
+        this.showError('Failed to load bookings. Please try again.');
+        this.loading = false;
+      }
+    });
+  }
+
+  private mapApiBookingToUI(apiBooking: CleanerBooking): Booking {
+    // Map API status to UI status
+    const statusMap: { [key: string]: 'Pending' | 'Confirmed' | 'Completed' | 'Cancelled' | 'Rejected' } = {
+      'pending': 'Pending',
+      'accepted': 'Confirmed',
+      'confirmed': 'Confirmed',
+      'completed': 'Completed',
+      'cancelled': 'Cancelled',
+      'rejected': 'Rejected'
+    };
+
+    // Calculate amount from service price (you might need to adjust this based on your pricing logic)
+    const amount = apiBooking.amount || 150.00; // Default amount if not provided
+
+    return {
+      id: `BK${apiBooking.booking_id.toString().padStart(3, '0')}`,
+      clientName: 'Customer', // You might want to get this from customer details
+      serviceType: apiBooking.service_name,
+      date: new Date(apiBooking.booking_date),
+      time: this.formatTime(apiBooking.time_slot),
+      amount: amount,
+      status: statusMap[apiBooking.status.toLowerCase()] || 'Pending',
+      address: 'Address not available', // You might want to get this from booking details
+      postcode: 'Postcode not available', // You might want to get this from booking details
+      originalData: apiBooking
+    };
+  }
+
+  private formatTime(timeString: string): string {
+    const timeParts = timeString.split(':');
+    const hours = parseInt(timeParts[0]);
+    const minutes = timeParts[1];
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+    return `${formattedHours}:${minutes} ${ampm}`;
   }
 
   showBookingDetails(booking: Booking) {
@@ -128,6 +145,15 @@ export class CleanerBookingsComponent implements OnInit {
     this.showConfirmDialog = true;
   }
 
+  completeBooking(booking: Booking) {
+    this.confirmMessage = `Are you sure you want to mark booking #${booking.id} as completed?`;
+    this.confirmActionText = 'Complete';
+    this.confirmButtonClass = 'bg-blue-600 hover:bg-blue-700 text-white';
+    this.pendingAction = this.performCompleteBooking;
+    this.selectedBooking = booking;
+    this.showConfirmDialog = true;
+  }
+
   confirmAction() {
     if (this.pendingAction && this.selectedBooking) {
       this.pendingAction(this.selectedBooking);
@@ -137,17 +163,91 @@ export class CleanerBookingsComponent implements OnInit {
   }
 
   private performAcceptBooking(booking: Booking) {
-    booking.status = 'Confirmed';
-    this.showDetailsDialog = false;
-    // Here you would typically make an API call to update the booking status
-    console.log('Booking accepted:', booking.id);
+    if (!booking.originalData) return;
+
+    const statusUpdate: BookingStatusUpdate = { status: 'accepted' };
+    
+    this.bookingService.updateBookingStatus(booking.originalData.booking_id, statusUpdate).subscribe({
+      next: (response: ApiResponse<any>) => {
+        if (response.code === 200) {
+          booking.status = 'Confirmed';
+          this.showSuccess('Booking accepted successfully!');
+          this.showDetailsDialog = false;
+          this.loadBookings(); // Reload to get updated data
+        } else {
+          this.showError('Failed to accept booking: ' + response.message);
+        }
+      },
+      error: (error) => {
+        console.error('Error accepting booking:', error);
+        this.showError('Failed to accept booking. Please try again.');
+      }
+    });
   }
 
   private performRejectBooking(booking: Booking) {
-    booking.status = 'Rejected';
-    this.showDetailsDialog = false;
-    // Here you would typically make an API call to update the booking status
-    console.log('Booking rejected:', booking.id);
+    if (!booking.originalData) return;
+
+    const statusUpdate: BookingStatusUpdate = { status: 'rejected' };
+    
+    this.bookingService.updateBookingStatus(booking.originalData.booking_id, statusUpdate).subscribe({
+      next: (response: ApiResponse<any>) => {
+        if (response.code === 200) {
+          booking.status = 'Rejected';
+          this.showSuccess('Booking rejected successfully!');
+          this.showDetailsDialog = false;
+          this.loadBookings(); // Reload to get updated data
+        } else {
+          this.showError('Failed to reject booking: ' + response.message);
+        }
+      },
+      error: (error) => {
+        console.error('Error rejecting booking:', error);
+        this.showError('Failed to reject booking. Please try again.');
+      }
+    });
+  }
+
+  private performCompleteBooking(booking: Booking) {
+    if (!booking.originalData) return;
+
+    const statusUpdate: BookingStatusUpdate = { status: 'completed' };
+    
+    this.bookingService.updateBookingStatus(booking.originalData.booking_id, statusUpdate).subscribe({
+      next: (response: ApiResponse<any>) => {
+        if (response.code === 200) {
+          booking.status = 'Completed';
+          this.showSuccess('Booking marked as completed successfully!');
+          this.showDetailsDialog = false;
+          this.loadBookings(); // Reload to get updated data
+        } else {
+          this.showError('Failed to complete booking: ' + response.message);
+        }
+      },
+      error: (error) => {
+        console.error('Error completing booking:', error);
+        this.showError('Failed to complete booking. Please try again.');
+      }
+    });
+  }
+
+  // Toast message methods
+  private showSuccess(message: string) {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: message,
+      life: 3000
+    });
+  }
+
+  private showError(message: string) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: message,
+      life: 5000
+    });
   }
 
   getInitials(name: string): string {
@@ -226,5 +326,10 @@ export class CleanerBookingsComponent implements OnInit {
       default:
         return 'Waiting for your confirmation.';
     }
+  }
+
+  // Helper method to check if booking can be completed
+  canCompleteBooking(booking: Booking): boolean {
+    return booking.status === 'Confirmed' || booking.status === 'Pending';
   }
 }

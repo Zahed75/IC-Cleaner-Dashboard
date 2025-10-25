@@ -1,4 +1,7 @@
 <div class="min-h-screen bg-gray-50 p-4 md:p-6 font-sans">
+  <!-- Toast for messages -->
+  <p-toast></p-toast>
+
   <!-- Header -->
   <div class="mb-6">
     <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Bookings</h1>
@@ -105,7 +108,13 @@
                 Reject
               </button>
               <button 
-                *ngIf="booking.status !== 'Pending'"
+                *ngIf="canCompleteBooking(booking)"
+                (click)="completeBooking(booking); $event.stopPropagation()"
+                class="p-button p-button-info p-button-sm text-xs">
+                Complete
+              </button>
+              <button 
+                *ngIf="booking.status !== 'Pending' && !canCompleteBooking(booking)"
                 (click)="showBookingDetails(booking); $event.stopPropagation()"
                 class="p-button p-button-outlined p-button-secondary p-button-sm text-xs">
                 View
@@ -161,8 +170,8 @@
     <div class="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
       <div>
         <p class="text-gray-500 text-sm font-medium mb-1">Address</p>
-        <p class="text-gray-900 font-semibold">1 Chapel Hill, Heswall, Bournemouth</p>
-        <p class="text-gray-600 text-sm mt-1">BH1 1AA</p>
+        <p class="text-gray-900 font-semibold">{{ selectedBooking.address }}</p>
+        <p class="text-gray-600 text-sm mt-1">{{ selectedBooking.postcode }}</p>
       </div>
       <i class="pi pi-map-marker text-gray-400 text-lg"></i>
     </div>
@@ -189,6 +198,16 @@
         class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center">
         <i class="pi pi-times mr-2"></i>
         Reject
+      </button>
+    </div>
+
+    <!-- Complete Button for Confirmed bookings -->
+    <div class="flex space-x-3 pt-4" *ngIf="selectedBooking.status === 'Confirmed'">
+      <button 
+        (click)="completeBooking(selectedBooking)"
+        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center">
+        <i class="pi pi-check-circle mr-2"></i>
+        Mark as Completed
       </button>
     </div>
 
