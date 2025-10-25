@@ -1,4 +1,7 @@
 <div class="payouts-container">
+  <!-- Toast for messages -->
+  <p-toast></p-toast>
+
   <!-- Header -->
   <div class="header-section">
     <div class="header-content">
@@ -19,15 +22,15 @@
             <h3>Total Disputes</h3>
           </div>
           <div class="stat-numbers">
-            <span class="total">79</span>
+            <span class="total">{{ getTotalDisputes() }}</span>
             <div class="breakdown">
               <div class="breakdown-item">
                 <span class="status-dot pending-dot"></span>
-                <span class="breakdown-text">Pending: 1</span>
+                <span class="breakdown-text">Pending: {{ getPendingDisputes() }}</span>
               </div>
               <div class="breakdown-item">
                 <span class="status-dot resolved-dot"></span>
-                <span class="breakdown-text">Resolved: 78</span>
+                <span class="breakdown-text">Resolved: {{ getResolvedDisputes() }}</span>
               </div>
             </div>
           </div>
@@ -43,7 +46,7 @@
           </div>
           <div class="priority-numbers">
             <div class="priority-item">
-              <span class="priority-count">1</span>
+              <span class="priority-count">{{ getHighPriorityDisputes() }}</span>
               <span class="priority-label">Requests</span>
             </div>
             <div class="priority-item">
@@ -62,10 +65,13 @@
             <h3>Total Payouts</h3>
           </div>
           <div class="stat-numbers">
-            <span class="total amount">$12,458</span>
-            <div class="trend positive">
+            <span class="total amount">${{ getTotalPayoutsAmount().toFixed(2) }}</span>
+            <div class="trend positive" *ngIf="totalBalanceData">
               <i class="pi pi-arrow-up"></i>
-              <span>12% from last month</span>
+              <span>Available: {{ totalBalanceData.currency }}{{ totalBalanceData.available_balance.toFixed(2) }}</span>
+            </div>
+            <div class="trend" *ngIf="!totalBalanceData">
+              <span>Loading balance...</span>
             </div>
           </div>
         </div>
@@ -95,6 +101,7 @@
       [value]="payouts" 
       [paginator]="true" 
       [rows]="5"
+      [loading]="loading"
       styleClass="p-datatable-striped modern-table"
       [tableStyle]="{'min-width': '75rem'}">
       <ng-template pTemplate="header">
@@ -126,7 +133,7 @@
               {{ payout.payoutMethod }}
             </div>
           </td>
-          <td class="amount-cell">${{ payout.amount }}</td>
+          <td class="amount-cell">${{ payout.amount.toFixed(2) }}</td>
           <td>
             <p-tag 
               [value]="payout.status" 
@@ -144,6 +151,14 @@
           </td>
         </tr>
       </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center py-8 text-gray-500">
+            <i class="pi pi-inbox text-4xl text-gray-300 mb-2 block"></i>
+            <p>No payouts found</p>
+          </td>
+        </tr>
+      </ng-template>
     </p-table>
   </p-card>
 
@@ -158,6 +173,12 @@
     class="payout-details-dialog">
     
     <div class="payout-details-content" *ngIf="selectedPayout">
+      <!-- Payout ID -->
+      <div class="detail-section">
+        <label>Payout ID</label>
+        <div class="detail-value">{{ selectedPayout.id }}</div>
+      </div>
+
       <!-- Cleaner Name -->
       <div class="detail-section">
         <label>Cleaner Name</label>
@@ -166,7 +187,7 @@
 
       <!-- Balance Amount -->
       <div class="detail-section">
-        <label>Balance Amount</label>
+        <label>Available Balance</label>
         <div class="detail-value amount">£ {{ selectedPayout.balanceAmount.toFixed(2) }}</div>
       </div>
 
@@ -175,12 +196,27 @@
         <label>Payout Method</label>
         <div class="bank-details">
           <div class="bank-method">{{ selectedPayout.bankDetails.method }}</div>
-          <div>{{ selectedPayout.bankDetails.company }}</div>
-          <div>Account No: {{ selectedPayout.bankDetails.accountNo }}</div>
-          <div>IBAN: {{ selectedPayout.bankDetails.iban }}</div>
-          <div>Sort Code: {{ selectedPayout.bankDetails.sortCode }}</div>
-          <div>Bank Name: {{ selectedPayout.bankDetails.bankName }}</div>
-          <div>Bank Address: {{ selectedPayout.bankDetails.bankAddress }}</div>
+          <div *ngIf="selectedPayout.bankDetails.company && selectedPayout.bankDetails.company !== 'N/A'">
+            {{ selectedPayout.bankDetails.company }}
+          </div>
+          <div *ngIf="selectedPayout.bankDetails.paypalEmail && selectedPayout.bankDetails.paypalEmail !== 'N/A'">
+            PayPal: {{ selectedPayout.bankDetails.paypalEmail }}
+          </div>
+          <div *ngIf="selectedPayout.bankDetails.accountNo && selectedPayout.bankDetails.accountNo !== 'N/A'">
+            Account No: {{ selectedPayout.bankDetails.accountNo }}
+          </div>
+          <div *ngIf="selectedPayout.bankDetails.iban && selectedPayout.bankDetails.iban !== 'N/A'">
+            IBAN: {{ selectedPayout.bankDetails.iban }}
+          </div>
+          <div *ngIf="selectedPayout.bankDetails.sortCode && selectedPayout.bankDetails.sortCode !== 'N/A'">
+            Sort Code: {{ selectedPayout.bankDetails.sortCode }}
+          </div>
+          <div *ngIf="selectedPayout.bankDetails.bankName && selectedPayout.bankDetails.bankName !== 'N/A'">
+            Bank Name: {{ selectedPayout.bankDetails.bankName }}
+          </div>
+          <div *ngIf="selectedPayout.bankDetails.bankAddress && selectedPayout.bankDetails.bankAddress !== 'N/A'">
+            Bank Address: {{ selectedPayout.bankDetails.bankAddress }}
+          </div>
         </div>
       </div>
 
@@ -190,12 +226,29 @@
         <div class="detail-value amount">£{{ selectedPayout.payoutAmount.toFixed(2) }}</div>
       </div>
 
+      <!-- Notes -->
+      <div class="detail-section" *ngIf="selectedPayout.notes">
+        <label>Notes</label>
+        <div class="detail-value">{{ selectedPayout.notes }}</div>
+      </div>
+
+      <!-- Dates -->
+      <div class="detail-section">
+        <label>Request Date</label>
+        <div class="detail-value">{{ selectedPayout.created_at }}</div>
+      </div>
+
+      <div class="detail-section">
+        <label>Last Updated</label>
+        <div class="detail-value">{{ selectedPayout.updated_at }}</div>
+      </div>
+
       <!-- Payout Status -->
       <div class="detail-section">
         <label>Payout Status</label>
         <p-tag 
           [value]="selectedPayout.payoutStatus" 
-          severity="warn"
+          [severity]="getStatusSeverity(selectedPayout.payoutStatus)"
           class="status-tag-large">
         </p-tag>
       </div>
