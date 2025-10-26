@@ -101,7 +101,7 @@ export class AppMenu implements OnInit {
           { label: 'Payouts', icon: 'pi pi-fw pi-wallet', routerLink: ['/admin/payouts'] },
           { label: 'Disputes', icon: 'pi pi-fw pi-exclamation-circle', routerLink: ['/admin/disputes'] },
           { label: 'Reports', icon: 'pi pi-fw pi-chart-line', routerLink: ['/admin/reports'] },
-          { label: 'Settings', icon: 'pi pi-fw pi-cog', routerLink: ['/admin/settings'] }
+          // { label: 'Settings', icon: 'pi pi-fw pi-cog', routerLink: ['/admin/settings'] }
         ]
       }
     ];

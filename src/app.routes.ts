@@ -40,7 +40,7 @@ export const appRoutes: Routes = [
         data: { requiredRole: 'admin' },
         children: [
             { path: 'dashboard', component: Dashboard },
-            { path: 'bookings', component: BookingsComponent }, // Changed from 'booking' to 'bookings'
+            { path: 'booking', component: BookingsComponent }, // Changed from 'booking' to 'bookings'
             { path: 'payouts', component: Payouts },
             { path: 'disputes', component: Disputes },
             { path: 'reports', component: Reports },
