@@ -95,6 +95,12 @@ export class CleanerDashboardComponent implements OnInit {
     notes: 'Payout request'
   };
 
+  // DBA Upload status
+  dbaUploadStatus: 'idle' | 'success' | 'error' | 'processing' = 'idle';
+  dbaUploadStatusMessage: string = '';
+  selectedDBAFile: File | null = null;
+  showDBAAlert: boolean = true;
+
   // Payment methods
   paymentMethods: PaymentMethod[] = [
     { label: 'PayPal', value: 'paypal', id: 1 },
@@ -136,6 +142,19 @@ export class CleanerDashboardComponent implements OnInit {
       }
     });
 
+    // Load DBA verification status
+    this.dashboardService.getDBAVerificationStatus().subscribe({
+      next: (response: ApiResponse<DBAVerificationStatus>) => {
+        if (response.code === 200 && response.data) {
+          this.dbaStatus = response.data;
+          this.updateAlerts();
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading DBA status:', error);
+      }
+    });
+
     // Load ratings data
     this.dashboardService.getMyRatings().subscribe({
       next: (response: ApiResponse<MyRatingsResponse>) => {
@@ -148,18 +167,6 @@ export class CleanerDashboardComponent implements OnInit {
         console.error('Error loading ratings:', error);
         // Use static data as fallback if API fails
         this.useStaticRatingsData();
-      }
-    });
-
-    this.dashboardService.getDBAVerificationStatus().subscribe({
-      next: (response: ApiResponse<DBAVerificationStatus>) => {
-        if (response.code === 200 && response.data) {
-          this.dbaStatus = response.data;
-          this.updateAlerts();
-        }
-      },
-      error: (error: any) => {
-        console.error('Error loading DBA status:', error);
       }
     });
 
@@ -186,6 +193,98 @@ export class CleanerDashboardComponent implements OnInit {
         console.error('Error loading total balance:', error);
       }
     });
+  }
+
+  // DBA File Upload Methods
+  onDBAFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/msword', 
+                           'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                           'image/jpeg', 'image/jpg', 'image/png'];
+      
+      if (!allowedTypes.includes(file.type)) {
+        this.showError('Please select a valid file (PDF, DOC, DOCX, JPG, PNG)');
+        return;
+      }
+
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        this.showError('File size should be less than 10MB');
+        return;
+      }
+
+      this.selectedDBAFile = file;
+      this.uploadDBADocument();
+    }
+  }
+
+  uploadDBADocument() {
+    if (!this.selectedDBAFile) return;
+
+    this.dbaUploadStatus = 'processing';
+    this.dbaUploadStatusMessage = 'Uploading DBA document...';
+
+    this.dashboardService.uploadDBADocument(this.selectedDBAFile).subscribe({
+      next: (response: any) => {
+        this.dbaUploadStatus = 'success';
+        this.dbaUploadStatusMessage = 'DBA document uploaded successfully! Under verification.';
+        
+        this.showSuccess('DBA document uploaded successfully! It will be verified shortly.');
+        
+        // Refresh DBA status after successful upload
+        setTimeout(() => {
+          this.loadDashboardData();
+        }, 2000);
+
+        // Reset file input
+        const fileInput = document.getElementById('dbaFileInput') as HTMLInputElement;
+        if (fileInput) fileInput.value = '';
+      },
+      error: (error: any) => {
+        console.error('Error uploading DBA document:', error);
+        this.dbaUploadStatus = 'error';
+        this.dbaUploadStatusMessage = 'Failed to upload DBA document. Please try again.';
+        this.showError('Failed to upload DBA document');
+      }
+    });
+  }
+
+  // DBA Alert Methods
+  dismissDBAAlert() {
+    this.showDBAAlert = false;
+  }
+
+  // onLearnMoreDBA() {
+  //   // You can navigate to a help page or show a dialog with more information
+  //   this.router.navigate(['/cleaner/help'], { queryParams: { section: 'dba-verification' } });
+  // }
+
+  getDBAUploadStatusClass(): string {
+    switch (this.dbaUploadStatus) {
+      case 'success':
+        return 'bg-green-50 text-green-800 border border-green-200';
+      case 'error':
+        return 'bg-red-50 text-red-800 border border-red-200';
+      case 'processing':
+        return 'bg-blue-50 text-blue-800 border border-blue-200';
+      default:
+        return '';
+    }
+  }
+
+  getDBAUploadStatusIcon(): string {
+    switch (this.dbaUploadStatus) {
+      case 'success':
+        return 'pi pi-check-circle text-green-500';
+      case 'error':
+        return 'pi pi-times-circle text-red-500';
+      case 'processing':
+        return 'pi pi-spin pi-spinner text-blue-500';
+      default:
+        return '';
+    }
   }
 
   private updateDashboardData() {

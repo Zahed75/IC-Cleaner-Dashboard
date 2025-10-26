@@ -16,6 +16,65 @@
     <p class="text-slate-600 mt-1 text-sm">Here's what's happening with your cleaning services today</p>
   </div>
 
+  <!-- DBA Verification Alert -->
+  <div class="mb-6" *ngIf="dbaStatus && (!dbaStatus.dba_verified || !dbaStatus.has_dba_document) && showDBAAlert">
+    <div class="bg-amber-50 border border-amber-200 rounded-xl shadow-sm p-5">
+      <div class="flex items-start justify-between">
+        <div class="flex items-start flex-1">
+          <div class="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-4">
+            <i class="pi pi-file-pdf text-amber-600 text-lg"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-semibold text-amber-800 text-lg mb-2">DBA Verification Required</h3>
+            <p class="text-amber-700 text-sm mb-3">
+              {{ !dbaStatus.has_dba_document ? 'Upload your DBA document to verify your business account and start receiving payments.' : 'Your DBA document is under verification. We will notify you once verified.' }}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <!-- Upload DBA Document Button -->
+              <div class="file-upload-wrapper" *ngIf="!dbaStatus.has_dba_document">
+                <input 
+                  type="file" 
+                  id="dbaFileInput"
+                  (change)="onDBAFileSelected($event)"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  class="file-input">
+                <label for="dbaFileInput" class="file-upload-label bg-amber-600 hover:bg-amber-700 border-amber-600">
+                  <i class="pi pi-upload mr-2"></i>
+                  Upload DBA Document
+                </label>
+              </div>
+              
+              <!-- Learn More Button -->
+              <p-button 
+                label="Learn More" 
+                styleClass="p-button-outlined p-button-secondary text-sm"
+                >
+              </p-button>
+            </div>
+            <small class="text-amber-600 text-xs mt-2 block">
+              Supported formats: PDF, DOC, DOCX, JPG, PNG • Max size: 10MB
+            </small>
+          </div>
+        </div>
+        <button 
+          class="text-amber-500 hover:text-amber-700 transition-colors"
+          (click)="dismissDBAAlert()"
+          *ngIf="!dbaStatus.has_dba_document">
+          <i class="pi pi-times text-lg"></i>
+        </button>
+      </div>
+      
+      <!-- Upload Status -->
+      <div *ngIf="dbaUploadStatus !== 'idle'" 
+           [class]="getDBAUploadStatusClass() + ' rounded-lg p-3 mt-3'">
+        <div class="flex items-center">
+          <i [class]="getDBAUploadStatusIcon() + ' text-base mr-2'"></i>
+          <span class="text-sm font-medium">{{ dbaUploadStatusMessage }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Alert Cards -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-6" *ngIf="alerts.verificationRequired || alerts.payoutInfoRequired">
     <!-- Verification Alert -->
@@ -292,51 +351,50 @@
       </div>
 
       <!-- Rating Card -->
-     <!-- Rating Card -->
-<div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
-  <div class="text-center">
-    <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3">
-      <i class="pi pi-star-fill text-blue-600 text-lg"></i>
-    </div>
-    <div class="flex items-center justify-center mb-2">
-      <span class="text-2xl font-bold text-slate-800 mr-1">{{ dashboardData.rating | number:'1.1-1' }}</span>
-      <span class="text-blue-600 text-sm">/5</span>
-    </div>
-    <p class="text-slate-600 font-medium text-sm mb-3">Customer Rating</p>
-    
-    <!-- Star Rating Breakdown -->
-    <div class="space-y-2 mb-4" *ngIf="ratingsData?.total_ratings === 0; else hasRatings">
-      <div class="text-center py-4">
-        <i class="pi pi-star text-slate-300 text-2xl mb-2"></i>
-        <p class="text-slate-500 text-sm">No ratings yet</p>
-        <p class="text-slate-400 text-xs mt-1">Complete bookings to receive ratings</p>
-      </div>
-    </div>
-    
-    <ng-template #hasRatings>
-      <div class="space-y-2 mb-4">
-        <div class="flex items-center justify-between text-xs" *ngFor="let stars of [5,4,3,2,1]">
-          <span class="text-slate-600 w-8">{{ stars }}★</span>
-          <div class="flex-1 mx-2 bg-slate-200 rounded-full h-1.5">
-            <div class="bg-yellow-500 h-1.5 rounded-full" 
-                 [style.width]="getRatingPercentage(stars) + '%'">
+      <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100">
+        <div class="text-center">
+          <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="pi pi-star-fill text-blue-600 text-lg"></i>
+          </div>
+          <div class="flex items-center justify-center mb-2">
+            <span class="text-2xl font-bold text-slate-800 mr-1">{{ dashboardData.rating | number:'1.1-1' }}</span>
+            <span class="text-blue-600 text-sm">/5</span>
+          </div>
+          <p class="text-slate-600 font-medium text-sm mb-3">Customer Rating</p>
+          
+          <!-- Star Rating Breakdown -->
+          <div class="space-y-2 mb-4" *ngIf="ratingsData?.total_ratings === 0; else hasRatings">
+            <div class="text-center py-4">
+              <i class="pi pi-star text-slate-300 text-2xl mb-2"></i>
+              <p class="text-slate-500 text-sm">No ratings yet</p>
+              <p class="text-slate-400 text-xs mt-1">Complete bookings to receive ratings</p>
             </div>
           </div>
-          <span class="text-slate-500 w-8 text-right">
-            {{ getRatingBreakdownValue(stars) }}
-          </span>
+          
+          <ng-template #hasRatings>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center justify-between text-xs" *ngFor="let stars of [5,4,3,2,1]">
+                <span class="text-slate-600 w-8">{{ stars }}★</span>
+                <div class="flex-1 mx-2 bg-slate-200 rounded-full h-1.5">
+                  <div class="bg-yellow-500 h-1.5 rounded-full" 
+                       [style.width]="getRatingPercentage(stars) + '%'">
+                  </div>
+                </div>
+                <span class="text-slate-500 w-8 text-right">
+                  {{ getRatingBreakdownValue(stars) }}
+                </span>
+              </div>
+            </div>
+          </ng-template>
+          
+          <p-progressBar 
+            [value]="dashboardData.ratingPercentage" 
+            [showValue]="false"
+            styleClass="h-1.5 mb-2 [&>.p-progressbar-value]:bg-blue-600">
+          </p-progressBar>
+          <p class="text-slate-500 text-xs">Based on {{ dashboardData.totalReviews }} reviews</p>
         </div>
       </div>
-    </ng-template>
-    
-    <p-progressBar 
-      [value]="dashboardData.ratingPercentage" 
-      [showValue]="false"
-      styleClass="h-1.5 mb-2 [&>.p-progressbar-value]:bg-blue-600">
-    </p-progressBar>
-    <p class="text-slate-500 text-xs">Based on {{ dashboardData.totalReviews }} reviews</p>
-  </div>
-</div>
 
       <!-- Service Breakdown -->
       <div class="bg-white rounded-xl shadow-sm p-5 border border-slate-100" *ngIf="statistics?.earnings_breakdown?.service_breakdown?.length">

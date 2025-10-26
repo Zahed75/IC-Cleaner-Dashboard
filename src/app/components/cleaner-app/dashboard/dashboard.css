@@ -104,3 +104,68 @@ input[type="number"] {
 .border-blue-200 {
   border-color: #bfdbfe;
 }
+
+/* DBA Upload Alert Styles */
+.file-upload-wrapper {
+  display: inline-block;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #3b82f6;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  border: 2px solid transparent;
+  text-decoration: none;
+}
+
+.file-upload-label:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.file-upload-label.bg-amber-600 {
+  background: #d97706;
+  border-color: #d97706;
+}
+
+.file-upload-label.bg-amber-600:hover {
+  background: #b45309;
+  border-color: #b45309;
+}
+
+/* DBA Alert specific styles */
+.bg-amber-50 {
+  background-color: #fffbeb;
+}
+
+.border-amber-200 {
+  border-color: #fed7aa;
+}
+
+.text-amber-600 {
+  color: #d97706;
+}
+
+.text-amber-700 {
+  color: #b45309;
+}
+
+.text-amber-800 {
+  color: #92400e;
+}
+
+.bg-amber-100 {
+  background-color: #fef3c7;
+}
