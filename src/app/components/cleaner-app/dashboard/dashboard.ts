@@ -21,7 +21,9 @@ import {
   PayoutRequest as APIPayoutRequest,
   Balance,
   TotalBalance,
-  ApiResponse 
+  ApiResponse,
+  MyRatingsResponse,
+  RatingStatistics
 } from '../../../services/cleaner-service/dashboard/dashboard-service';
 
 interface UIPayoutRequest {
@@ -66,9 +68,9 @@ export class CleanerDashboardComponent implements OnInit {
     availableBalance: 0,
     nextPayout: 0,
     payoutDate: this.getNextPayoutDate(),
-    rating: 4.7, // Static rating data
-    ratingPercentage: 94, // Static rating percentage
-    totalReviews: 42 // Static total reviews
+    rating: 0,
+    ratingPercentage: 0,
+    totalReviews: 0
   };
 
   // API data
@@ -76,19 +78,7 @@ export class CleanerDashboardComponent implements OnInit {
   dbaStatus: DBAVerificationStatus | null = null;
   balance: Balance | null = null;
   totalBalance: TotalBalance | null = null;
-
-  // Static rating data
-  staticRatingData = {
-    average_rating: 4.7,
-    total_ratings: 42,
-    breakdown: {
-      '5_star': 25,
-      '4_star': 12,
-      '3_star': 3,
-      '2_star': 1,
-      '1_star': 1
-    }
-  };
+  ratingsData: RatingStatistics | null = null;
 
   // Alert statuses
   alerts = {
@@ -109,7 +99,6 @@ export class CleanerDashboardComponent implements OnInit {
   paymentMethods: PaymentMethod[] = [
     { label: 'PayPal', value: 'paypal', id: 1 },
     { label: 'Bank Transfer', value: 'bank_transfer', id: 2 },
-    { label: 'Stripe', value: 'stripe', id: 3 }
   ];
 
   selectedPaymentMethod: PaymentMethod | null = null;
@@ -144,6 +133,21 @@ export class CleanerDashboardComponent implements OnInit {
         console.error('Error loading dashboard statistics:', error);
         this.showError('Failed to load dashboard data');
         this.loading = false;
+      }
+    });
+
+    // Load ratings data
+    this.dashboardService.getMyRatings().subscribe({
+      next: (response: ApiResponse<MyRatingsResponse>) => {
+        if (response.code === 200 && response.data) {
+          this.ratingsData = response.data.statistics;
+          this.updateRatingsData();
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading ratings:', error);
+        // Use static data as fallback if API fails
+        this.useStaticRatingsData();
       }
     });
 
@@ -188,7 +192,6 @@ export class CleanerDashboardComponent implements OnInit {
     if (!this.statistics) return;
 
     const today = this.statistics.today_overview;
-    const ratings = this.statistics.ratings;
     const quickStats = this.statistics.quick_stats;
 
     this.dashboardData.todayBookings = today.total_bookings;
@@ -198,8 +201,23 @@ export class CleanerDashboardComponent implements OnInit {
     // Update available balance from balance API if available
     if (this.balance) {
       this.dashboardData.availableBalance = this.balance.available_balance;
-      this.dashboardData.nextPayout = Math.min(this.balance.available_balance, 500); // Example logic
+      this.dashboardData.nextPayout = Math.min(this.balance.available_balance, 500);
     }
+  }
+
+  private updateRatingsData() {
+    if (!this.ratingsData) return;
+
+    this.dashboardData.rating = this.ratingsData.average_rating;
+    this.dashboardData.ratingPercentage = (this.ratingsData.average_rating / 5) * 100;
+    this.dashboardData.totalReviews = this.ratingsData.total_ratings;
+  }
+
+  private useStaticRatingsData() {
+    // Fallback static data if API fails
+    this.dashboardData.rating = 4.7;
+    this.dashboardData.ratingPercentage = 94;
+    this.dashboardData.totalReviews = 42;
   }
 
   private updateBalanceData() {
@@ -380,15 +398,52 @@ export class CleanerDashboardComponent implements OnInit {
 
   // Helper method for rating breakdown
   getRatingBreakdownValue(stars: number): number {
-    // Use static data since we don't have API for ratings
-    const breakdown = this.staticRatingData.breakdown;
+    if (!this.ratingsData?.rating_breakdown) {
+      // Fallback to static data if no ratings data
+      const staticData = {
+        5: 25,
+        4: 12,
+        3: 3,
+        2: 1,
+        1: 1
+      };
+      return staticData[stars as keyof typeof staticData] || 0;
+    }
+    
+    const breakdown = this.ratingsData.rating_breakdown;
     
     switch (stars) {
-      case 5: return breakdown['5_star'];
-      case 4: return breakdown['4_star'];
-      case 3: return breakdown['3_star'];
-      case 2: return breakdown['2_star'];
-      case 1: return breakdown['1_star'];
+      case 5: return breakdown['5_star'].count;
+      case 4: return breakdown['4_star'].count;
+      case 3: return breakdown['3_star'].count;
+      case 2: return breakdown['2_star'].count;
+      case 1: return breakdown['1_star'].count;
+      default: return 0;
+    }
+  }
+
+  // Helper method to get rating percentage for progress bar
+  getRatingPercentage(stars: number): number {
+    if (!this.ratingsData?.rating_breakdown || this.ratingsData.total_ratings === 0) {
+      // Fallback percentages if no data
+      const staticPercentages = {
+        5: 59.5,
+        4: 28.6,
+        3: 7.1,
+        2: 2.4,
+        1: 2.4
+      };
+      return staticPercentages[stars as keyof typeof staticPercentages] || 0;
+    }
+    
+    const breakdown = this.ratingsData.rating_breakdown;
+    
+    switch (stars) {
+      case 5: return breakdown['5_star'].percentage;
+      case 4: return breakdown['4_star'].percentage;
+      case 3: return breakdown['3_star'].percentage;
+      case 2: return breakdown['2_star'].percentage;
+      case 1: return breakdown['1_star'].percentage;
       default: return 0;
     }
   }

@@ -3,6 +3,43 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../enviornments/environment';
 
+// Add this new interface for ratings
+export interface RatingStatistics {
+  total_ratings: number;
+  average_rating: number;
+  rating_breakdown: {
+    '5_star': {
+      count: number;
+      percentage: number;
+    };
+    '4_star': {
+      count: number;
+      percentage: number;
+    };
+    '3_star': {
+      count: number;
+      percentage: number;
+    };
+    '2_star': {
+      count: number;
+      percentage: number;
+    };
+    '1_star': {
+      count: number;
+      percentage: number;
+    };
+  };
+}
+
+export interface MyRatingsResponse {
+  ratings: any[];
+  statistics: RatingStatistics;
+  filters_applied: {
+    rating: number | null;
+    service: string | null;
+  };
+}
+
 export interface DashboardStatistics {
   today_overview: {
     total_bookings: number;
@@ -243,6 +280,14 @@ export class DashboardService {
   getTotalBalance(): Observable<ApiResponse<TotalBalance>> {
     return this.http.get<ApiResponse<TotalBalance>>(
       `${this.baseURL}/cleaner/api/payouts/total-balance/`,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  // Get my ratings
+  getMyRatings(): Observable<ApiResponse<MyRatingsResponse>> {
+    return this.http.get<ApiResponse<MyRatingsResponse>>(
+      `${this.baseURL}/cleaner/api/ratings/my-ratings/`,
       { headers: this.getHeaders() }
     );
   }
