@@ -1,0 +1,216 @@
+.signup-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-label {
+  display: block;
+  color: var(--surface-900);
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.dark .input-label {
+  color: var(--surface-0);
+}
+
+.signup-button {
+  height: 3rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Black Theme Styles */
+.black-theme {
+  background: #000000 !important;
+  border: 1px solid #000000 !important;
+  color: #ffffff !important;
+}
+
+.black-theme:enabled:hover {
+  background: #333333 !important;
+  border-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+.black-theme:enabled:focus {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.black-theme:disabled {
+  background: #666666 !important;
+  border-color: #666666 !important;
+  color: #999999 !important;
+}
+
+/* PrimeNG Input Overrides with Black Theme */
+::ng-deep .p-inputtext {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--surface-300);
+  background: var(--surface-0);
+  color: var(--surface-900);
+  transition: all 0.2s ease-in-out;
+}
+
+::ng-deep .p-inputtext:enabled:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #000000;
+  border-color: #000000;
+}
+
+::ng-deep .p-inputtext:enabled:hover {
+  border-color: #000000;
+}
+
+.dark ::ng-deep .p-inputtext {
+  background: var(--surface-800);
+  border-color: var(--surface-600);
+  color: var(--surface-0);
+}
+
+.dark ::ng-deep .p-inputtext:enabled:focus {
+  box-shadow: 0 0 0 2px #ffffff;
+  border-color: #ffffff;
+}
+
+/* Password Input Overrides */
+::ng-deep .p-password {
+  width: 100%;
+}
+
+::ng-deep .p-password input {
+  width: 100%;
+}
+
+/* Checkbox Overrides with Black Theme */
+::ng-deep .p-checkbox .p-checkbox-box {
+  border-radius: 4px;
+  border: 1px solid var(--surface-300);
+}
+
+::ng-deep .p-checkbox .p-checkbox-box.p-highlight {
+  background: #000000;
+  border-color: #000000;
+}
+
+::ng-deep .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box:hover {
+  border-color: #000000;
+}
+
+.dark ::ng-deep .p-checkbox .p-checkbox-box.p-highlight {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.dark ::ng-deep .p-checkbox .p-checkbox-box.p-highlight .p-checkbox-icon {
+  color: #000000;
+}
+
+/* RadioButton Overrides with Black Theme */
+::ng-deep .p-radiobutton .p-radiobutton-box {
+  border: 1px solid var(--surface-300);
+}
+
+::ng-deep .p-radiobutton .p-radiobutton-box.p-highlight {
+  background: #000000;
+  border-color: #000000;
+}
+
+::ng-deep .p-radiobutton:not(.p-radiobutton-disabled) .p-radiobutton-box:hover {
+  border-color: #000000;
+}
+
+.dark ::ng-deep .p-radiobutton .p-radiobutton-box.p-highlight {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.dark ::ng-deep .p-radiobutton .p-radiobutton-box.p-highlight .p-radiobutton-icon {
+  background: #000000;
+}
+
+/* Button Overrides */
+::ng-deep .p-button {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+::ng-deep .p-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Message Overrides */
+::ng-deep .p-message {
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+::ng-deep .p-message .p-message-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Progress Spinner Overrides */
+::ng-deep .p-progressspinner {
+  width: 1rem;
+  height: 1rem;
+}
+
+::ng-deep .p-progressspinner-circle {
+  stroke: currentColor;
+}
+
+/* Link and Text Colors */
+.text-black {
+  color: #000000 !important;
+}
+
+.dark .text-black {
+  color: #ffffff !important;
+}
+
+/* Focus states for accessibility */
+::ng-deep .p-checkbox:focus-within .p-checkbox-box {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .p-radiobutton:focus-within .p-radiobutton-box {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .signup-container {
+    padding: 1rem;
+  }
+  
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Dark mode adjustments */
+.dark ::ng-deep .p-inputtext::placeholder {
+  color: var(--surface-400);
+}
+
+.dark ::ng-deep .p-password-panel {
+  background: var(--surface-800);
+  border-color: var(--surface-600);
+  color: var(--surface-0);
+}
+
+/* Gradient border for the container */
+::ng-deep .p-component {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}

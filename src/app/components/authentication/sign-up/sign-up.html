@@ -1,0 +1,133 @@
+<div class="signup-container">
+    <div
+        class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-screen overflow-hidden p-4">
+        <div class="flex flex-col items-center justify-center w-full max-w-md">
+            <div
+                style="border-radius: 32px; padding: 0.2rem; background: linear-gradient(180deg, #000000 10%, rgba(0, 0, 0, 0) 30%)">
+                <div class="w-full bg-surface-0 dark:bg-surface-900 py-12 px-8 sm:px-12" style="border-radius: 30px">
+
+                    <!-- Header Section -->
+                    <div class="text-center mb-8">
+                        <div class="text-surface-900 dark:text-surface-0 text-2xl font-bold mb-2">
+                            Let's get started
+                        </div>
+                        <span class="text-muted-color text-sm">
+                            Please enter your information to continue
+                        </span>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div *ngIf="errorMessage" class="mb-6">
+                        <p-message severity="error" [text]="errorMessage" styleClass="w-full"></p-message>
+                    </div>
+
+                    <!-- Sign Up Form -->
+                    <form (ngSubmit)="onSubmit()" class="space-y-6">
+
+                        <!-- Name Fields -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group">
+                                <label for="firstName" class="input-label">First Name</label>
+                                <input pInputText id="firstName" type="text" placeholder="First Name" class="w-full"
+                                    [(ngModel)]="firstName" name="firstName" [disabled]="isLoading" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName" class="input-label">Last Name</label>
+                                <input pInputText id="lastName" type="text" placeholder="Last Name" class="w-full"
+                                    [(ngModel)]="lastName" name="lastName" [disabled]="isLoading" required />
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email" class="input-label">Email Address</label>
+                            <input pInputText id="email" type="email" placeholder="Email Address" class="w-full"
+                                [(ngModel)]="email" name="email" [disabled]="isLoading" required />
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="form-group">
+                            <label for="phoneNumber" class="input-label">Phone Number</label>
+                            <input pInputText id="phoneNumber" type="tel" placeholder="Phone Number" class="w-full"
+                                [(ngModel)]="phoneNumber" name="phoneNumber" [disabled]="isLoading" required />
+                        </div>
+
+                        <!-- Password Fields -->
+                        <div class="form-group">
+                            <label for="password" class="input-label">Password</label>
+                            <p-password id="password" [(ngModel)]="password" placeholder="Password" [toggleMask]="true"
+                                [feedback]="true" [disabled]="isLoading" name="password" required
+                                styleClass="w-full"></p-password>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="repeatPassword" class="input-label">Repeat Password</label>
+                            <p-password id="repeatPassword" [(ngModel)]="repeatPassword" placeholder="Repeat Password"
+                                [toggleMask]="true" [feedback]="false" [disabled]="isLoading" name="repeatPassword"
+                                required styleClass="w-full"></p-password>
+                        </div>
+
+                        <!-- User Type Selection -->
+                        <div class="form-group">
+                            <label class="input-label mb-3 block">I am here as a:</label>
+                            <div class="flex gap-4">
+                                <div class="flex items-center">
+                                    <p-radioButton [(ngModel)]="userType" value="customer" name="userType"
+                                        [disabled]="isLoading" inputId="customer"></p-radioButton>
+                                    <label for="customer" class="ml-2 cursor-pointer">Customer</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <p-radioButton [(ngModel)]="userType" value="cleaner" name="userType"
+                                        [disabled]="isLoading" inputId="cleaner"></p-radioButton>
+                                    <label for="cleaner" class="ml-2 cursor-pointer">Cleaner</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Checkboxes -->
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <p-checkbox [(ngModel)]="acceptOffers" id="offers" binary [disabled]="isLoading"
+                                    name="acceptOffers" class="mr-3"></p-checkbox>
+                                <label for="offers" class="text-sm cursor-pointer">Opt-in for offer updates</label>
+                            </div>
+
+                            <div class="flex items-center">
+                                <p-checkbox [(ngModel)]="acceptTerms" id="terms" binary [disabled]="isLoading"
+                                    name="acceptTerms" class="mr-3" required></p-checkbox>
+                                <label for="terms" class="text-sm cursor-pointer">
+                                    By Signing-up you accept the
+                                    <span class="text-black font-medium dark:text-white">term of use</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Sign Up Button -->
+                        <!-- Sign Up Button -->
+                        <button pButton type="submit" styleClass="w-full" [disabled]="isLoading"
+                            class="signup-button black-theme">
+                            <span *ngIf="isLoading" class="flex items-center justify-center">
+                                <p-progressSpinner styleClass="w-4 h-4 mr-2" strokeWidth="4"
+                                    animationDuration=".5s"></p-progressSpinner>
+                                Creating Account...
+                            </span>
+                            <span *ngIf="!isLoading">Sign Up</span>
+                        </button>
+
+                        <!-- Login Link -->
+                        <div class="text-center mt-6">
+                            <span class="text-muted-color text-sm">
+                                Already an user?
+                                <a routerLink="/login"
+                                    class="text-black font-medium no-underline hover:underline ml-1 dark:text-white">
+                                    Login here
+                                </a>
+                            </span>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

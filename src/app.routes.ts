@@ -26,11 +26,19 @@ import { CustomerBillingComponent } from '@/components/customer-app/billings/bil
 import { CustomerAccountSettingsComponent } from '@/components/customer-app/settings/settings';
 
 import { AuthGuard } from '../src/app/guard/auth-guard';
+import { SignUp } from '@/components/authentication/sign-up/sign-up';
+import { OtpVerify } from '@/components/authentication/otp-verify/otp-verify';
+import { ForgetPassword } from '@/components/authentication/forget-password/forget-password';
+import { ResetPassword } from '@/components/authentication/reset-password/reset-password';
 
 export const appRoutes: Routes = [
     // Login route (only for specific paths)
     { path: '', component: Login },
     { path: 'sign-in', component: Login },
+    { path: 'sign-up', component: SignUp },
+    { path: 'otp-verify', component: OtpVerify },
+    {path:'forget-password',component:ForgetPassword},  
+    { path: 'reset-password', component: ResetPassword },
 
     // Admin routes
     {

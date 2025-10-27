@@ -1,0 +1,208 @@
+.otp-verify-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.otp-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.otp-input-wrapper {
+  width: 4rem;
+  height: 4rem;
+}
+
+.otp-input {
+  width: 100% !important;
+  height: 100% !important;
+  text-align: center !important;
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  border: 2px solid var(--surface-300) !important;
+  background: var(--surface-0) !important;
+  color: var(--surface-900) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.otp-input:enabled:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px #000000 !important;
+  border-color: #000000 !important;
+}
+
+.otp-input:enabled:hover {
+  border-color: #000000 !important;
+}
+
+.dark .otp-input {
+  background: var(--surface-800) !important;
+  border-color: var(--surface-600) !important;
+  color: var(--surface-0) !important;
+}
+
+.dark .otp-input:enabled:focus {
+  box-shadow: 0 0 0 2px #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+/* Black Theme Styles */
+.black-theme {
+  background: #000000 !important;
+  border: 1px solid #000000 !important;
+  color: #ffffff !important;
+}
+
+.black-theme:enabled:hover {
+  background: #333333 !important;
+  border-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+.black-theme:enabled:focus {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.black-theme:disabled {
+  background: #666666 !important;
+  border-color: #666666 !important;
+  color: #999999 !important;
+}
+
+.verify-button {
+  height: 3rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.resend-link {
+  font-size: 0.875rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.resend-link:hover:not(:disabled) {
+  color: #333333 !important;
+}
+
+.dark .resend-link:hover:not(:disabled) {
+  color: #cccccc !important;
+}
+
+.resend-link:disabled {
+  color: #999999 !important;
+  cursor: not-allowed;
+}
+
+/* PrimeNG Overrides */
+::ng-deep .p-inputtext {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--surface-300);
+  background: var(--surface-0);
+  color: var(--surface-900);
+  transition: all 0.2s ease-in-out;
+}
+
+::ng-deep .p-inputtext:enabled:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #000000;
+  border-color: #000000;
+}
+
+::ng-deep .p-inputtext:enabled:hover {
+  border-color: #000000;
+}
+
+.dark ::ng-deep .p-inputtext {
+  background: var(--surface-800);
+  border-color: var(--surface-600);
+  color: var(--surface-0);
+}
+
+.dark ::ng-deep .p-inputtext:enabled:focus {
+  box-shadow: 0 0 0 2px #ffffff;
+  border-color: #ffffff;
+}
+
+/* Button Overrides */
+::ng-deep .p-button {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+::ng-deep .p-button:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Message Overrides */
+::ng-deep .p-message {
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+::ng-deep .p-message .p-message-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Progress Spinner Overrides */
+::ng-deep .p-progressspinner {
+  width: 1rem;
+  height: 1rem;
+}
+
+::ng-deep .p-progressspinner-circle {
+  stroke: currentColor;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .otp-verify-container {
+    padding: 1rem;
+  }
+  
+  .otp-input-wrapper {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+  
+  .otp-input {
+    font-size: 1.25rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .otp-input-wrapper {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .otp-input {
+    font-size: 1.125rem !important;
+  }
+}
+
+/* Remove spinner from number inputs */
+.otp-input::-webkit-outer-spin-button,
+.otp-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.otp-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Focus states for accessibility */
+::ng-deep .p-button:focus {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Border for the container */
+::ng-deep .p-component {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
