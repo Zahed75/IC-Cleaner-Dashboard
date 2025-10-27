@@ -1,10 +1,20 @@
 <div class="settings-container">
+  <!-- Toast for messages -->
+  <p-toast></p-toast>
+
+  <!-- Loading State -->
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="loading-spinner">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+      <p>Loading profile data...</p>
+    </div>
+  </div>
+
   <!-- Header Section -->
   <div class="header-section">
-   
     <div class="account-management">
       <h1>Account Management</h1>
-      <p class="subtitle">Here's what's happening with your cleaning services today</p>
+      <p class="subtitle">Manage your personal information and account settings</p>
     </div>
   </div>
 
@@ -16,20 +26,29 @@
         <!-- Profile Picture -->
         <div class="form-section compact-section">
           <label class="section-label">Profile Picture</label>
-          <div class="upload-container">
-            <div class="upload-area" (click)="triggerFileInput()">
-              <div class="upload-placeholder">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
-                  <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                <span>Choose</span>
+          <div class="profile-picture-container">
+            <div class="profile-image-wrapper">
+              <img [src]="profilePictureUrl" alt="Profile Picture" class="profile-image" (error)="profilePictureUrl = 'assets/images/default-avatar.png'">
+              <div class="profile-overlay" (click)="triggerFileInput()">
+                <i class="pi pi-camera"></i>
+                <span>Change Photo</span>
               </div>
-              <input type="file" id="profilePicture" class="file-input" (change)="onFileSelected($event)" accept="image/*">
             </div>
-            <button type="button" class="btn-upload compact-btn">Upload</button>
+            <div class="upload-controls">
+              <div class="upload-area" (click)="triggerFileInput()">
+                <div class="upload-placeholder">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                  <span>Choose File</span>
+                </div>
+                <input type="file" id="profilePicture" class="file-input" (change)="onFileSelected($event)" accept="image/*">
+              </div>
+              <div class="file-info">{{ selectedFileName || 'No files chosen' }}</div>
+              <small class="file-hint">JPG, PNG, GIF • Max 5MB</small>
+            </div>
           </div>
-          <div class="file-info">{{ selectedFileName || 'No files chosen' }}</div>
         </div>
 
         <!-- Personal Information -->
@@ -37,19 +56,28 @@
           <label class="section-label">Personal Information</label>
           <div class="form-row compact-row">
             <div class="form-group compact-group">
-              <input type="text" id="firstName" name="firstName" [(ngModel)]="userProfile.firstName" placeholder="First Name" required>
+              <label for="firstName" class="input-label">First Name *</label>
+              <input type="text" id="firstName" name="firstName" [(ngModel)]="userProfile.firstName" 
+                     placeholder="Enter first name" required [disabled]="loading" class="form-input">
             </div>
             <div class="form-group compact-group">
-              <input type="text" id="lastName" name="lastName" [(ngModel)]="userProfile.lastName" placeholder="Last Name" required>
+              <label for="lastName" class="input-label">Last Name *</label>
+              <input type="text" id="lastName" name="lastName" [(ngModel)]="userProfile.lastName" 
+                     placeholder="Enter last name" required [disabled]="loading" class="form-input">
             </div>
           </div>
 
           <div class="form-row compact-row">
             <div class="form-group compact-group">
-              <input type="email" id="email" name="email" [(ngModel)]="userProfile.email" placeholder="Email" required>
+              <label for="email" class="input-label">Email *</label>
+              <input type="email" id="email" name="email" [(ngModel)]="userProfile.email" 
+                     placeholder="Enter email" required [disabled]="true" class="form-input disabled">
+              <small class="field-hint">Email cannot be changed</small>
             </div>
             <div class="form-group compact-group">
-              <input type="tel" id="phoneNumber" name="phoneNumber" [(ngModel)]="userProfile.phoneNumber" placeholder="Phone Number" required>
+              <label for="phoneNumber" class="input-label">Phone Number *</label>
+              <input type="tel" id="phoneNumber" name="phoneNumber" [(ngModel)]="userProfile.phoneNumber" 
+                     placeholder="+1234567890" required [disabled]="loading" class="form-input">
             </div>
           </div>
         </div>
@@ -59,42 +87,69 @@
       <div class="form-column">
         <!-- Address Information -->
         <div class="form-section compact-section">
-          <label class="section-label">Address</label>
+          <label class="section-label">Address Information</label>
           <div class="form-group compact-group">
-            <input type="text" id="buildingNumber" name="buildingNumber" [(ngModel)]="userProfile.buildingNumber" placeholder="Building Number and Street Name" required>
+            <label for="buildingNumber" class="input-label">Building Number and Street Name *</label>
+            <input type="text" id="buildingNumber" name="buildingNumber" [(ngModel)]="userProfile.buildingNumber" 
+                   placeholder="123 Main St" required [disabled]="loading" class="form-input">
+          </div>
+
+          <div class="form-group compact-group">
+            <label for="localityName" class="input-label">Locality Name (optional)</label>
+            <input type="text" id="localityName" name="localityName" [(ngModel)]="userProfile.localityName" 
+                   placeholder="Optional locality" [disabled]="loading" class="form-input">
           </div>
 
           <div class="form-row compact-row">
             <div class="form-group compact-group">
-              <input type="text" id="localityName" name="localityName" [(ngModel)]="userProfile.localityName" placeholder="Locality Name (optional)">
+              <label for="postTown" class="input-label">City *</label>
+              <input type="text" id="postTown" name="postTown" [(ngModel)]="userProfile.postTown" 
+                     placeholder="New York" required [disabled]="loading" class="form-input">
             </div>
             <div class="form-group compact-group">
-              <input type="text" id="postTown" name="postTown" [(ngModel)]="userProfile.postTown" placeholder="Post Town" required>
+              <label for="postcode" class="input-label">Postcode *</label>
+              <input type="text" id="postcode" name="postcode" [(ngModel)]="userProfile.postcode" 
+                     placeholder="10001" required [disabled]="loading" class="form-input">
             </div>
           </div>
 
-          <div class="form-group compact-group">
-            <input type="text" id="postcode" name="postcode" [(ngModel)]="userProfile.postcode" placeholder="Postcode" required>
+          <div class="form-row compact-row">
+            <div class="form-group compact-group">
+              <label for="state" class="input-label">State *</label>
+              <input type="text" id="state" name="state" [(ngModel)]="userProfile.state" 
+                     placeholder="NY" required [disabled]="loading" class="form-input">
+            </div>
+            <div class="form-group compact-group">
+              <label for="country" class="input-label">Country *</label>
+              <input type="text" id="country" name="country" [(ngModel)]="userProfile.country" 
+                     placeholder="USA" required [disabled]="loading" class="form-input">
+            </div>
           </div>
         </div>
 
         <!-- Password Change -->
         <div class="form-section compact-section">
-          <label class="section-label">Password</label>
+          <label class="section-label">Change Password</label>
           <div class="form-group compact-group">
-            <input type="password" id="password" name="password" [(ngModel)]="userProfile.password" placeholder="Password (if want to change)">
+            <label for="password" class="input-label">New Password</label>
+            <input type="password" id="password" name="password" [(ngModel)]="userProfile.password" 
+                   placeholder="Enter new password" [disabled]="loading" class="form-input">
           </div>
           <div class="form-group compact-group">
-            <input type="password" id="repeatPassword" name="repeatPassword" [(ngModel)]="userProfile.repeatPassword" placeholder="Repeat Password">
+            <label for="repeatPassword" class="input-label">Repeat Password</label>
+            <input type="password" id="repeatPassword" name="repeatPassword" [(ngModel)]="userProfile.repeatPassword" 
+                   placeholder="Repeat new password" [disabled]="loading" class="form-input">
           </div>
+          <small class="field-hint">Leave blank to keep current password</small>
         </div>
       </div>
     </div>
 
     <!-- Form Actions -->
     <div class="form-actions compact-actions">
-      <button type="submit" class="btn-save compact-btn" [disabled]="!profileForm.valid">Save Changes</button>
-
+      <button type="submit" class="btn-save compact-btn" [disabled]="!profileForm.valid || loading">
+        {{ loading ? 'Saving...' : 'Save Changes' }}
+      </button>
     </div>
   </form>
 </div>
