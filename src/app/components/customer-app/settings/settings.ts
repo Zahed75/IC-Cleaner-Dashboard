@@ -8,7 +8,7 @@ import { MessageService } from 'primeng/api';
 import { 
   CustomerProfileService, 
   UserProfileResponse, 
-  UpdateProfileRequest, 
+  UpdateCustomerProfileRequest, 
   ChangePasswordRequest,
   ApiResponse 
 } from '../../../services/customer-service/settings/customer-profile-service';
@@ -24,7 +24,7 @@ interface UserProfile {
   postcode: string;
   state: string;
   country: string;
-  password: string;
+  newPassword: string;
   repeatPassword: string;
   profilePicture?: string;
 }
@@ -41,7 +41,7 @@ export class CustomerAccountSettingsComponent implements OnInit {
   selectedFileName: string = '';
   selectedFile: File | null = null;
   loading = false;
-  userId: number = 6; // You can get this from authentication service or localStorage
+  userId: number = 4; // Updated to match your API response user_id
   currentProfile: UserProfileResponse | null = null;
   profilePictureUrl: string = 'assets/images/default-avatar.png';
 
@@ -56,7 +56,7 @@ export class CustomerAccountSettingsComponent implements OnInit {
     postcode: '',
     state: 'NY',
     country: 'USA',
-    password: '',
+    newPassword: '',
     repeatPassword: ''
   };
 
@@ -170,27 +170,27 @@ export class CustomerAccountSettingsComponent implements OnInit {
 
   saveChanges(): void {
     if (this.validateForm()) {
-      this.updateProfile();
-      this.changePasswordIfNeeded();
+      this.updateProfileAndPassword();
     }
   }
 
   private validateForm(): boolean {
-    // Check if passwords match if provided
-    if (this.userProfile.password && this.userProfile.password !== this.userProfile.repeatPassword) {
-      this.showError('Passwords do not match');
+    // Check if new passwords match if provided
+    if (this.userProfile.newPassword && this.userProfile.newPassword !== this.userProfile.repeatPassword) {
+      this.showError('New passwords do not match');
       return false;
     }
 
     // Check password strength if changing password
-    if (this.userProfile.password && this.userProfile.password.length < 8) {
-      this.showError('Password must be at least 8 characters long');
+    if (this.userProfile.newPassword && this.userProfile.newPassword.length < 8) {
+      this.showError('New password must be at least 8 characters long');
       return false;
     }
 
     // Validate required fields
     if (!this.userProfile.firstName || !this.userProfile.lastName || !this.userProfile.phoneNumber || 
-        !this.userProfile.buildingNumber || !this.userProfile.postTown || !this.userProfile.postcode) {
+        !this.userProfile.buildingNumber || !this.userProfile.postTown || !this.userProfile.postcode ||
+        !this.userProfile.state || !this.userProfile.country) {
       this.showError('Please fill in all required fields');
       return false;
     }
@@ -198,27 +198,36 @@ export class CustomerAccountSettingsComponent implements OnInit {
     return true;
   }
 
-  private updateProfile(): void {
-    const profileData: UpdateProfileRequest = {
+  private updateProfileAndPassword(): void {
+    this.loading = true;
+
+    // Update profile first
+    const profileData: UpdateCustomerProfileRequest = {
       first_name: this.userProfile.firstName,
       last_name: this.userProfile.lastName,
       phone_number: this.userProfile.phoneNumber,
       address_line1: this.userProfile.buildingNumber,
+      address_line2: this.userProfile.localityName,
       city: this.userProfile.postTown,
       state: this.userProfile.state,
       zip_code: this.userProfile.postcode,
-      country: this.userProfile.country
+      country: this.userProfile.country // Include country in the request
     };
 
-    this.loading = true;
-    this.profileService.updateUserProfile(this.userId, profileData).subscribe({
+    this.profileService.updateCustomerProfile(profileData).subscribe({
       next: (response: ApiResponse<any>) => {
         if (response.code === 200) {
-          this.showSuccess('Profile updated successfully!');
+          // If password is being changed, update it after profile update
+          if (this.userProfile.newPassword) {
+            this.changePassword();
+          } else {
+            this.showSuccess('Profile updated successfully!');
+            this.loading = false;
+          }
         } else {
           this.showError('Failed to update profile: ' + response.message);
+          this.loading = false;
         }
-        this.loading = false;
       },
       error: (error: any) => {
         console.error('Error updating profile:', error);
@@ -228,28 +237,28 @@ export class CustomerAccountSettingsComponent implements OnInit {
     });
   }
 
-  private changePasswordIfNeeded(): void {
-    if (!this.userProfile.password) return;
-
+  private changePassword(): void {
     const passwordData: ChangePasswordRequest = {
-      new_password: this.userProfile.password,
+      new_password: this.userProfile.newPassword,
       confirm_new_password: this.userProfile.repeatPassword
     };
 
     this.profileService.changePassword(passwordData).subscribe({
       next: (response: ApiResponse<any>) => {
         if (response.code === 200) {
-          this.showSuccess('Password changed successfully!');
+          this.showSuccess('Profile and password updated successfully!');
           // Clear password fields
-          this.userProfile.password = '';
+          this.userProfile.newPassword = '';
           this.userProfile.repeatPassword = '';
         } else {
-          this.showError('Failed to change password: ' + response.message);
+          this.showError('Profile updated but failed to change password: ' + response.message);
         }
+        this.loading = false;
       },
       error: (error: any) => {
         console.error('Error changing password:', error);
-        this.showError('Failed to change password');
+        this.showError('Profile updated but failed to change password');
+        this.loading = false;
       }
     });
   }

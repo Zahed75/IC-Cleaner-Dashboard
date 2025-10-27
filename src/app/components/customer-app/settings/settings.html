@@ -123,6 +123,7 @@
               <label for="country" class="input-label">Country *</label>
               <input type="text" id="country" name="country" [(ngModel)]="userProfile.country" 
                      placeholder="USA" required [disabled]="loading" class="form-input">
+              <small class="field-hint">Enter your country</small>
             </div>
           </div>
         </div>
@@ -131,16 +132,16 @@
         <div class="form-section compact-section">
           <label class="section-label">Change Password</label>
           <div class="form-group compact-group">
-            <label for="password" class="input-label">New Password</label>
-            <input type="password" id="password" name="password" [(ngModel)]="userProfile.password" 
+            <label for="newPassword" class="input-label">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" [(ngModel)]="userProfile.newPassword" 
                    placeholder="Enter new password" [disabled]="loading" class="form-input">
           </div>
           <div class="form-group compact-group">
-            <label for="repeatPassword" class="input-label">Repeat Password</label>
+            <label for="repeatPassword" class="input-label">Repeat New Password</label>
             <input type="password" id="repeatPassword" name="repeatPassword" [(ngModel)]="userProfile.repeatPassword" 
                    placeholder="Repeat new password" [disabled]="loading" class="form-input">
           </div>
-          <small class="field-hint">Leave blank to keep current password</small>
+          <small class="field-hint">Leave password fields blank to keep current password</small>
         </div>
       </div>
     </div>

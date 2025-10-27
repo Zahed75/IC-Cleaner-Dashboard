@@ -67,15 +67,16 @@ export interface UserProfileResponse {
   cleaner_statistics: CleanerStatistics;
 }
 
-export interface UpdateProfileRequest {
-  first_name: string;
-  last_name: string;
-  phone_number: string;
-  address_line1: string;
-  city: string;
-  state: string;
-  zip_code: string;
-  country: string;
+export interface UpdateCustomerProfileRequest {
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  address_line1?: string;
+  address_line2?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  country?: string;
 }
 
 export interface ChangePasswordRequest {
@@ -98,6 +99,16 @@ export interface ProfilePictureResponse {
   file_name: string;
   file_size: number;
   updated_at: string;
+}
+
+export interface UpdateProfileResponse {
+  user_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  address: Address;
+  password_updated: boolean;
 }
 
 export interface ApiResponse<T> {
@@ -137,10 +148,10 @@ export class CustomerProfileService {
     );
   }
 
-  // Update user profile
-  updateUserProfile(userId: number, profileData: UpdateProfileRequest): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(
-      `${this.baseURL}/auths/api/user/profile/${userId}/`,
+  // Update customer profile using PATCH
+  updateCustomerProfile(profileData: UpdateCustomerProfileRequest): Observable<ApiResponse<UpdateProfileResponse>> {
+    return this.http.patch<ApiResponse<UpdateProfileResponse>>(
+      `${this.baseURL}/auths/api/user/update-customer-profile/`,
       profileData,
       { headers: this.getHeaders() }
     );
