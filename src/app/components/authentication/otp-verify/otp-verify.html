@@ -10,8 +10,13 @@
               Verify yourself
             </div>
             <span class="text-muted-color text-sm">
-              Please enter the OTP received in your email.
+              Please enter the 6-digit OTP received in your email.
             </span>
+            <div *ngIf="email" class="mt-2">
+              <span class="text-sm text-surface-600 dark:text-surface-400">
+                Sent to: {{ email }}
+              </span>
+            </div>
           </div>
 
           <!-- Error Message -->
@@ -29,21 +34,95 @@
             
             <!-- OTP Input Fields -->
             <div class="otp-input-group">
-              <div class="flex justify-center gap-4 mb-6">
-                <div *ngFor="let digit of otp; let i = index" class="otp-input-wrapper">
+              <div class="flex justify-center gap-3 mb-6">
+                <div class="otp-input-wrapper">
                   <input
-                    pInputText
-                    [id]="'otp-' + i"
+                    id="otp-1"
                     type="text"
                     maxlength="1"
-                    [(ngModel)]="otp[i]"
-                    [name]="'otp' + i"
-                    (input)="onOtpInput($event, i)"
-                    (keydown)="onKeyDown($event, i)"
+                    (input)="onInput($event, 1)"
+                    (keydown)="onKeyDown($event, 1)"
                     (paste)="onPaste($event)"
-                    [disabled]="isLoading"
+                    (focus)="onFocus($event)"
+                    [disabled]="isLoading || isResending"
                     class="otp-input"
                     autocomplete="one-time-code"
+                    placeholder="0"
+                  />
+                </div>
+                <div class="otp-input-wrapper">
+                  <input
+                    id="otp-2"
+                    type="text"
+                    maxlength="1"
+                    (input)="onInput($event, 2)"
+                    (keydown)="onKeyDown($event, 2)"
+                    (paste)="onPaste($event)"
+                    (focus)="onFocus($event)"
+                    [disabled]="isLoading || isResending"
+                    class="otp-input"
+                    autocomplete="one-time-code"
+                    placeholder="0"
+                  />
+                </div>
+                <div class="otp-input-wrapper">
+                  <input
+                    id="otp-3"
+                    type="text"
+                    maxlength="1"
+                    (input)="onInput($event, 3)"
+                    (keydown)="onKeyDown($event, 3)"
+                    (paste)="onPaste($event)"
+                    (focus)="onFocus($event)"
+                    [disabled]="isLoading || isResending"
+                    class="otp-input"
+                    autocomplete="one-time-code"
+                    placeholder="0"
+                  />
+                </div>
+                <div class="otp-input-wrapper">
+                  <input
+                    id="otp-4"
+                    type="text"
+                    maxlength="1"
+                    (input)="onInput($event, 4)"
+                    (keydown)="onKeyDown($event, 4)"
+                    (paste)="onPaste($event)"
+                    (focus)="onFocus($event)"
+                    [disabled]="isLoading || isResending"
+                    class="otp-input"
+                    autocomplete="one-time-code"
+                    placeholder="0"
+                  />
+                </div>
+                <div class="otp-input-wrapper">
+                  <input
+                    id="otp-5"
+                    type="text"
+                    maxlength="1"
+                    (input)="onInput($event, 5)"
+                    (keydown)="onKeyDown($event, 5)"
+                    (paste)="onPaste($event)"
+                    (focus)="onFocus($event)"
+                    [disabled]="isLoading || isResending"
+                    class="otp-input"
+                    autocomplete="one-time-code"
+                    placeholder="0"
+                  />
+                </div>
+                <div class="otp-input-wrapper">
+                  <input
+                    id="otp-6"
+                    type="text"
+                    maxlength="1"
+                    (input)="onInput($event, 6)"
+                    (keydown)="onKeyDown($event, 6)"
+                    (paste)="onPaste($event)"
+                    (focus)="onFocus($event)"
+                    [disabled]="isLoading || isResending"
+                    class="otp-input"
+                    autocomplete="one-time-code"
+                    placeholder="0"
                   />
                 </div>
               </div>
@@ -54,7 +133,7 @@
               pButton 
               type="submit" 
               styleClass="w-full" 
-              [disabled]="isLoading || otp.join('').length !== 4"
+              [disabled]="isLoading || isResending || getOtpValue().length !== 6"
               class="verify-button black-theme"
             >
               <span *ngIf="isLoading" class="flex items-center justify-center">
@@ -73,10 +152,18 @@
               <button 
                 type="button" 
                 (click)="resendOtp()"
-                [disabled]="isLoading"
-                class="resend-link text-black dark:text-white font-medium no-underline hover:underline bg-transparent border-none cursor-pointer"
+                [disabled]="isLoading || isResending"
+                class="resend-link text-black dark:text-white font-medium no-underline hover:underline bg-transparent border-none cursor-pointer flex items-center justify-center mx-auto"
               >
-                Reset Password
+                <span *ngIf="isResending" class="flex items-center justify-center">
+                  <p-progressSpinner 
+                    styleClass="w-4 h-4 mr-2" 
+                    strokeWidth="4"
+                    animationDuration=".5s"
+                  ></p-progressSpinner>
+                  Resending...
+                </span>
+                <span *ngIf="!isResending">Resend OTP</span>
               </button>
             </div>
 
@@ -84,7 +171,7 @@
             <div class="text-center mt-6 pt-6 border-t border-surface-200 dark:border-surface-700">
               <span class="text-muted-color text-sm">
                 First time user? 
-                <a routerLink="/sign-up" class="text-black font-medium no-underline hover:underline ml-1 dark:text-white">
+                <a routerLink="/signup" class="text-black font-medium no-underline hover:underline ml-1 dark:text-white">
                   Signup here
                 </a>
               </span>

@@ -20,31 +20,64 @@
   font-size: 1.5rem !important;
   font-weight: 600 !important;
   border-radius: 12px !important;
-  border: 2px solid var(--surface-300) !important;
-  background: var(--surface-0) !important;
-  color: var(--surface-900) !important;
+  border: 2px solid #e5e7eb !important;
+  background: #ffffff !important;
+  color: #1f2937 !important;
   transition: all 0.2s ease-in-out !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.otp-input::placeholder {
+  color: #9ca3af !important;
+  font-weight: 400 !important;
 }
 
 .otp-input:enabled:focus {
   outline: none !important;
-  box-shadow: 0 0 0 2px #000000 !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1) !important;
   border-color: #000000 !important;
+  background: #f9fafb !important;
 }
 
 .otp-input:enabled:hover {
   border-color: #000000 !important;
+  background: #f9fafb !important;
 }
 
+.otp-input:disabled {
+  background: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+  color: #6b7280 !important;
+  cursor: not-allowed !important;
+}
+
+/* Dark mode styles */
 .dark .otp-input {
-  background: var(--surface-800) !important;
-  border-color: var(--surface-600) !important;
-  color: var(--surface-0) !important;
+  background: #1f2937 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .otp-input::placeholder {
+  color: #6b7280 !important;
 }
 
 .dark .otp-input:enabled:focus {
-  box-shadow: 0 0 0 2px #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1), 0 4px 6px rgba(0, 0, 0, 0.3) !important;
   border-color: #ffffff !important;
+  background: #374151 !important;
+}
+
+.dark .otp-input:enabled:hover {
+  border-color: #ffffff !important;
+  background: #374151 !important;
+}
+
+.dark .otp-input:disabled {
+  background: #374151 !important;
+  border-color: #6b7280 !important;
+  color: #9ca3af !important;
 }
 
 /* Black Theme Styles */
@@ -184,6 +217,10 @@
   .otp-input {
     font-size: 1.125rem !important;
   }
+  
+  .flex.justify-center.gap-3 {
+    gap: 0.5rem !important;
+  }
 }
 
 /* Remove spinner from number inputs */
@@ -205,4 +242,20 @@
 /* Border for the container */
 ::ng-deep .p-component {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Input animation */
+.otp-input {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

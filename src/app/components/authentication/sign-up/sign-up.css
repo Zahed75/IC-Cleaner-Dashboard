@@ -19,6 +19,70 @@
   color: var(--surface-0);
 }
 
+.field-hint {
+  display: block;
+  color: var(--surface-500);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.dark .field-hint {
+  color: var(--surface-400);
+}
+
+/* Phone Input Styling */
+.phone-input-container {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--surface-300);
+  border-radius: 8px;
+  background: var(--surface-0);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.phone-input-container:focus-within {
+  box-shadow: 0 0 0 2px #000000;
+  border-color: #000000;
+}
+
+.phone-input-container:hover {
+  border-color: #000000;
+}
+
+.phone-prefix {
+  padding: 0.75rem 1rem;
+  background: var(--surface-100);
+  color: var(--surface-700);
+  font-weight: 500;
+  border-right: 1px solid var(--surface-300);
+  min-width: 60px;
+  text-align: center;
+}
+
+.phone-input {
+  border: none !important;
+  box-shadow: none !important;
+  padding-left: 0.5rem !important;
+}
+
+.dark .phone-input-container {
+  background: var(--surface-800);
+  border-color: var(--surface-600);
+}
+
+.dark .phone-prefix {
+  background: var(--surface-700);
+  color: var(--surface-300);
+  border-right-color: var(--surface-600);
+}
+
+.dark .phone-input-container:focus-within {
+  box-shadow: 0 0 0 2px #ffffff;
+  border-color: #ffffff;
+}
+
 .signup-button {
   height: 3rem;
   font-weight: 600;

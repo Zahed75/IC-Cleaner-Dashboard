@@ -21,18 +21,23 @@
                         <p-message severity="error" [text]="errorMessage" styleClass="w-full"></p-message>
                     </div>
 
+                    <!-- Success Message -->
+                    <div *ngIf="successMessage" class="mb-6">
+                        <p-message severity="success" [text]="successMessage" styleClass="w-full"></p-message>
+                    </div>
+
                     <!-- Sign Up Form -->
                     <form (ngSubmit)="onSubmit()" class="space-y-6">
 
                         <!-- Name Fields -->
                         <div class="grid grid-cols-2 gap-4">
                             <div class="form-group">
-                                <label for="firstName" class="input-label">First Name</label>
+                                <label for="firstName" class="input-label">First Name *</label>
                                 <input pInputText id="firstName" type="text" placeholder="First Name" class="w-full"
                                     [(ngModel)]="firstName" name="firstName" [disabled]="isLoading" required />
                             </div>
                             <div class="form-group">
-                                <label for="lastName" class="input-label">Last Name</label>
+                                <label for="lastName" class="input-label">Last Name *</label>
                                 <input pInputText id="lastName" type="text" placeholder="Last Name" class="w-full"
                                     [(ngModel)]="lastName" name="lastName" [disabled]="isLoading" required />
                             </div>
@@ -40,28 +45,33 @@
 
                         <!-- Email -->
                         <div class="form-group">
-                            <label for="email" class="input-label">Email Address</label>
+                            <label for="email" class="input-label">Email Address *</label>
                             <input pInputText id="email" type="email" placeholder="Email Address" class="w-full"
                                 [(ngModel)]="email" name="email" [disabled]="isLoading" required />
                         </div>
 
                         <!-- Phone Number -->
                         <div class="form-group">
-                            <label for="phoneNumber" class="input-label">Phone Number</label>
-                            <input pInputText id="phoneNumber" type="tel" placeholder="Phone Number" class="w-full"
-                                [(ngModel)]="phoneNumber" name="phoneNumber" [disabled]="isLoading" required />
+                            <label for="phoneNumber" class="input-label">Phone Number *</label>
+                            <div class="phone-input-container">
+                                <div class="phone-prefix">+44</div>
+                                <input pInputText id="phoneNumber" type="tel" placeholder="7911 123456" class="w-full phone-input"
+                                    [(ngModel)]="phoneNumber" name="phoneNumber" [disabled]="isLoading" required />
+                            </div>
+                            <small class="field-hint">UK phone number format: +44 followed by your number</small>
                         </div>
 
                         <!-- Password Fields -->
                         <div class="form-group">
-                            <label for="password" class="input-label">Password</label>
+                            <label for="password" class="input-label">Password *</label>
                             <p-password id="password" [(ngModel)]="password" placeholder="Password" [toggleMask]="true"
                                 [feedback]="true" [disabled]="isLoading" name="password" required
                                 styleClass="w-full"></p-password>
+                            <small class="field-hint">Must be at least 8 characters with uppercase, lowercase, number and special character</small>
                         </div>
 
                         <div class="form-group">
-                            <label for="repeatPassword" class="input-label">Repeat Password</label>
+                            <label for="repeatPassword" class="input-label">Repeat Password *</label>
                             <p-password id="repeatPassword" [(ngModel)]="repeatPassword" placeholder="Repeat Password"
                                 [toggleMask]="true" [feedback]="false" [disabled]="isLoading" name="repeatPassword"
                                 required styleClass="w-full"></p-password>
@@ -69,7 +79,7 @@
 
                         <!-- User Type Selection -->
                         <div class="form-group">
-                            <label class="input-label mb-3 block">I am here as a:</label>
+                            <label class="input-label mb-3 block">I am here as a: *</label>
                             <div class="flex gap-4">
                                 <div class="flex items-center">
                                     <p-radioButton [(ngModel)]="userType" value="customer" name="userType"
@@ -102,7 +112,6 @@
                             </div>
                         </div>
 
-                        <!-- Sign Up Button -->
                         <!-- Sign Up Button -->
                         <button pButton type="submit" styleClass="w-full" [disabled]="isLoading"
                             class="signup-button black-theme">

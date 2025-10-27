@@ -17,13 +17,13 @@ import { AuthService, LoginRequest } from '../../../../services/auth/auth-servic
     standalone: true,
     imports: [
         CommonModule,
-        ButtonModule, 
-        CheckboxModule, 
-        InputTextModule, 
-        PasswordModule, 
-        FormsModule, 
-        RouterModule, 
-        RippleModule, 
+        ButtonModule,
+        CheckboxModule,
+        InputTextModule,
+        PasswordModule,
+        FormsModule,
+        RouterModule,
+        RippleModule,
         MessageModule,
         ProgressSpinnerModule,
         AppFloatingConfigurator
@@ -111,6 +111,7 @@ import { AuthService, LoginRequest } from '../../../../services/auth/auth-servic
                                 styleClass="w-full" 
                                 [disabled]="isLoading"
                             >
+                            
                                 <span *ngIf="isLoading" class="flex items-center justify-center">
                                     <p-progressSpinner 
                                         styleClass="w-4 h-4 mr-2" 
@@ -121,6 +122,15 @@ import { AuthService, LoginRequest } from '../../../../services/auth/auth-servic
                                 </span>
                              
                             </button>
+                            <!-- Sign Up Link -->
+<div class="text-center mt-6">
+    <span class="text-muted-color text-sm">
+        Don't have an account? 
+        <a routerLink="/sign-up" class="text-primary font-medium no-underline hover:underline ml-1">
+            Sign up here
+        </a>
+    </span>
+</div>
                         </form>
                     </div>
                 </div>
@@ -138,7 +148,7 @@ export class Login {
     constructor(
         private authService: AuthService,
         private router: Router
-    ) {}
+    ) { }
 
     onSubmit(): void {
         if (!this.email || !this.password) {
@@ -157,7 +167,7 @@ export class Login {
         this.authService.login(loginRequest).subscribe({
             next: (response) => {
                 this.isLoading = false;
-                
+
                 // Check if user is admin (you might want to adjust this based on your role system)
                 if (response.user.role === 'admin') {
                     this.router.navigate(['/dashboard']);
